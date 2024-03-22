@@ -2,8 +2,6 @@ import sys
 
 import pygame
 
-from scripts.tower import tower
-
 
 class Game:
     def __init__(self):
@@ -54,7 +52,8 @@ class Game:
 
         self.monster_sprite = pygame.sprite.Sprite()
         self.monster_sprite.image = self.monster_img
-        self.monster_sprite.rect = pygame.Rect(self.monster_pos[0], self.monster_pos[1], self.monster_img.get_width(), self.monster_img.get_height())
+        self.monster_sprite.rect = pygame.Rect(self.monster_pos[0], self.monster_pos[1], self.monster_img.get_width(),
+                                               self.monster_img.get_height())
         self.monster_sprite.radius = (self.monster_img.get_width() / 2)
 
         self.tower_image_pos = [int(self.tower_pos[0]-(self.tower.get_width()/2)),
@@ -62,33 +61,32 @@ class Game:
         self.target_radius_pos = [int(self.tower_pos[0] - (self.no_target_gizmo.get_width() / 2)),
                                   int(self.tower_pos[1] - self.no_target_gizmo.get_height() / 2)]
 
+    def draw_grid(self):
+        # Here is where we are initializing the bg and bg grid
+        pygame.draw.rect(self.screen, self.bg_color, self.game_bg_rect)
+        for count in range(self.bg_grid_width_count - 1):
+            pygame.draw.line(self.screen, self.bg_grid_color,
+                             (self.bg_border,
+                              ((count + 1) * self.game_bg_rect_height / self.bg_grid_width_count + self.bg_border)),
+                             ((self.game_bg_rect_width + self.bg_border),
+                              ((count + 1) * self.game_bg_rect_height / self.bg_grid_width_count + self.bg_border)))
+
+        for count in range(self.bg_grid_height_count - 1):
+            pygame.draw.line(self.screen, self.bg_grid_color,
+                             (((count + 1) * self.game_bg_rect_width / self.bg_grid_height_count + self.bg_border),
+                              self.bg_border),
+                             (((count + 1) * self.game_bg_rect_width / self.bg_grid_height_count + self.bg_border),
+                              self.SCREEN_HEIGHT - self.bg_border))
+
     def run(self):
         while True:
-            # Here is where we are initializing the bg and bg grid
-            pygame.draw.rect(self.screen, self.bg_color, self.game_bg_rect)
-            for count in range(self.bg_grid_width_count - 1):
-                pygame.draw.line(self.screen, self.bg_grid_color,
-                                 (self.bg_border,
-                                  ((count + 1) * self.game_bg_rect_height / self.bg_grid_width_count + self.bg_border)),
-                                 ((self.game_bg_rect_width + self.bg_border),
-                                  ((count + 1) * self.game_bg_rect_height / self.bg_grid_width_count + self.bg_border)))
-
-            for count in range(self.bg_grid_height_count - 1):
-                pygame.draw.line(self.screen, self.bg_grid_color,
-                                 (((count + 1) * self.game_bg_rect_width / self.bg_grid_height_count + self.bg_border),
-                                  self.bg_border),
-                                 (((count + 1) * self.game_bg_rect_width / self.bg_grid_height_count + self.bg_border),
-                                  self.SCREEN_HEIGHT - self.bg_border))
-
+            self.draw_grid()
             self.screen.blit(self.no_target_gizmo, self.target_radius_pos)
             self.screen.blit(self.tower, self.tower_image_pos)
-            pygame.draw.circle(self.screen, (255, 0, 0, 50), (40, 40), 40)
 
-            #self.monster_pos[0] += self.monster_movement[1] - self.monster_movement[0]
-            #self.screen.blit(self.monster_img, self.monster_pos)
+            self.monster_pos[0] += self.monster_movement[1] - self.monster_movement[0]
+            self.screen.blit(self.monster_img, self.monster_pos)
 
-            monster_r = pygame.Rect(self.monster_pos[0], self.monster_pos[1], self.monster_img.get_width(), self.monster_img.get_height())
-            if self.no_target_gizmo_mask.overlap_mask(self.monster_mask,(0,0)):
             # This is the event checker for each frame
             for event in pygame.event.get():
                 # This is where we make sure the game breaks out of the loop when the player wishes to exit
