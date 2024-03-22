@@ -1,7 +1,40 @@
 import sys
 
 import pygame
+from pygame.locals import *
 
+# load art for test turret
+tower_img = pygame.image.load('art/Tower.png')
+tower_pos = [226, 222]
+
+valid_target_gizmo = pygame.image.load('art/valid_target_gizmo.png')
+# valid_target_gizmo.set_alpha(50)
+no_target_gizmo = pygame.image.load('art/no_target_gizmo.png')
+no_target_gizmo.set_alpha(50)
+no_target_gizmo_mask = pygame.mask.from_surface(no_target_gizmo)
+
+
+# monster details
+monster_img = pygame.image.load('art/centipede.png')
+monster_pos = [626, 222]
+monster_end_pos = [300, 222]
+monster_move_speed = 10
+monster_movement = [False, False]
+monster_mask = pygame.mask.from_surface(monster_img)
+
+monster_pos = [int(monster_pos[0] - (monster_img.get_width() / 2)),
+                            int(monster_pos[1] - monster_img.get_height() / 2)]
+monster_end_pos = [int(monster_end_pos[0] - (monster_img.get_width() / 2)),
+                                int(monster_end_pos[1] - monster_img.get_height() / 2)]
+
+monster_sprite = pygame.sprite.Sprite()
+monster_sprite.image = monster_img
+monster_sprite.radius = (monster_img.get_width() / 2)
+
+tower_image_pos = [int(tower_pos[0] - (tower_img.get_width() / 2)),
+                   int(tower_pos[1] - tower_img.get_height() / 2)]
+target_radius_pos = [int(tower_pos[0] - (no_target_gizmo.get_width() / 2)),
+                     int(tower_pos[1] - no_target_gizmo.get_height() / 2)]
 
 class Game:
     def __init__(self):
@@ -26,40 +59,6 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
-        # load art for test turret
-        self.tower = pygame.image.load('art/Tower.png')
-
-        self.tower_pos = [226, 222]
-        self.valid_target_gizmo = pygame.image.load('art/valid_target_gizmo.png')
-        self.valid_target_gizmo.set_alpha(50)
-        self.no_target_gizmo = pygame.image.load('art/no_target_gizmo.png')
-        self.no_target_gizmo.set_alpha(50)
-        self.no_target_gizmo_mask = pygame.mask.from_surface(self.no_target_gizmo)
-
-        # monster details
-        self.monster_img = pygame.image.load('art/centipede.png')
-        self.monster_pos = [626, 222]
-        self.monster_end_pos = [300, 222]
-        self.monster_move_speed = 5
-        self.monster_movement = [False, False]
-        self.monster_rect = self.monster_img.get_rect()
-        self.monster_mask = pygame.mask.from_surface(self.monster_img)
-
-        self.monster_pos = [int(self.monster_pos[0] - (self.monster_img.get_width() / 2)),
-                            int(self.monster_pos[1] - self.monster_img.get_height() / 2)]
-        self.monster_end_pos = [int(self.monster_end_pos[0] - (self.monster_img.get_width() / 2)),
-                                int(self.monster_end_pos[1] - self.monster_img.get_height() / 2)]
-
-        self.monster_sprite = pygame.sprite.Sprite()
-        self.monster_sprite.image = self.monster_img
-        self.monster_sprite.rect = pygame.Rect(self.monster_pos[0], self.monster_pos[1], self.monster_img.get_width(),
-                                               self.monster_img.get_height())
-        self.monster_sprite.radius = (self.monster_img.get_width() / 2)
-
-        self.tower_image_pos = [int(self.tower_pos[0]-(self.tower.get_width()/2)),
-                                int(self.tower_pos[1]-self.tower.get_height()/2)]
-        self.target_radius_pos = [int(self.tower_pos[0] - (self.no_target_gizmo.get_width() / 2)),
-                                  int(self.tower_pos[1] - self.no_target_gizmo.get_height() / 2)]
 
     def draw_grid(self):
         # Here is where we are initializing the bg and bg grid
@@ -81,11 +80,17 @@ class Game:
     def run(self):
         while True:
             self.draw_grid()
-            self.screen.blit(self.no_target_gizmo, self.target_radius_pos)
-            self.screen.blit(self.tower, self.tower_image_pos)
 
-            self.monster_pos[0] += self.monster_movement[1] - self.monster_movement[0]
-            self.screen.blit(self.monster_img, self.monster_pos)
+            # Here is where we update the position of the monster
+            self.screen.blit(monster_img, monster_pos)
+            self.screen.blit(tower_img, tower_image_pos)
+            monster_pos[0] += (monster_movement[1] - monster_movement[0]) * monster_move_speed
+
+            # Here is where we check if the monster is in range of the turret
+            if no_target_gizmo_mask.overlap(monster_mask, (monster_pos[0] - target_radius_pos[0], monster_pos[1] - target_radius_pos[1])):
+                self.screen.blit(valid_target_gizmo, target_radius_pos)
+            else:
+                self.screen.blit(no_target_gizmo, target_radius_pos)
 
             # This is the event checker for each frame
             for event in pygame.event.get():
@@ -94,15 +99,17 @@ class Game:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        show_masks = not show_masks
                     if event.key == pygame.K_LEFT:
-                        self.monster_movement[0] = True
+                        monster_movement[0] = True
                     if event.key == pygame.K_RIGHT:
-                        self.monster_movement[1] = True
+                        monster_movement[1] = True
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT:
-                        self.monster_movement[0] = False
+                        monster_movement[0] = False
                     if event.key == pygame.K_RIGHT:
-                        self.monster_movement[1] = False
+                        monster_movement[1] = False
 
             pygame.display.update()
             self.clock.tick(60)
