@@ -3,6 +3,7 @@ import sys
 import pygame
 
 from scripts import tower
+from scripts import monster
 
 # Init our tower for testing
 # NOTE: I think we will want to init these at runtime assuming we want to place towers
@@ -19,9 +20,9 @@ monster_movement = [False, False]
 monster_mask = pygame.mask.from_surface(monster_img)
 
 monster_pos = [int(monster_pos[0] - (monster_img.get_width() / 2)),
-                            int(monster_pos[1] - monster_img.get_height() / 2)]
+               int(monster_pos[1] - monster_img.get_height() / 2)]
 monster_end_pos = [int(monster_end_pos[0] - (monster_img.get_width() / 2)),
-                                int(monster_end_pos[1] - monster_img.get_height() / 2)]
+                   int(monster_end_pos[1] - monster_img.get_height() / 2)]
 
 monster_sprite = pygame.sprite.Sprite()
 monster_sprite.image = monster_img
@@ -31,6 +32,7 @@ tower_image_pos = [int(tower1.pos[0] - (tower1.tower_img.get_width() / 2)),
                    int(tower1.pos[1] - tower1.tower_img.get_height() / 2)]
 target_radius_pos = [int(tower1.pos[0] - (tower1.no_target_gizmo.get_width() / 2)),
                      int(tower1.pos[1] - tower1.no_target_gizmo.get_height() / 2)]
+
 
 class Game:
     def __init__(self):
@@ -77,17 +79,20 @@ class Game:
             self.draw_grid()
 
             # Here is where we update the position of the monster
-            self.screen.blit(monster_img, monster_pos)
+            monster1 = monster.Monster(monster_pos[0], monster_pos[1])
+            monster1.draw_monster(self.screen, monster_pos)
+            monster1.healthBar.draw_health_bar(self.screen)
             self.screen.blit(tower1.tower_img, tower_image_pos)
             monster_pos[0] += (monster_movement[1] - monster_movement[0]) * monster_move_speed
 
             # Here is where we check if the monster is in range of the turret
-            if tower1.range_mask.overlap(monster_mask, (monster_pos[0] - target_radius_pos[0], monster_pos[1] - target_radius_pos[1])):
-                # self.screen.blit(valid_target_gizmo, target_radius_pos)
+            if (tower1.range_mask.overlap
+               (monster_mask, (monster_pos[0] - target_radius_pos[0], monster_pos[1] - target_radius_pos[1]))):
+                self.screen.blit(tower1.valid_target_gizmo, target_radius_pos)
                 print(F"Monster in range of {tower1.tower_img}")
 
             else:
-                # self.screen.blit(no_target_gizmo, target_radius_pos)
+                self.screen.blit(tower1.no_target_gizmo, target_radius_pos)
                 pass
 
             # This is the event checker for each frame
