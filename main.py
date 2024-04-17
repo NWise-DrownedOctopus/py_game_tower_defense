@@ -5,33 +5,8 @@ import pygame
 from scripts import tower
 from scripts import monster
 
-# Init our tower for testing
-# NOTE: I think we will want to init these at runtime assuming we want to place towers
-#       during the game
-tower1 = tower.Tower()
-tower1.set_tower_position([226, 222])
-
-# monster details
-monster_img = pygame.image.load('art/centipede.png')
+# Player monster details
 monster_pos = [626, 222]
-monster_end_pos = [300, 222]
-monster_move_speed = 10
-monster_movement = [False, False]
-monster_mask = pygame.mask.from_surface(monster_img)
-
-monster_pos = [int(monster_pos[0] - (monster_img.get_width() / 2)),
-               int(monster_pos[1] - monster_img.get_height() / 2)]
-monster_end_pos = [int(monster_end_pos[0] - (monster_img.get_width() / 2)),
-                   int(monster_end_pos[1] - monster_img.get_height() / 2)]
-
-monster_sprite = pygame.sprite.Sprite()
-monster_sprite.image = monster_img
-monster_sprite.radius = (monster_img.get_width() / 2)
-
-tower_image_pos = [int(tower1.pos[0] - (tower1.tower_img.get_width() / 2)),
-                   int(tower1.pos[1] - tower1.tower_img.get_height() / 2)]
-target_radius_pos = [int(tower1.pos[0] - (tower1.no_target_gizmo.get_width() / 2)),
-                     int(tower1.pos[1] - tower1.no_target_gizmo.get_height() / 2)]
 
 
 class Game:
@@ -77,23 +52,16 @@ class Game:
     def run(self):
         while True:
             self.draw_grid()
+            tower1 = tower.Tower([226, 222], self.screen)
 
             # Here is where we update the position of the monster
             monster1 = monster.Monster(monster_pos[0], monster_pos[1])
             monster1.draw_monster(self.screen, monster_pos)
             monster1.healthBar.draw_health_bar(self.screen)
-            self.screen.blit(tower1.tower_img, tower_image_pos)
-            monster_pos[0] += (monster_movement[1] - monster_movement[0]) * monster_move_speed
+            monster_pos[0] += (monster1.monster_movement[1] - monster1.monster_movement[0]) * monster1.monster_move_speed
 
             # Here is where we check if the monster is in range of the turret
-            if (tower1.range_mask.overlap
-               (monster_mask, (monster_pos[0] - target_radius_pos[0], monster_pos[1] - target_radius_pos[1]))):
-                self.screen.blit(tower1.valid_target_gizmo, target_radius_pos)
-                print(F"Monster in range of {tower1.tower_img}")
-
-            else:
-                self.screen.blit(tower1.no_target_gizmo, target_radius_pos)
-                pass
+            tower1.detect_monster(monster1)
 
             # This is the event checker for each frame
             for event in pygame.event.get():
@@ -103,14 +71,14 @@ class Game:
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
-                        monster_movement[0] = True
+                        monster1.monster_movement[0] = True
                     if event.key == pygame.K_RIGHT:
-                        monster_movement[1] = True
+                        monster1.monster_movement[1] = True
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT:
-                        monster_movement[0] = False
+                        monster1.monster_movement[0] = False
                     if event.key == pygame.K_RIGHT:
-                        monster_movement[1] = False
+                        monster1.monster_movement[1] = False
 
             pygame.display.update()
             self.clock.tick(60)
