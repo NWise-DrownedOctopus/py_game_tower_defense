@@ -5,8 +5,9 @@ import pygame
 from scripts import tower
 from scripts import monster
 
-# Player monster details
+# monster details
 monster_pos = [626, 222]
+monster_movement = [False, False]
 
 
 class Game:
@@ -58,7 +59,7 @@ class Game:
             monster1 = monster.Monster(monster_pos[0], monster_pos[1])
             monster1.draw_monster(self.screen, monster_pos)
             monster1.healthBar.draw_health_bar(self.screen)
-            monster_pos[0] += (monster1.monster_movement[1] - monster1.monster_movement[0]) * monster1.monster_move_speed
+            monster_pos[0] += (monster_movement[1] - monster_movement[0]) * monster1.monster_move_speed
 
             # Here is where we check if the monster is in range of the turret
             tower1.detect_monster(monster1)
@@ -71,14 +72,14 @@ class Game:
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
-                        monster1.monster_movement[0] = True
+                        monster_movement[0] = True
                     if event.key == pygame.K_RIGHT:
-                        monster1.monster_movement[1] = True
+                        monster_movement[1] = True
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT:
-                        monster1.monster_movement[0] = False
+                        monster_movement[0] = False
                     if event.key == pygame.K_RIGHT:
-                        monster1.monster_movement[1] = False
+                        monster_movement[1] = False
 
             pygame.display.update()
             self.clock.tick(60)
