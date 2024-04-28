@@ -21,3 +21,6 @@ class Monster:
 
     def draw_monster(self, surface, pos):
         surface.blit(self.monster_img, pos)
+
+    def get_pos(self):
+        return self.x_pos, self.y_pos

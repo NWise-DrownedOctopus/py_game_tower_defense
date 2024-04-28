@@ -4,10 +4,12 @@ import pygame
 
 from scripts import tower
 from scripts import monster
+from scripts import gem
 
 # monster details
 monster_pos = [626, 222]
 monster_movement = [False, False]
+monster_v_movement = [False, False]
 
 
 class Game:
@@ -51,18 +53,43 @@ class Game:
                               self.SCREEN_HEIGHT - self.bg_border))
 
     def run(self):
+        # Here is where we can initialize the scene
+        towers = []
+        gems = []
+
+        # Here is where we initialize all of our static elements in the scene
+        # I put them in relevant lists, so that they can be updated in batches
+        tower1 = tower.Tower([226, 222], self.screen)
+        towers.append(tower1)
+        gem1 = gem.Gem([226, 222], self.screen, tower1)
+        gems.append(gem1)
+
+        # Here we enter the game loop, it is called "every frame"
         while True:
+            # Here we start the loop by drawing the background of the scene first
             self.draw_grid()
-            tower1 = tower.Tower([226, 222], self.screen)
+
+            # Here is where we draw our static elements to the screen
+            for player_tower in towers:
+                player_tower.draw()
+            for player_gem in gems:
+                player_gem.draw()
 
             # Here is where we update the position of the monster
             monster1 = monster.Monster(monster_pos[0], monster_pos[1])
             monster1.draw_monster(self.screen, monster_pos)
             monster1.healthBar.draw_health_bar(self.screen)
             monster_pos[0] += (monster_movement[1] - monster_movement[0]) * monster1.monster_move_speed
+            monster_pos[1] += (monster_v_movement[1] - monster_v_movement[0]) * monster1.monster_move_speed
 
             # Here is where we check if the monster is in range of the turret
             tower1.detect_monster(monster1)
+            gem1.update()
+
+            # Here we update our projectiles
+            for player_gem in gems:
+                for projectile in player_gem.projectiles:
+                    projectile.update()
 
             # This is the event checker for each frame
             for event in pygame.event.get():
@@ -75,11 +102,19 @@ class Game:
                         monster_movement[0] = True
                     if event.key == pygame.K_RIGHT:
                         monster_movement[1] = True
+                    if event.key == pygame.K_UP:
+                        monster_v_movement[0] = True
+                    if event.key == pygame.K_DOWN:
+                        monster_v_movement[1] = True
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT:
                         monster_movement[0] = False
                     if event.key == pygame.K_RIGHT:
                         monster_movement[1] = False
+                    if event.key == pygame.K_UP:
+                        monster_v_movement[0] = False
+                    if event.key == pygame.K_DOWN:
+                        monster_v_movement[1] = False
 
             pygame.display.update()
             self.clock.tick(60)
