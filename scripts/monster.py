@@ -2,8 +2,9 @@ import pygame
 from scripts.healthBar import HealthBar
 
 
-class Monster:
+class Monster (pygame.sprite.Sprite):
     def __init__(self, x_pos, y_pos, max_health=10):
+        super().__init__()
         self.x_pos = x_pos
         self.y_pos = y_pos
         self.max_health = max_health
@@ -19,8 +20,11 @@ class Monster:
         #     self.healthBar = HealthBar(self.x_pos, self.y_pos)
         self.current_health -= dmg
 
-    def draw_monster(self, surface, pos):
+    def draw(self, surface, pos):
         surface.blit(self.monster_img, pos)
+        self.x_pos = pos[0]
+        self.y_pos = pos[1]
+        self.healthBar.draw(surface, pos)
 
     def get_pos(self):
         return self.x_pos, self.y_pos

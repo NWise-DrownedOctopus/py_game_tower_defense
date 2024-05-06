@@ -54,15 +54,20 @@ class Game:
 
     def run(self):
         # Here is where we can initialize the scene
-        towers = []
-        gems = []
+        towers = pygame.sprite.Group()
+        gems = pygame.sprite.Group()
+        monsters = pygame.sprite.Group()
 
         # Here is where we initialize all of our static elements in the scene
         # I put them in relevant lists, so that they can be updated in batches
         tower1 = tower.Tower([226, 222], self.screen)
-        towers.append(tower1)
+        towers.add(tower1)
         gem1 = gem.Gem([226, 222], self.screen, tower1)
-        gems.append(gem1)
+        gems.add(gem1)
+
+        # Here is where we initialize our dynamic elements
+        monster1 = monster.Monster(monster_pos[0], monster_pos[1])
+        monsters.add(monster1)
 
         # Here we enter the game loop, it is called "every frame"
         while True:
@@ -76,15 +81,16 @@ class Game:
                 player_gem.draw()
 
             # Here is where we update the position of the monster
-            monster1 = monster.Monster(monster_pos[0], monster_pos[1])
-            monster1.draw_monster(self.screen, monster_pos)
-            monster1.healthBar.draw_health_bar(self.screen)
+            monster1.draw(self.screen, monster_pos)
             monster_pos[0] += (monster_movement[1] - monster_movement[0]) * monster1.monster_move_speed
             monster_pos[1] += (monster_v_movement[1] - monster_v_movement[0]) * monster1.monster_move_speed
 
             # Here is where we check if the monster is in range of the turret
-            tower1.detect_monster(monster1)
-            gem1.update()
+            for p_tower in towers:
+                for e_monster in monsters:
+                    p_tower.detect_monster(e_monster)
+            for p_gem in gems:
+                p_gem.update()
 
             # Here we update our projectiles
             for player_gem in gems:

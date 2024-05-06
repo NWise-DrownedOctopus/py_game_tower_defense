@@ -1,7 +1,7 @@
 import pygame
 
 
-class Tower:
+class Tower (pygame.sprite.Sprite):
     tower_img = pygame.image.load('art/Tower.png')
     valid_target_gizmo = pygame.image.load('art/valid_target_gizmo.png')
     no_target_gizmo = pygame.image.load('art/no_target_gizmo.png')
@@ -11,6 +11,7 @@ class Tower:
     display_radius = True
 
     def __init__(self, pos, surface):
+        super().__init__()
         pygame.init()
         self.damage = 10
         self.attack_speed = 2

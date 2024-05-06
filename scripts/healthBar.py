@@ -12,8 +12,10 @@ class HealthBar:
             raise ValueError("Do we not have a target for the health bar?")
         self.position = (obj_x, obj_y - offset)
         self.monster_target = monster_target
+        self.health_width = self.width * (self.monster_target.current_health / self.monster_target.max_health)
+        self.offset = offset
 
-    def draw_health_bar(self, surface):
-        health_width = self.width * (self.monster_target.current_health / self.monster_target.max_health)
+    def draw(self, surface, pos):
+        self.position = (pos[0], pos[1] - self.offset)
         pygame.draw.rect(surface, self.dmg_color, (self.position[0], self.position[1], self.width, self.height))
-        pygame.draw.rect(surface, self.health_color, (self.position[0], self.position[1], health_width, self.height))
+        pygame.draw.rect(surface, self.health_color, (self.position[0], self.position[1], self.health_width, self.height))
