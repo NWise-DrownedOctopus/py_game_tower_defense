@@ -17,5 +17,6 @@ class HealthBar:
 
     def draw(self, surface, pos):
         self.position = (pos[0], pos[1] - self.offset)
+        self.health_width = self.width * (self.monster_target.current_health / self.monster_target.max_health)
         pygame.draw.rect(surface, self.dmg_color, (self.position[0], self.position[1], self.width, self.height))
         pygame.draw.rect(surface, self.health_color, (self.position[0], self.position[1], self.health_width, self.height))

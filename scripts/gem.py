@@ -17,7 +17,7 @@ class Gem (pygame.sprite.Sprite):
         self.y_pos = pos[1]
         self.gem_img_pos = [int(self.x_pos - (self.gem_img.get_width() / 2)),
                             int(self.y_pos - self.gem_img.get_height() / 2)]
-        self.projectiles = []
+        self.projectiles = pygame.sprite.Group()
         self.last_shot = time.time()
         self.shot_delay = 1
 
@@ -29,12 +29,12 @@ class Gem (pygame.sprite.Sprite):
             if time.time() - self.last_shot > self.shot_delay:
                 self.fire(self.tower.valid_target)
                 self.last_shot = time.time()
-        print(f"number of projectiles: {len(self.projectiles)}")
+        # print(f"number of projectiles: {len(self.projectiles)}")
 
     def fire(self, monster):
-        print(f"Gem: {self} calling fire()")
+        # print(f"Gem: {self} calling fire()")
         projectile = Projectile(self.gem_img_pos, monster, self.surface)
-        self.projectiles.append(projectile)
+        self.projectiles.add(projectile)
 
 
 class Projectile(pygame.sprite.Sprite):
@@ -48,11 +48,12 @@ class Projectile(pygame.sprite.Sprite):
         self.rect = self.img.get_rect(center=start_pos)
         self.position = Vector2(start_pos)
         self.direction = (target.x_pos, target.y_pos) - self.position
-        print(f"Target Direction = {self.direction}")
+        self.dmg = 2
+        # print(f"Target Direction = {self.direction}")
         radius, angle = self.direction.as_polar()
-        print(f"Target radius = {radius}, angle = {angle}")
+        # print(f"Target radius = {radius}, angle = {angle}")
         self.img = pygame.transform.rotozoom(self.img, -angle-90, 1)
-        print(f"Projectile rotation: {-angle-90}")
+        # print(f"Projectile rotation: {-angle-90}")
         self.velocity = self.direction.normalize() * 11
         self.projectile_mask = pygame.mask.from_surface(self.img)
 
@@ -68,7 +69,8 @@ class Projectile(pygame.sprite.Sprite):
 
         # Here we will handle what happens when we collide with a monster
         if self.projectile_mask.overlap(self.target.monster_mask, (self.target.x_pos - self.position[0], self.target.y_pos - self.position[1])):
-            print("Projectile has collided")
+            # print("Projectile has collided")
+            self.target.dmg(self.dmg)
             self.kill()
 
         if not self.screen_rect.contains(self.rect):

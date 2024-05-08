@@ -19,6 +19,8 @@ class Monster (pygame.sprite.Sprite):
         # if self.healthBar is None:
         #     self.healthBar = HealthBar(self.x_pos, self.y_pos)
         self.current_health -= dmg
+        if self.current_health <= 0:
+            print("Monster should die now, it is at or below 0 health")
 
     def draw(self, surface, pos):
         surface.blit(self.monster_img, pos)

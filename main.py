@@ -11,6 +11,8 @@ monster_pos = [626, 222]
 monster_movement = [False, False]
 monster_v_movement = [False, False]
 
+FPS = 60
+
 
 class Game:
     def __init__(self):
@@ -123,7 +125,7 @@ class Game:
                         monster_v_movement[1] = False
 
             pygame.display.update()
-            self.clock.tick(60)
+            self.clock.tick(FPS)
 
 
 Game().run()
