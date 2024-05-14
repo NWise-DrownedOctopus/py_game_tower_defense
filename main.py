@@ -1,4 +1,3 @@
-# NWISE Update Test
 import sys
 
 import pygame
@@ -6,9 +5,11 @@ import pygame
 from scripts import tower
 from scripts import monster
 from scripts import gem
+from scripts.utils import load_image, load_images
+from scripts.tilemap import Tilemap
 
 # monster details
-monster_pos = [626, 222]
+monster_pos = [220, 200]
 monster_movement = [False, False]
 monster_v_movement = [False, False]
 
@@ -22,40 +23,33 @@ class Game:
 
         self.SCREEN_WIDTH = pygame.display.get_desktop_sizes()[0][0]
         self.SCREEN_HEIGHT = pygame.display.get_desktop_sizes()[0][1]
-
-        self.bg_border = 25
         self.bg_color = (25, 25, 25)
-        self.game_bg_rect_width = self.SCREEN_WIDTH - (self.bg_border * 2)
-        self.game_bg_rect_height = self.SCREEN_HEIGHT - (self.bg_border * 2)
-        self.game_bg_rect = (self.bg_border, self.bg_border, self.game_bg_rect_width, self.game_bg_rect_height)
-
-        self.bg_grid_width_count = 28
-        self.bg_grid_height_count = 45
-        self.bg_grid_color = (50, 50, 50)
 
         # screen is now a "Surface" as that is the return type from setting the display mode
-        self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+        self.screen = pygame.display.set_mode((1020, 960))
+
+        self.display = pygame.Surface((510, 480))
 
         self.clock = pygame.time.Clock()
 
-    def draw_grid(self):
-        # Here is where we are initializing the bg and bg grid
-        pygame.draw.rect(self.screen, self.bg_color, self.game_bg_rect)
-        for count in range(self.bg_grid_width_count - 1):
-            pygame.draw.line(self.screen, self.bg_grid_color,
-                             (self.bg_border,
-                              ((count + 1) * self.game_bg_rect_height / self.bg_grid_width_count + self.bg_border)),
-                             ((self.game_bg_rect_width + self.bg_border),
-                              ((count + 1) * self.game_bg_rect_height / self.bg_grid_width_count + self.bg_border)))
+        # here we will import all the assets we need in our game at runtime
+        self.assets = {
+            'player': load_image("player.png"),
+            'grass': load_images("grass"),
+            'dirt': load_images("dirt")
+        }
 
-        for count in range(self.bg_grid_height_count - 1):
-            pygame.draw.line(self.screen, self.bg_grid_color,
-                             (((count + 1) * self.game_bg_rect_width / self.bg_grid_height_count + self.bg_border),
-                              self.bg_border),
-                             (((count + 1) * self.game_bg_rect_width / self.bg_grid_height_count + self.bg_border),
-                              self.SCREEN_HEIGHT - self.bg_border))
+        # here is where we initialize our tilemap
+        self.tilemap = Tilemap(self, tile_size=16)
+
+        # Here is where we are going to work with our camera initialization
+        self.scroll = [0, 0]
 
     def run(self):
+        # Here is where we can draw our background
+        self.display.fill(self.bg_color)
+        self.tilemap.render(self.display, offset=self.scroll)
+
         # Here is where we can initialize the scene
         towers = pygame.sprite.Group()
         gems = pygame.sprite.Group()
@@ -63,42 +57,49 @@ class Game:
 
         # Here is where we initialize all of our static elements in the scene
         # I put them in relevant lists, so that they can be updated in batches
-        tower1 = tower.Tower([226, 222], self.screen)
+        tower1 = tower.Tower([100, 100], self.display)
         towers.add(tower1)
-        gem1 = gem.Gem([226, 222], self.screen, tower1)
+        gem1 = gem.Gem([100, 100], self.display, tower1)
         gems.add(gem1)
 
         # Here is where we initialize our dynamic elements
-        monster1 = monster.Monster(monster_pos[0], monster_pos[1])
+        monster1 = monster.Monster(self, monster_pos[0], monster_pos[1])
         monsters.add(monster1)
 
         # Here we enter the game loop, it is called "every frame"
         while True:
             # Here we start the loop by drawing the background of the scene first
-            self.draw_grid()
+            self.display.fill(self.bg_color)
+
+            # Here is where we control our camera movement based on player position
+            self.scroll[0] += (monster1.rect().centerx - self.display.get_width() / 2 - self.scroll[0]) / 30
+            self.scroll[1] += (monster1.rect().centery - self.display.get_height() / 2 - self.scroll[1]) / 30
+
+            # here is where we render our tile map
+            self.tilemap.render(self.display, offset=self.scroll)
 
             # Here is where we draw our static elements to the screen
             for player_tower in towers:
-                player_tower.draw()
+                player_tower.update(offset=self.scroll)
             for player_gem in gems:
-                player_gem.draw()
+                player_gem.update(offset=self.scroll)
 
             # Here is where we update the position of the monster
-            monster1.draw(self.screen, monster_pos)
+            monster1.update(self.display, monster_pos)
             monster_pos[0] += (monster_movement[1] - monster_movement[0]) * monster1.monster_move_speed
             monster_pos[1] += (monster_v_movement[1] - monster_v_movement[0]) * monster1.monster_move_speed
 
             # Here is where we check if the monster is in range of the turret
             for p_tower in towers:
                 for e_monster in monsters:
-                    p_tower.detect_monster(e_monster)
+                    p_tower.detect_monster(e_monster, offset=self.scroll)
             for p_gem in gems:
-                p_gem.update()
+                p_gem.update(offset=self.scroll)
 
             # Here we update our projectiles
             for player_gem in gems:
                 for projectile in player_gem.projectiles:
-                    projectile.update()
+                    projectile.update(offset=self.scroll)
 
             # This is the event checker for each frame
             for event in pygame.event.get():
@@ -125,6 +126,7 @@ class Game:
                     if event.key == pygame.K_DOWN:
                         monster_v_movement[1] = False
 
+            self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0,0))
             pygame.display.update()
             self.clock.tick(FPS)
 
