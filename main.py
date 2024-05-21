@@ -1,4 +1,3 @@
-# NWISE Update Test 01
 import sys
 
 import pygame
@@ -6,6 +5,8 @@ import pygame
 from scripts import tower
 from scripts import monster
 from scripts import gem
+from scripts.utils import load_image, load_images
+from scripts.tilemap import Tilemap
 
 # monster details
 monster_pos = [626, 222]
@@ -23,39 +24,33 @@ class Game:
         self.SCREEN_WIDTH = pygame.display.get_desktop_sizes()[0][0]
         self.SCREEN_HEIGHT = pygame.display.get_desktop_sizes()[0][1]
 
-        self.bg_border = 25
         self.bg_color = (25, 25, 25)
-        self.game_bg_rect_width = self.SCREEN_WIDTH - (self.bg_border * 2)
-        self.game_bg_rect_height = self.SCREEN_HEIGHT - (self.bg_border * 2)
-        self.game_bg_rect = (self.bg_border, self.bg_border, self.game_bg_rect_width, self.game_bg_rect_height)
-
-        self.bg_grid_width_count = 28
-        self.bg_grid_height_count = 45
-        self.bg_grid_color = (50, 50, 50)
 
         # screen is now a "Surface" as that is the return type from setting the display mode
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
 
+        # screen is now a "Surface" as that is the return type from setting the display mode
+        self.screen = pygame.display.set_mode((2880, 1800))
+
+        self.display = pygame.Surface((1440, 900))
+
         self.clock = pygame.time.Clock()
 
-    def draw_grid(self):
-        # Here is where we are initializing the bg and bg grid
-        pygame.draw.rect(self.screen, self.bg_color, self.game_bg_rect)
-        for count in range(self.bg_grid_width_count - 1):
-            pygame.draw.line(self.screen, self.bg_grid_color,
-                             (self.bg_border,
-                              ((count + 1) * self.game_bg_rect_height / self.bg_grid_width_count + self.bg_border)),
-                             ((self.game_bg_rect_width + self.bg_border),
-                              ((count + 1) * self.game_bg_rect_height / self.bg_grid_width_count + self.bg_border)))
+        # here we will import all the assets we need in our game at runtime
+        self.assets = {
+            'player': load_image("player.png"),
+            'grass': load_images("grass"),
+            'dirt': load_images("dirt")
+        }
 
-        for count in range(self.bg_grid_height_count - 1):
-            pygame.draw.line(self.screen, self.bg_grid_color,
-                             (((count + 1) * self.game_bg_rect_width / self.bg_grid_height_count + self.bg_border),
-                              self.bg_border),
-                             (((count + 1) * self.game_bg_rect_width / self.bg_grid_height_count + self.bg_border),
-                              self.SCREEN_HEIGHT - self.bg_border))
+        # here is where we initialize our tilemap
+        self.tilemap = Tilemap(self, tile_size=16)
 
     def run(self):
+        # Here is where we can draw our background
+        self.display.fill(self.bg_color)
+        self.tilemap.render(self.display)
+
         # Here is where we can initialize the scene
         towers = pygame.sprite.Group()
         gems = pygame.sprite.Group()
@@ -75,7 +70,7 @@ class Game:
         # Here we enter the game loop, it is called "every frame"
         while True:
             # Here we start the loop by drawing the background of the scene first
-            self.draw_grid()
+            self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
 
             # Here is where we draw our static elements to the screen
             for player_tower in towers:
