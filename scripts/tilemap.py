@@ -13,7 +13,9 @@ class Tilemap:
         self.game = game
         self.tile_size = tile_size
         self.tilemap = {}
-        self.offgrid_tile = []
+        self.offgrid_tiles = []
+
+        '''
 
         # Here is where we draw the background with a base grass tile, it leaves a one tile border around each side
         for col in range(43):
@@ -58,10 +60,10 @@ class Tilemap:
 
         for col in range(15):
             self.tilemap[str(25 + col) + ';' + str(3)] = {'type': 'dirt', 'variant': 1, 'pos': (25 + col, 3)}
-
+        '''
 
     def render(self, surf):
-        for tile in self.offgrid_tile:
+        for tile in self.offgrid_tiles:
             surf.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0], tile['pos'][1]))
 
         for loc in self.tilemap:

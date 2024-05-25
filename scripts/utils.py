@@ -1,7 +1,7 @@
 import os
 import pygame
 
-BASE_IMG_PATH = 'art/'
+BASE_IMG_PATH = r"C:/Users/nicho/PycharmProjects/py_game_tower_defense/art/"
 
 
 def load_image(path):
@@ -13,6 +13,7 @@ def load_image(path):
 # This script loads a whole folder of images based on the specified folder
 def load_images(path):
     images = []
+    print(BASE_IMG_PATH + path)
     for img_name in os.listdir(BASE_IMG_PATH + path):
         images.append(load_image(path + '/' + img_name))
     return images
