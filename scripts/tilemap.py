@@ -1,3 +1,5 @@
+import json
+
 class Tilemap:
     """
     Our current working screen resolution is going to be set at 2880 x 1800
@@ -61,6 +63,22 @@ class Tilemap:
         for col in range(15):
             self.tilemap[str(25 + col) + ';' + str(3)] = {'type': 'dirt', 'variant': 1, 'pos': (25 + col, 3)}
         '''
+    def save(self, path):
+        print('We called save function')
+        f = open(path, 'w')
+        json.dump({'tilemap': self.tilemap, 'tile_size': self.tile_size, 'offgrid': self.offgrid_tiles}, f)
+        print(f)
+        f.close()
+        print(f)
+
+    def load(self, path):
+        f = open(path, 'r')
+        map_data = json.load(f)
+        f.close()
+
+        self.tilemap = map_data['tilemap']
+        self.tile_size = map_data['tile_size']
+        self.offgrid_tiles = map_data['offgrid']
 
     def render(self, surf):
         for tile in self.offgrid_tiles:
