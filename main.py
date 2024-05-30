@@ -28,13 +28,14 @@ class Game:
         # screen is now a "Surface" as that is the return type from setting the display mode
         self.screen = pygame.display.set_mode(
             (pygame.display.get_desktop_sizes()[0][0], pygame.display.get_desktop_sizes()[0][1]))
+        print(pygame.display.get_desktop_sizes()[0][0], pygame.display.get_desktop_sizes()[0][1])
 
-        # Here we will initialize 16 x 10 ratios
+        # Here we will initialize 16 x 10 ratios (My PC)
         if self.screen.get_size()[0] == 2560 and self.screen.get_size()[1] == 1440:
             self.display = pygame.Surface((1280, 720))
 
-        # Here we will initialize 16 x 9 ratios
-        if self.screen.get_size()[0] == 2880 and self.screen.get_size()[1] == 1800:
+        # Here we will initialize 16 x 9 ratios (My Laptop)
+        if self.screen.get_size()[0] == 1440 and self.screen.get_size()[1] == 900:
             self.display = pygame.Surface((1440, 900))
 
 
