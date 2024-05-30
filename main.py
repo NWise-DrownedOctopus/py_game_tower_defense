@@ -54,11 +54,11 @@ class Game:
 
         # here is where we initialize our tilemap
         self.tilemap = Tilemap(self, tile_size=16)
-        filepath = r"C:\Users\nicho\PycharmProjects\py_game_tower_defense\data"
+        filepath = r"data"
         try:
             if os.path.exists(filepath):
                 print('loaded tilemap successfully')
-                self.tilemap.load("C:/Users/nicho/PycharmProjects/py_game_tower_defense/data/map.json")
+                self.tilemap.load("data/map.json")
             else:
                 print("File not found: " + filepath)
         except FileNotFoundError:
@@ -89,6 +89,7 @@ class Game:
         while True:
             # Here is where we can draw our background
             self.display.fill(self.bg_color)
+            self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             self.tilemap.render(self.display)
 
             # here is where we manage the mouse position input
@@ -166,7 +167,7 @@ class Game:
                     if event.key == pygame.K_DOWN:
                         monster_v_movement[1] = False
                         # Here we start the loop by drawing the background of the scene first
-            self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
+
             pygame.display.update()
             self.clock.tick(FPS)
 

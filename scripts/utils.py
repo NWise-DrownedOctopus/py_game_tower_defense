@@ -1,7 +1,7 @@
 import os
 import pygame
 
-BASE_IMG_PATH = r"C:/Users/nicho/PycharmProjects/py_game_tower_defense/art/"
+BASE_IMG_PATH = r"art/"
 
 
 def load_image(path):
