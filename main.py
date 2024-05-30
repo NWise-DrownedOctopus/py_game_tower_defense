@@ -23,18 +23,20 @@ class Game:
         pygame.init()
         pygame.display.set_caption("tower defense game")
 
-        self.SCREEN_WIDTH = pygame.display.get_desktop_sizes()[0][0]
-        self.SCREEN_HEIGHT = pygame.display.get_desktop_sizes()[0][1]
-
         self.bg_color = (25, 25, 25)
 
         # screen is now a "Surface" as that is the return type from setting the display mode
-        self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+        self.screen = pygame.display.set_mode(
+            (pygame.display.get_desktop_sizes()[0][0], pygame.display.get_desktop_sizes()[0][1]))
 
-        # screen is now a "Surface" as that is the return type from setting the display mode
-        self.screen = pygame.display.set_mode((2880, 1800))
+        # Here we will initialize 16 x 10 ratios
+        if self.screen.get_size()[0] == 2560 and self.screen.get_size()[1] == 1440:
+            self.display = pygame.Surface((1280, 720))
 
-        self.display = pygame.Surface((1440, 900))
+        # Here we will initialize 16 x 9 ratios
+        if self.screen.get_size()[0] == 2880 and self.screen.get_size()[1] == 1800:
+            self.display = pygame.Surface((1440, 900))
+
 
         self.clock = pygame.time.Clock()
 
@@ -69,13 +71,13 @@ class Game:
     def run(self):
         # here is where we initialize the game, before our while loop, this code only runs once
         pygame.mouse.set_visible(False)
+
         # Here is where we can initialize the scene
         towers = pygame.sprite.Group()
         gems = pygame.sprite.Group()
         monsters = pygame.sprite.Group()
 
         # Here is where we initialize all of our static elements in the scene
-        # I put them in relevant lists, so that they can be updated in batches
         tower1 = tower.Tower([226, 222], self.screen)
         towers.add(tower1)
         gem1 = gem.Gem([226, 222], self.screen, tower1)
@@ -89,8 +91,9 @@ class Game:
         while True:
             # Here is where we can draw our background
             self.display.fill(self.bg_color)
-            self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             self.tilemap.render(self.display)
+            self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
+
 
             # here is where we manage the mouse position input
             mpos = pygame.mouse.get_pos()

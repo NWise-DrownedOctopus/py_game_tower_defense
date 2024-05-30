@@ -2,13 +2,9 @@ import json
 
 class Tilemap:
     """
-    Our current working screen resolution is going to be set at 2880 x 1800
-    however, we are scaling up a display resolution of  1440, 900 to get there
-
-    if our tiles are 16 x 16 pixels but doubled to 32 x 32 pixels:
-    Our max Width is 45 tiles (1440 pixels)
-    Our max Height is 28.125 tiles tall (900 pixels)
-    if we do only 28 tiles we have 2 extra pixels
+    Our target is to have 16 x 16 tiles, that scale up x2 to be 32 x 32
+    Our map is going to have a limit of 51 x 33 tiles to make sure the map fits on any monitor we want to support,
+    and so that we have plenty of room for UI on the sides of the screen
     """
 
     def __init__(self, game, tile_size=16):
@@ -40,4 +36,5 @@ class Tilemap:
 
         for loc in self.tilemap:
             tile = self.tilemap[loc]
-            surf.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] * self.tile_size, tile['pos'][1] * self.tile_size))
+            surf.blit(self.game.assets[tile['type']][tile['variant']],
+                      (tile['pos'][0] * self.tile_size, tile['pos'][1] * self.tile_size))
