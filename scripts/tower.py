@@ -9,10 +9,8 @@ class Tower (pygame.sprite.Sprite):
         pygame.init()
         self.damage = 10
         self.attack_speed = 2
-        self.pos = [0, 0]
+        self.pos = pos
         self.surface = surface
-        self.x_pos = pos[0]
-        self.y_pos = pos[1]
         self.tower_img = load_image('Tower.png')
         self.valid_target_gizmo = pygame.image.load('art/valid_target_gizmo.png')
         self.no_target_gizmo = pygame.image.load('art/no_target_gizmo.png')
@@ -20,16 +18,16 @@ class Tower (pygame.sprite.Sprite):
         self.tower_mask = pygame.mask.from_surface(self.tower_img)
         self.range_mask = pygame.mask.from_surface(self.target_mask_gizmo)
         self.display_radius = True
+        self.tile_size = 16
+        self.tower_pos = [pos[0] - self.tile_size, pos[1] - self.tile_size, self]
 
-        self.tower_image_pos = [int(self.x_pos - (self.tower_img.get_width() / 2)),
-                                int(self.y_pos - self.tower_img.get_height() / 2)]
-        self.target_radius_pos = [int(self.x_pos - (self.no_target_gizmo.get_width() / 2)),
-                                  int(self.y_pos - self.no_target_gizmo.get_height() / 2)]
+        self.target_radius_pos = [int(self.pos[0]) - (self.no_target_gizmo.get_width() / 2) + (self.tile_size / 2),
+                                int(self.pos[1]) - (self.no_target_gizmo.get_height() / 2) + (self.tile_size / 2)]
         self.targets = []
         self.valid_target = None
 
     def draw(self):
-        self.surface.blit(self.tower_img, self.tower_image_pos)
+        self.surface.blit(self.tower_img, self.pos)
 
     def detect_monster(self, monster):
         if self.display_radius:

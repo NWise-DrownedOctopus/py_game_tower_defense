@@ -22,7 +22,7 @@ class Gem (pygame.sprite.Sprite):
         self.shot_delay = 1
 
     def draw(self):
-        self.surface.blit(self.gem_img, self.gem_img_pos)
+        self.surface.blit(self.gem_img, self.pos)
 
     def update(self):
         if self.tower.valid_target is not None:

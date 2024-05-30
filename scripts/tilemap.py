@@ -17,52 +17,6 @@ class Tilemap:
         self.tilemap = {}
         self.offgrid_tiles = []
 
-        '''
-
-        # Here is where we draw the background with a base grass tile, it leaves a one tile border around each side
-        for col in range(43):
-            for row in range(26):
-                self.tilemap[str(col + 1) + ';' + str(row + 1)] = {'type': 'grass', 'variant': 1, 'pos': (col + 1, row + 1)}
-
-        # Here we draw a platform for our base to rest on
-        for col in range(3):
-            for row in range(3):
-                self.tilemap[str(40 + col) + ';' + str(2 + row)] = {'type': 'dirt', 'variant': 1, 'pos': (40 + col, 2 + row)}
-
-        # Here we draw pathways for the monster to travel towards our base
-        for col in range(10):
-            self.tilemap[str(1 + col) + ';' + str(24)] = {'type': 'dirt', 'variant': 1, 'pos': (1 + col, 24)}
-
-        for row in range(10):
-            self.tilemap['10;' + str(14 + row)] = {'type': 'dirt', 'variant': 1, 'pos': (10, 14 + row)}
-
-        for col in range(8):
-            self.tilemap[str(11 + col) + ';14'] = {'type': 'dirt', 'variant': 1, 'pos': (11 + col, 14)}
-
-        for row in range(10):
-            self.tilemap['19;' + str(14 + row)] = {'type': 'dirt', 'variant': 1, 'pos': (19, 14 + row)}
-
-        for col in range(20):
-            self.tilemap[str(19 + col) + ';' + str(24)] = {'type': 'dirt', 'variant': 1, 'pos': (19 + col, 24)}
-
-        for row in range(15):
-            self.tilemap['39;' + str(10 + row)] = {'type': 'dirt', 'variant': 1, 'pos': (39, 10 + row)}
-
-        for col in range(8):
-            self.tilemap[str(31 + col) + ';' + str(10)] = {'type': 'dirt', 'variant': 1, 'pos': (31 + col, 10)}
-
-        for row in range(8):
-            self.tilemap['31;' + str(10 + row)] = {'type': 'dirt', 'variant': 1, 'pos': (31, 10 + row)}
-
-        for col in range(8):
-            self.tilemap[str(24 + col) + ';' + str(18)] = {'type': 'dirt', 'variant': 1, 'pos': (24 + col, 18)}
-
-        for row in range(15):
-            self.tilemap['24;' + str(3 + row)] = {'type': 'dirt', 'variant': 1, 'pos': (24, 3 + row)}
-
-        for col in range(15):
-            self.tilemap[str(25 + col) + ';' + str(3)] = {'type': 'dirt', 'variant': 1, 'pos': (25 + col, 3)}
-        '''
     def save(self, path):
         print('We called save function')
         f = open(path, 'w')
