@@ -15,7 +15,7 @@ monster_movement = [False, False]
 monster_v_movement = [False, False]
 
 FPS = 60
-RENDER_SCALE = 1.0
+RENDER_SCALE = 4
 
 
 class Game:
@@ -30,14 +30,13 @@ class Game:
             (pygame.display.get_desktop_sizes()[0][0], pygame.display.get_desktop_sizes()[0][1]))
         print(pygame.display.get_desktop_sizes()[0][0], pygame.display.get_desktop_sizes()[0][1])
 
-        # Here we will initialize 16 x 10 ratios (My PC)
+        # Here we will initialize 16 x 9 ratios (My PC)
         if self.screen.get_size()[0] == 2560 and self.screen.get_size()[1] == 1440:
-            self.display = pygame.Surface((1280, 720))
+            self.display = pygame.Surface((640, 360))
 
-        # Here we will initialize 16 x 9 ratios (My Laptop)
+        # Here we will initialize 16 x 10 ratios (My Laptop)
         if self.screen.get_size()[0] == 1440 and self.screen.get_size()[1] == 900:
-            self.display = pygame.Surface((1440, 900))
-
+            self.display = pygame.Surface((640, 360))
 
         self.clock = pygame.time.Clock()
 
@@ -79,10 +78,12 @@ class Game:
         monsters = pygame.sprite.Group()
 
         # Here is where we initialize all of our static elements in the scene
-        tower1 = tower.Tower([226, 222], self.screen)
+        '''
+        tower1 = tower.Tower([226, 222], self.display)
         towers.add(tower1)
-        gem1 = gem.Gem([226, 222], self.screen, tower1)
+        gem1 = gem.Gem([226, 222], self.display, tower1)
         gems.add(gem1)
+        '''
 
         # Here is where we initialize our dynamic elements
         monster1 = monster.Monster(monster_pos[0], monster_pos[1])
@@ -91,23 +92,24 @@ class Game:
         # Here we enter the game loop, it is called "every frame"
         while True:
             # Here is where we can draw our background
+            self.screen.fill(self.bg_color)
             self.display.fill(self.bg_color)
             self.tilemap.render(self.display)
-            self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
+            self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 16))
 
 
             # here is where we manage the mouse position input
             mpos = pygame.mouse.get_pos()
             mpos = (mpos[0] / RENDER_SCALE, mpos[1] / RENDER_SCALE)
             tile_pos = (int(mpos[0] // self.tilemap.tile_size), int(mpos[1] // self.tilemap.tile_size))
-            self.screen.blit(self.assets['mouse_pointer'], mpos)
+            self.display.blit(self.assets['mouse_pointer'], mpos)
 
             # here is where we handle build mode
             if self.build_mode:
-                self.screen.blit(self.assets['build_indicator'], (5, 5))
+                self.display.blit(self.assets['build_indicator'], (600, 320))
                 current_building = self.assets['tower'].copy()
                 current_building.set_alpha(100)
-                self.screen.blit(current_building, (tile_pos[0] * self.tilemap.tile_size, tile_pos[1] * self.tilemap.tile_size))
+                self.display.blit(current_building, (tile_pos[0] * self.tilemap.tile_size, tile_pos[1] * self.tilemap.tile_size))
 
 
             # Here is where we draw our static elements to the screen
@@ -171,7 +173,7 @@ class Game:
                     if event.key == pygame.K_DOWN:
                         monster_v_movement[1] = False
                         # Here we start the loop by drawing the background of the scene first
-
+            self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 16))
             pygame.display.update()
             self.clock.tick(FPS)
 

@@ -8,7 +8,7 @@ from scripts.tilemap import Tilemap
 
 FPS = 60
 
-RENDER_SCALE = 2.0
+RENDER_SCALE = 4
 
 
 class Editor:
@@ -18,6 +18,7 @@ class Editor:
 
         self.SCREEN_WIDTH = pygame.display.get_desktop_sizes()[0][0]
         self.SCREEN_HEIGHT = pygame.display.get_desktop_sizes()[0][1]
+        print(pygame.display.get_desktop_sizes()[0][0], pygame.display.get_desktop_sizes()[0][1])
 
         self.bg_color = (25, 25, 25)
 
@@ -28,13 +29,13 @@ class Editor:
         self.screen = pygame.display.set_mode(
             (pygame.display.get_desktop_sizes()[0][0], pygame.display.get_desktop_sizes()[0][1]))
 
-        # Here we will initialize 16 x 10 ratios (My PC)
+        # Here we will initialize 16 x 9 ratios (My PC)
         if self.screen.get_size()[0] == 2560 and self.screen.get_size()[1] == 1440:
-            self.display = pygame.Surface((1280, 720))
+            self.display = pygame.Surface((640, 360))
 
-        # Here we will initialize 16 x 9 ratios (My Laptop)
+        # Here we will initialize 16 x 10 ratios (My Laptop)
         if self.screen.get_size()[0] == 1440 and self.screen.get_size()[1] == 900:
-            self.display = pygame.Surface((1440, 900))
+            self.display = pygame.Surface((640, 360))
 
         self.clock = pygame.time.Clock()
 
