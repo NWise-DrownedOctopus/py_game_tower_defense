@@ -10,7 +10,7 @@ from scripts.utils import load_image, load_images
 from scripts.tilemap import Tilemap
 
 # monster details
-monster_pos = [626, 222]
+monster_pos = [50, 320]
 monster_movement = [False, False]
 monster_v_movement = [False, False]
 
@@ -77,14 +77,6 @@ class Game:
         gems = pygame.sprite.Group()
         monsters = pygame.sprite.Group()
 
-        # Here is where we initialize all of our static elements in the scene
-        '''
-        tower1 = tower.Tower([226, 222], self.display)
-        towers.add(tower1)
-        gem1 = gem.Gem([226, 222], self.display, tower1)
-        gems.add(gem1)
-        '''
-
         # Here is where we initialize our dynamic elements
         monster1 = monster.Monster(monster_pos[0], monster_pos[1])
         monsters.add(monster1)
@@ -96,7 +88,6 @@ class Game:
             self.display.fill(self.bg_color)
             self.tilemap.render(self.display)
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 16))
-
 
             # here is where we manage the mouse position input
             mpos = pygame.mouse.get_pos()
@@ -111,7 +102,6 @@ class Game:
                 current_building.set_alpha(100)
                 self.display.blit(current_building, (tile_pos[0] * self.tilemap.tile_size, tile_pos[1] * self.tilemap.tile_size))
 
-
             # Here is where we draw our static elements to the screen
             for player_tower in towers:
                 player_tower.draw()
@@ -119,7 +109,7 @@ class Game:
                 player_gem.draw()
 
             # Here is where we update the position of the monster
-            monster1.draw(self.screen, monster_pos)
+            monster1.draw(self.display, monster_pos)
             monster_pos[0] += (monster_movement[1] - monster_movement[0]) * monster1.monster_move_speed
             monster_pos[1] += (monster_v_movement[1] - monster_v_movement[0]) * monster1.monster_move_speed
 
@@ -148,7 +138,7 @@ class Game:
                             if self.clicking:
                                 tower_n = tower.Tower(
                                     (tile_pos[0] * self.tilemap.tile_size, tile_pos[1] * self.tilemap.tile_size),
-                                    self.screen)
+                                    self.display)
                                 towers.add(tower_n)
                     if event.button == 3:
                         self.right_clicking = True

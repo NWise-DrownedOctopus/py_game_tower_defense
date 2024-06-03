@@ -12,7 +12,7 @@ class Monster (pygame.sprite.Sprite):
         self.healthBar = HealthBar(self, self.x_pos, self.y_pos)
         self.monster_img = pygame.image.load('art/centipede.png')
         self.monster_mask = pygame.mask.from_surface(self.monster_img)
-        self.monster_move_speed = 10
+        self.monster_move_speed = 2
         self.monster_movement = [False, False]
 
     def dmg(self, dmg):
