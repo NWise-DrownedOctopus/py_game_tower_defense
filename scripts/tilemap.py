@@ -38,3 +38,10 @@ class Tilemap:
             tile = self.tilemap[loc]
             surf.blit(self.game.assets[tile['type']][tile['variant']],
                       (tile['pos'][0] * self.tile_size, tile['pos'][1] * self.tile_size))
+
+    def get_tile(self, pos):
+        try:
+            tile = self.tilemap[str(pos[0]) + ';' + str(pos[1])]
+        except KeyError:
+            return None
+        return tile

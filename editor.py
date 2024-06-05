@@ -1,6 +1,7 @@
 import os
 import sys
 
+
 import pygame
 
 from scripts.utils import load_image, load_images
