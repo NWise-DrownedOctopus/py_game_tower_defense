@@ -1,9 +1,10 @@
 import pygame
 from scripts.healthBar import HealthBar
+from pathfinding import Pathfinding
 
 
 class Monster (pygame.sprite.Sprite):
-    def __init__(self, x_pos, y_pos, max_health=10):
+    def __init__(self, x_pos, y_pos, pathfinding, max_health=10):
         super().__init__()
         self.x_pos = x_pos
         self.y_pos = y_pos
@@ -14,6 +15,7 @@ class Monster (pygame.sprite.Sprite):
         self.monster_mask = pygame.mask.from_surface(self.monster_img)
         self.monster_move_speed = 2
         self.monster_movement = [False, False]
+        self.pathfinding = pathfinding
 
     def dmg(self, dmg):
         # if self.healthBar is None:
@@ -30,3 +32,10 @@ class Monster (pygame.sprite.Sprite):
 
     def get_pos(self):
         return self.x_pos, self.y_pos
+
+    def find_path(self):
+        print(self.pathfinding.pathway)
+
+
+    def update(self):
+        pass

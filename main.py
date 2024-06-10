@@ -8,6 +8,8 @@ from scripts import monster
 from scripts import gem
 from scripts.utils import load_image, load_images
 from scripts.tilemap import Tilemap
+from pathfinding import Pathfinding, make_grid, draw_pathfinding
+from pathfinding import algorithm as pf_algorithm
 
 # monster details
 monster_pos = [50, 320]
@@ -16,6 +18,8 @@ monster_v_movement = [False, False]
 
 FPS = 60
 RENDER_SCALE = 4
+WIDTH = 640
+ROWS = 40
 
 
 class Game:
@@ -46,16 +50,21 @@ class Game:
             'grass': load_images("grass"),
             'dirt': load_images("dirt"),
             'build_indicator': load_image("build_indicator.png"),
+            'pathfinding_indicator': load_image("pathfinding_indicator.png"),
             'mouse_pointer': load_image("mouse_pointer.png"),
             'tower': load_image("tower.png")
         }
 
         self.build_mode = False
+        self.pathfinding_mode = False
         self.clicking = False
         self.right_clicking = False
+        self.shift = False
 
         # here is where we initialize our tilemap
         self.tilemap = Tilemap(self, tile_size=16)
+        self.pathfinding = Pathfinding(self)
+        self.pf_grid = make_grid(ROWS, WIDTH)
         filepath = r"data"
         try:
             if os.path.exists(filepath):
@@ -78,8 +87,13 @@ class Game:
         monsters = pygame.sprite.Group()
 
         # Here is where we initialize our dynamic elements
-        monster1 = monster.Monster(monster_pos[0], monster_pos[1])
+        monster1 = monster.Monster(monster_pos[0], monster_pos[1], self.pathfinding)
         monsters.add(monster1)
+        pf_started = False
+        pf_start = self.pf_grid[6][21]
+        pf_start.make_start()
+        pf_end = self.pf_grid[28][4]
+        pf_end.make_end()
 
         # Here we enter the game loop, it is called "every frame"
         while True:
@@ -94,6 +108,11 @@ class Game:
             mpos = (mpos[0] / RENDER_SCALE, mpos[1] / RENDER_SCALE)
             tile_pos = (int(mpos[0] // self.tilemap.tile_size), int(mpos[1] // self.tilemap.tile_size))
             self.display.blit(self.assets['mouse_pointer'], mpos)
+
+            # Here is where we manage pathfinding
+            if self.pathfinding_mode:
+                self.display.blit(self.assets['pathfinding_indicator'], (600, 20))
+                self.pathfinding.update()
 
             # here is where we handle build mode
             if self.build_mode:
@@ -131,6 +150,10 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+
+                if pf_started:
+                    continue
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         self.clicking = True
@@ -140,8 +163,32 @@ class Game:
                                     (tile_pos[0] * self.tilemap.tile_size, tile_pos[1] * self.tilemap.tile_size),
                                     self.display)
                                 towers.add(tower_n)
+
+                        if self.pathfinding_mode:
+                            row = tile_pos[0]
+                            col = tile_pos[1]
+                            tile = self.pf_grid[row][col]
+                            if not pf_start and tile != pf_end:
+                                pf_start = tile
+                                pf_start.make_start()
+                            elif not pf_end and tile != pf_start:
+                                pf_end = tile
+                                pf_end.make_end()
+                            elif tile != pf_end and tile != pf_start:
+                                tile.make_barrier()
+
                     if event.button == 3:
                         self.right_clicking = True
+                        if self.pathfinding_mode:
+                            row = tile_pos[0]
+                            col = tile_pos[1]
+                            tile = self.pf_grid[row][col]
+                            tile.reset()
+                            if tile == pf_start:
+                                pf_start = None
+                            if tile == pf_end:
+                                pf_end = None
+
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
                         monster_movement[0] = True
@@ -153,6 +200,18 @@ class Game:
                         monster_v_movement[1] = True
                     if event.key == pygame.K_b:
                         self.build_mode = not self.build_mode
+                    if event.key == pygame.K_p:
+                        self.pathfinding_mode = not self.pathfinding_mode
+                    if event.key == pygame.K_SPACE:
+                        if not pf_started:
+                            for row in self.pf_grid:
+                                for tile in row:
+                                    tile.update_neighbors(self.pf_grid)
+
+                            pf_algorithm(lambda: draw_pathfinding(self.display, self.pf_grid, ROWS, WIDTH),
+                                         self.pf_grid, pf_start, pf_end, self)
+                            monster1.find_path()
+
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT:
                         monster_movement[0] = False
@@ -162,6 +221,8 @@ class Game:
                         monster_v_movement[0] = False
                     if event.key == pygame.K_DOWN:
                         monster_v_movement[1] = False
+
+
                         # Here we start the loop by drawing the background of the scene first
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 16))
             pygame.display.update()
