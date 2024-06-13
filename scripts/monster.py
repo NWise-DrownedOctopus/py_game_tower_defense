@@ -34,8 +34,12 @@ class Monster (pygame.sprite.Sprite):
         return self.x_pos, self.y_pos
 
     def find_path(self):
-        print(self.pathfinding.pathway)
-
+        print('monster tile path is:')
+        pathway = []
+        for tile in self.pathfinding.pathway:
+            pathway.append([str(tile.row), str(tile.col)])
+        pathway.reverse()
+        print(pathway)
 
     def update(self):
         pass

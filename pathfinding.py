@@ -125,7 +125,7 @@ def reconstruct_path(came_from, current, draw):
     return pathway
 
 
-def algorithm(draw, grid, start, end, pathfinding):
+def algorithm(draw, grid, start, end, game):
     count = 0
     open_set = PriorityQueue()
     open_set.put((0, count, start))
@@ -148,7 +148,7 @@ def algorithm(draw, grid, start, end, pathfinding):
         open_set_hash.remove(current)
 
         if current == end:
-            pathfinding.pathway = reconstruct_path(came_from, end, draw)
+            game.pathfinding.pathway = reconstruct_path(came_from, end, draw)
             end.make_end()
             return True  # make path
 

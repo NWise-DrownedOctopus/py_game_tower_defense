@@ -17,7 +17,6 @@ monster_movement = [False, False]
 monster_v_movement = [False, False]
 
 FPS = 60
-RENDER_SCALE = 4
 WIDTH = 640
 ROWS = 40
 
@@ -32,15 +31,8 @@ class Game:
         # screen is now a "Surface" as that is the return type from setting the display mode
         self.screen = pygame.display.set_mode(
             (pygame.display.get_desktop_sizes()[0][0], pygame.display.get_desktop_sizes()[0][1]))
-        print(pygame.display.get_desktop_sizes()[0][0], pygame.display.get_desktop_sizes()[0][1])
 
-        # Here we will initialize 16 x 9 ratios (My PC)
-        if self.screen.get_size()[0] == 2560 and self.screen.get_size()[1] == 1440:
-            self.display = pygame.Surface((640, 360))
-
-        # Here we will initialize 16 x 10 ratios (My Laptop)
-        if self.screen.get_size()[0] == 1440 and self.screen.get_size()[1] == 900:
-            self.display = pygame.Surface((640, 360))
+        self.display = pygame.Surface((640, 360))
 
         self.clock = pygame.time.Clock()
 
@@ -94,6 +86,19 @@ class Game:
         pf_start.make_start()
         pf_end = self.pf_grid[28][4]
         pf_end.make_end()
+        render_scale = 1.0
+
+        # Here we will initialize 16 x 9 ratios (My PC)
+        if self.screen.get_size()[0] == 2560 and self.screen.get_size()[1] == 1440:
+            self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 16))
+            render_scale = 4.0
+        # Here we will initialize 16 x 10 ratios (My Laptop)
+        if self.screen.get_size()[0] == 2880 and self.screen.get_size()[1] == 1800:
+            self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
+            render_scale = 3.0
+        if self.screen.get_size()[0] == 1440 and self.screen.get_size()[1] == 900:
+            self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 90))
+            render_scale = 2.0
 
         # Here we enter the game loop, it is called "every frame"
         while True:
@@ -101,11 +106,10 @@ class Game:
             self.screen.fill(self.bg_color)
             self.display.fill(self.bg_color)
             self.tilemap.render(self.display)
-            self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 16))
 
             # here is where we manage the mouse position input
             mpos = pygame.mouse.get_pos()
-            mpos = (mpos[0] / RENDER_SCALE, mpos[1] / RENDER_SCALE)
+            mpos = (mpos[0] / render_scale, mpos[1] / render_scale)
             tile_pos = (int(mpos[0] // self.tilemap.tile_size), int(mpos[1] // self.tilemap.tile_size))
             self.display.blit(self.assets['mouse_pointer'], mpos)
 
@@ -127,15 +131,11 @@ class Game:
             for player_gem in gems:
                 player_gem.draw()
 
-            # Here is where we update the position of the monster
-            monster1.draw(self.display, monster_pos)
-            monster_pos[0] += (monster_movement[1] - monster_movement[0]) * monster1.monster_move_speed
-            monster_pos[1] += (monster_v_movement[1] - monster_v_movement[0]) * monster1.monster_move_speed
-
             # Here is where we check if the monster is in range of the turret
             for p_tower in towers:
-                for e_monster in monsters:
-                    p_tower.detect_monster(e_monster)
+                if monsters is not None:
+                    for e_monster in monsters:
+                        p_tower.detect_monster(e_monster)
             for p_gem in gems:
                 p_gem.update()
 
@@ -222,9 +222,11 @@ class Game:
                     if event.key == pygame.K_DOWN:
                         monster_v_movement[1] = False
 
-
-                        # Here we start the loop by drawing the background of the scene first
-            self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 16))
+            # Here we start the loop by drawing the background of the scene first
+            if self.screen.get_size()[0] == 1440 and self.screen.get_size()[1] == 900:
+                screen_size = (1440, 900)
+                self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 90))
+                render_scale = 2.0
             pygame.display.update()
             self.clock.tick(FPS)
 
