@@ -6,9 +6,19 @@ class UI:
     def __init__(self, game):
         self.game = game
         self.buttons = []
+        self.mpos = game.screen_mpos
 
     def update(self):
         pass
+
+    def check_click(self):
+        if len(self.buttons) > 0:
+            for button in self.buttons:
+                # Check if we have a collision with the mpos point
+                if button.rect.collidepoint(self.mpos):
+                    button.button_presed()
+        else:
+            print("No buttons were found when checking for click")
 
 
 class Button:

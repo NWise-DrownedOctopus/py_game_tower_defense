@@ -6,6 +6,7 @@ import pygame
 from scripts import tower
 from scripts import monster
 from scripts import gem
+from scripts import ui
 from scripts.utils import load_image, load_images
 from scripts.tilemap import Tilemap
 from pathfinding import Pathfinding, make_grid, draw_pathfinding
@@ -54,10 +55,12 @@ class Game:
         self.right_clicking = False
         self.shift = False
         self.mpos = None
+        self.screen_mpos = pygame.mouse.get_pos()
 
         # here is where we initialize our tilemap
         self.tilemap = Tilemap(self, tile_size=16)
         self.pathfinding = Pathfinding(self)
+        self.game_ui = ui.UI(self)
         self.pf_grid = make_grid(ROWS, WIDTH)
         self.pf_started = False
         filepath = r"data"
@@ -119,10 +122,22 @@ class Game:
             self.screen.blit(self.assets['l_side_bar'], (0, 0))
 
             # here is where we manage the mouse position input
-            self.mpos = pygame.mouse.get_pos()
-            self.mpos = (self.mpos[0] / self.render_scale, self.mpos[1] / self.render_scale)
-            tile_pos = (int(self.mpos[0] // self.tilemap.tile_size), int(self.mpos[1] // self.tilemap.tile_size))
-            self.display.blit(self.assets['mouse_pointer'], self.mpos)
+            self.screen_mpos = pygame.mouse.get_pos()
+
+            # This feels super hacky, and I think I should attempt to refactor this to be more elegant
+            if self.screen.get_size()[0] == 1440 and self.screen.get_size()[1] == 900:
+                self.mpos = ((self.screen_mpos[0] / self.render_scale), (self.screen_mpos[1] / self.render_scale) - 45)
+                tile_pos = (int(self.mpos[0] // self.tilemap.tile_size), int(self.mpos[1] // self.tilemap.tile_size))
+                if tile_pos[0] <= 1:
+                    tile_pos = (2, tile_pos[1])
+                if tile_pos[0] >= 33:
+                    tile_pos = (33, tile_pos[1])
+                if tile_pos[1] <= 0:
+                    tile_pos = (tile_pos[0], 0)
+                if tile_pos[1] >= 21:
+                    tile_pos = (tile_pos[0], 21)
+
+
 
             # Here is where we manage pathfinding
             if self.pathfinding_mode:
@@ -174,6 +189,8 @@ class Game:
                                     (tile_pos[0] * self.tilemap.tile_size, tile_pos[1] * self.tilemap.tile_size),
                                     self.display)
                                 towers.add(tower_n)
+                        else:
+                            self.game_ui.check_click()
 
                         if self.pathfinding_mode:
                             row = tile_pos[0]
@@ -243,6 +260,10 @@ class Game:
 
             # Here we load our UI
             self.screen.blit(self.assets['l_side_bar'], (0, 0))
+
+            # Here we display our mouse
+            self.screen.blit(self.assets['mouse_pointer'], self.screen_mpos)
+
 
             pygame.display.update()
             self.clock.tick(FPS)
