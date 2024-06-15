@@ -75,7 +75,8 @@ class Tile:
         self.color = PURPLE
 
     def draw(self, surf):
-        pygame.draw.circle(surf, self.color, (self.x + 8, self.y + 8), 3)
+        pass
+        # game.draw.circle(surf, self.color, (self.x + 8, self.y + 8), 3)
 
     def update_neighbors(self, grid):
         self.neighbors = []
@@ -194,6 +195,8 @@ def check_tilemap(tilemap, grid):
             if tilemap.get_tile(path_tile_pos) is not None:
                 if tilemap.get_tile(path_tile_pos)["type"] != "dirt":
                     grid[i][j].make_barrier()
+            else:
+                grid[i][j].make_barrier()
             if tilemap.get_tile(path_tile_pos) is None:
                 grid[i][j].make_barrier()
 

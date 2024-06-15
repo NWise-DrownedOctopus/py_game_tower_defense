@@ -44,7 +44,8 @@ class Game:
             'build_indicator': load_image("build_indicator.png"),
             'pathfinding_indicator': load_image("pathfinding_indicator.png"),
             'mouse_pointer': load_image("mouse_pointer.png"),
-            'tower': load_image("tower.png")
+            'tower': load_image("tower.png"),
+            'l_side_bar': load_image("UI_L_SideBar.png")
         }
 
         self.build_mode = False
@@ -52,12 +53,15 @@ class Game:
         self.clicking = False
         self.right_clicking = False
         self.shift = False
+        self.mpos = None
 
         # here is where we initialize our tilemap
         self.tilemap = Tilemap(self, tile_size=16)
         self.pathfinding = Pathfinding(self)
         self.pf_grid = make_grid(ROWS, WIDTH)
+        self.pf_started = False
         filepath = r"data"
+        self.render_scale = 1.0
         try:
             if os.path.exists(filepath):
                 print('loaded tilemap successfully')
@@ -81,24 +85,28 @@ class Game:
         # Here is where we initialize our dynamic elements
         monster1 = monster.Monster(monster_pos[0], monster_pos[1], self.pathfinding)
         monsters.add(monster1)
-        pf_started = False
-        pf_start = self.pf_grid[6][21]
-        pf_start.make_start()
-        pf_end = self.pf_grid[28][4]
-        pf_end.make_end()
-        render_scale = 1.0
 
         # Here we will initialize 16 x 9 ratios (My PC)
         if self.screen.get_size()[0] == 2560 and self.screen.get_size()[1] == 1440:
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 16))
-            render_scale = 4.0
+            self.render_scale = 4.0
         # Here we will initialize 16 x 10 ratios (My Laptop)
         if self.screen.get_size()[0] == 2880 and self.screen.get_size()[1] == 1800:
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
-            render_scale = 3.0
+            self.render_scale = 3.0
         if self.screen.get_size()[0] == 1440 and self.screen.get_size()[1] == 900:
             self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 90))
-            render_scale = 2.0
+            self.render_scale = 2.0
+
+        # pf_start, pf_end = self.start()
+        # here we manage pathfinding initialization
+        pf_start = self.pf_grid[6][21]
+        pf_start.make_start()
+        pf_end = self.pf_grid[28][4]
+        pf_end.make_end()
+        pf_started = True
+        print("We Finished Start")
+        monster1.find_path()
 
         # Here we enter the game loop, it is called "every frame"
         while True:
@@ -107,11 +115,14 @@ class Game:
             self.display.fill(self.bg_color)
             self.tilemap.render(self.display)
 
+            # Here we load our UI
+            self.screen.blit(self.assets['l_side_bar'], (0, 0))
+
             # here is where we manage the mouse position input
-            mpos = pygame.mouse.get_pos()
-            mpos = (mpos[0] / render_scale, mpos[1] / render_scale)
-            tile_pos = (int(mpos[0] // self.tilemap.tile_size), int(mpos[1] // self.tilemap.tile_size))
-            self.display.blit(self.assets['mouse_pointer'], mpos)
+            self.mpos = pygame.mouse.get_pos()
+            self.mpos = (self.mpos[0] / self.render_scale, self.mpos[1] / self.render_scale)
+            tile_pos = (int(self.mpos[0] // self.tilemap.tile_size), int(self.mpos[1] // self.tilemap.tile_size))
+            self.display.blit(self.assets['mouse_pointer'], self.mpos)
 
             # Here is where we manage pathfinding
             if self.pathfinding_mode:
@@ -151,7 +162,7 @@ class Game:
                     pygame.quit()
                     sys.exit()
 
-                if pf_started:
+                if self.pf_started:
                     continue
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -203,7 +214,7 @@ class Game:
                     if event.key == pygame.K_p:
                         self.pathfinding_mode = not self.pathfinding_mode
                     if event.key == pygame.K_SPACE:
-                        if not pf_started:
+                        if not self.pf_started:
                             for row in self.pf_grid:
                                 for tile in row:
                                     tile.update_neighbors(self.pf_grid)
@@ -224,9 +235,15 @@ class Game:
 
             # Here we start the loop by drawing the background of the scene first
             if self.screen.get_size()[0] == 1440 and self.screen.get_size()[1] == 900:
-                screen_size = (1440, 900)
                 self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 90))
-                render_scale = 2.0
+                self.render_scale = 2.0
+            if self.screen.get_size()[0] == 2560 and self.screen.get_size()[1] == 1440:
+                self.screen.blit(pygame.transform.scale(self.display, (2560, 1440)), (0, 16))
+                self.render_scale = 4.0
+
+            # Here we load our UI
+            self.screen.blit(self.assets['l_side_bar'], (0, 0))
+
             pygame.display.update()
             self.clock.tick(FPS)
 
