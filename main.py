@@ -50,7 +50,9 @@ class Game:
             'r_side_bar': load_image("UI_R_SideBar.png"),
             'top_bar': load_image("UI_TopBar.png"),
             'bottom_bar': load_image("UI_BottomBar.png"),
-            'play_button': load_image("play_button.png")
+            'play_button': load_image("play_button.png"),
+            'pause_button': load_image("pause_button.png"),
+            'fast_forward_button': load_image("fast_forward_button.png")
         }
 
         self.build_mode = False
@@ -88,6 +90,7 @@ class Game:
         towers = pygame.sprite.Group()
         gems = pygame.sprite.Group()
         monsters = pygame.sprite.Group()
+        self.game_ui.create_buttons()
 
         # Here is where we initialize our dynamic elements
         # monster1 = monster.Monster(monster_pos[0], monster_pos[1], self.pathfinding)
@@ -122,8 +125,6 @@ class Game:
             self.screen.fill(self.bg_color)
             self.display.fill(self.bg_color)
             self.tilemap.render(self.display)
-
-
 
             # here is where we manage the mouse position input
             self.screen_mpos = pygame.mouse.get_pos()
@@ -280,8 +281,10 @@ class Game:
                 pygame.draw.rect(self.screen, (200, 150, 10), pygame.Rect(32, 794, 1056, 106))
                 # self.screen.blit(self.assets['bottom_bar'], (64, 794))
 
-                self.render_scale = 2.0
+                for button in self.game_ui.buttons:
+                    button.draw_button()
 
+                self.render_scale = 2.0
 
             if self.screen.get_size()[0] == 2560 and self.screen.get_size()[1] == 1440:
                 self.screen.blit(pygame.transform.scale(self.display, (2560, 1440)), (0, 16))
