@@ -46,7 +46,11 @@ class Game:
             'pathfinding_indicator': load_image("pathfinding_indicator.png"),
             'mouse_pointer': load_image("mouse_pointer.png"),
             'tower': load_image("tower.png"),
-            'l_side_bar': load_image("UI_L_SideBar.png")
+            'l_side_bar': load_image("UI_L_SideBar.png"),
+            'r_side_bar': load_image("UI_R_SideBar.png"),
+            'top_bar': load_image("UI_TopBar.png"),
+            'bottom_bar': load_image("UI_BottomBar.png"),
+            'play_button': load_image("play_button.png")
         }
 
         self.build_mode = False
@@ -86,8 +90,8 @@ class Game:
         monsters = pygame.sprite.Group()
 
         # Here is where we initialize our dynamic elements
-        monster1 = monster.Monster(monster_pos[0], monster_pos[1], self.pathfinding)
-        monsters.add(monster1)
+        # monster1 = monster.Monster(monster_pos[0], monster_pos[1], self.pathfinding)
+        # monsters.add(monster1)
 
         # Here we will initialize 16 x 9 ratios (My PC)
         if self.screen.get_size()[0] == 2560 and self.screen.get_size()[1] == 1440:
@@ -109,7 +113,8 @@ class Game:
         pf_end.make_end()
         pf_started = True
         print("We Finished Start")
-        monster1.find_path()
+        if len(monsters) >= 1:
+            monsters.sprites()[0].find_path()
 
         # Here we enter the game loop, it is called "every frame"
         while True:
@@ -118,8 +123,7 @@ class Game:
             self.display.fill(self.bg_color)
             self.tilemap.render(self.display)
 
-            # Here we load our UI
-            self.screen.blit(self.assets['l_side_bar'], (0, 0))
+
 
             # here is where we manage the mouse position input
             self.screen_mpos = pygame.mouse.get_pos()
@@ -238,7 +242,8 @@ class Game:
 
                             pf_algorithm(lambda: draw_pathfinding(self.display, self.pf_grid, ROWS, WIDTH),
                                          self.pf_grid, pf_start, pf_end, self)
-                            monster1.find_path()
+                            if len(monsters) >= 1:
+                                monsters.sprites()[0].find_path()
 
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT:
@@ -251,19 +256,39 @@ class Game:
                         monster_v_movement[1] = False
 
             # Here we start the loop by drawing the background of the scene first
+            # This layout is for our laptop
+            # We currently have 33 x 22 tiles?
+            # We are scaling up by two at this resolution, and tiles were designed at 16x16 pixels (32x32 once scaled)
+            # this means our play area is taking up 1280 x 720
             if self.screen.get_size()[0] == 1440 and self.screen.get_size()[1] == 900:
                 self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 90))
+                # Left bar at this resolution should be at (0, 0) with the dim. (32 x 1440)
+                # self.screen.blit(self.assets['l_side_bar'], (0, 0))
+                pygame.draw.rect(self.screen, (245, 190, 37), pygame.Rect(0, 0, 32, 1440))
+
+                # Right bar at this resolution should be at (1088, 0) with the dim. (128 x 1440)
+                pygame.draw.rect(self.screen, (245, 190, 37), pygame.Rect(1088, 0, 352, 1440))
+                # self.screen.blit(self.assets['r_side_bar'], (1088, 0))
+
+                # Top bar at this resolution should be at (32, 0) with the dim. (1056 x 80)
+                pygame.draw.rect(self.screen, (200, 150, 10), pygame.Rect(32, 0, 1056, 90))
+                # self.screen.blit(self.assets['top_bar'], (64, 0))
+
+                # Bottom bar at this resolution should be at (32, 810) with the dim. (1056 x 90)
+                # However our tile grid is slightly too tall because we have an extra half tile in height
+                # that adds an extra 16 pixels for us here
+                pygame.draw.rect(self.screen, (200, 150, 10), pygame.Rect(32, 794, 1056, 106))
+                # self.screen.blit(self.assets['bottom_bar'], (64, 794))
+
                 self.render_scale = 2.0
+
+
             if self.screen.get_size()[0] == 2560 and self.screen.get_size()[1] == 1440:
                 self.screen.blit(pygame.transform.scale(self.display, (2560, 1440)), (0, 16))
                 self.render_scale = 4.0
 
-            # Here we load our UI
-            self.screen.blit(self.assets['l_side_bar'], (0, 0))
-
             # Here we display our mouse
             self.screen.blit(self.assets['mouse_pointer'], self.screen_mpos)
-
 
             pygame.display.update()
             self.clock.tick(FPS)

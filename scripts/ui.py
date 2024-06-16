@@ -31,6 +31,8 @@ class Button:
         self.mask = pygame.mask.from_surface(self.img)
         ui.buttons.append(self)
 
+    def start(self):
+
     def button_presed(self, action):
         action()
 
