@@ -9,9 +9,9 @@ class UI:
         self.mpos = game.screen_mpos
 
     def create_buttons(self):
-        pause_button = Button(self, 32, 32, (1150, 50), self.game.assets["pause_button"])
-        start_button = Button(self, 32, 32, (1250, 50), self.game.assets["play_button"])
-        fast_forward_button = Button(self, 32, 32, (1350, 50), self.game.assets["fast_forward_button"])
+        pause_button = Button(self, 32, 32, (1150, 50), 'pause', self.game.assets["pause_button"])
+        start_button = Button(self, 32, 32, (1250, 50), 'play', self.game.assets["play_button"])
+        fast_forward_button = Button(self, 32, 32, (1350, 50), 'fast_forward', self.game.assets["fast_forward_button"])
 
     def update(self):
         pass
@@ -21,19 +21,20 @@ class UI:
             for button in self.buttons:
                 # Check if we have a collision with the mpos point
                 if button.rect.collidepoint(pygame.mouse.get_pos()):
-                    button.button_presed(print())
+                    return button.name
         else:
             print("No buttons were found when checking for click")
 
 
 class Button:
-    def __init__(self, ui, width, height, pos, img):
+    def __init__(self, ui, width, height, pos, name, img):
         self.ui = ui
         self.width, self.height = width, height
         self.pos = pos
         self.rect = pygame.Rect(pos[0], pos[1], self.width, self.height)
         self.img = img
         self.mask = pygame.mask.from_surface(self.img)
+        self.name = name
         ui.buttons.append(self)
 
     def button_presed(self, action):

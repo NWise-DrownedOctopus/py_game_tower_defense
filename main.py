@@ -12,15 +12,9 @@ from scripts.tilemap import Tilemap
 from pathfinding import Pathfinding, make_grid, draw_pathfinding
 from pathfinding import algorithm as pf_algorithm
 
-# monster details
-monster_pos = [50, 320]
-monster_movement = [False, False]
-monster_v_movement = [False, False]
-
 FPS = 60
 WIDTH = 640
 ROWS = 40
-
 
 class Game:
     def __init__(self):
@@ -56,6 +50,7 @@ class Game:
         }
 
         self.build_mode = False
+        self.paused = True
         self.pathfinding_mode = False
         self.clicking = False
         self.right_clicking = False
@@ -91,10 +86,11 @@ class Game:
         gems = pygame.sprite.Group()
         monsters = pygame.sprite.Group()
         self.game_ui.create_buttons()
+        monster_spawn_pos = self.pf_grid[6][22].row, self.pf_grid[6][22].col
 
         # Here is where we initialize our dynamic elements
-        # monster1 = monster.Monster(monster_pos[0], monster_pos[1], self.pathfinding)
-        # monsters.add(monster1)
+        monster1 = monster.Monster(monster_spawn_pos[0], monster_spawn_pos[1], self.pathfinding)
+        monsters.add(monster1)
 
         # Here we will initialize 16 x 9 ratios (My PC)
         if self.screen.get_size()[0] == 2560 and self.screen.get_size()[1] == 1440:
@@ -116,8 +112,10 @@ class Game:
         pf_end.make_end()
         pf_started = True
         print("We Finished Start")
+        '''
         if len(monsters) >= 1:
             monsters.sprites()[0].find_path()
+        '''
 
         # Here we enter the game loop, it is called "every frame"
         while True:
@@ -142,8 +140,6 @@ class Game:
                 if tile_pos[1] >= 21:
                     tile_pos = (tile_pos[0], 21)
 
-
-
             # Here is where we manage pathfinding
             if self.pathfinding_mode:
                 self.display.blit(self.assets['pathfinding_indicator'], (600, 20))
@@ -161,6 +157,11 @@ class Game:
                 player_tower.draw()
             for player_gem in gems:
                 player_gem.draw()
+
+            # Here is where we make our monsters move
+            for enemy_monster in monsters:
+                enemy_monster.draw(self.display)
+                enemy_monster.update()
 
             # Here is where we check if the monster is in range of the turret
             for p_tower in towers:
@@ -195,7 +196,35 @@ class Game:
                                     self.display)
                                 towers.add(tower_n)
                         else:
-                            self.game_ui.check_click()
+                            if self.game_ui.check_click() == 'play':
+                                print("we would like to play")
+                                self.pathfinding.update()
+                                row = tile_pos[0]
+                                col = tile_pos[1]
+                                tile = self.pf_grid[row][col]
+                                if not pf_start and tile != pf_end:
+                                    pf_start = tile
+                                    pf_start.make_start()
+                                elif not pf_end and tile != pf_start:
+                                    pf_end = tile
+                                    pf_end.make_end()
+                                elif tile != pf_end and tile != pf_start:
+                                    tile.make_barrier()
+                                if not self.pf_started and self.paused:
+                                    self.paused = False
+                                    for row in self.pf_grid:
+                                        for tile in row:
+                                            tile.update_neighbors(self.pf_grid)
+
+                                    pf_algorithm(lambda: draw_pathfinding(self.display, self.pf_grid, ROWS, WIDTH),
+                                                 self.pf_grid, pf_start, pf_end, self)
+                                    if len(monsters) >= 1:
+                                        monsters.sprites()[0].find_path()
+
+                            if self.game_ui.check_click() == 'pause':
+                                print("we would like to pause")
+                            if self.game_ui.check_click() == 'fast_forward':
+                                print("we would like to fast_forward")
 
                         if self.pathfinding_mode:
                             row = tile_pos[0]
@@ -223,14 +252,6 @@ class Game:
                                 pf_end = None
 
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT:
-                        monster_movement[0] = True
-                    if event.key == pygame.K_RIGHT:
-                        monster_movement[1] = True
-                    if event.key == pygame.K_UP:
-                        monster_v_movement[0] = True
-                    if event.key == pygame.K_DOWN:
-                        monster_v_movement[1] = True
                     if event.key == pygame.K_b:
                         self.build_mode = not self.build_mode
                     if event.key == pygame.K_p:
@@ -246,15 +267,7 @@ class Game:
                             if len(monsters) >= 1:
                                 monsters.sprites()[0].find_path()
 
-                if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT:
-                        monster_movement[0] = False
-                    if event.key == pygame.K_RIGHT:
-                        monster_movement[1] = False
-                    if event.key == pygame.K_UP:
-                        monster_v_movement[0] = False
-                    if event.key == pygame.K_DOWN:
-                        monster_v_movement[1] = False
+            # Here we handle UI input
 
             # Here we start the loop by drawing the background of the scene first
             # This layout is for our laptop

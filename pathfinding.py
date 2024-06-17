@@ -75,8 +75,7 @@ class Tile:
         self.color = PURPLE
 
     def draw(self, surf):
-        pass
-        # game.draw.circle(surf, self.color, (self.x + 8, self.y + 8), 3)
+        pygame.draw.circle(surf, self.color, (self.x + 8, self.y + 8), 3)
 
     def update_neighbors(self, grid):
         self.neighbors = []
@@ -114,12 +113,13 @@ def make_grid(rows, width):
     return grid
 
 
-def reconstruct_path(came_from, current, draw):
+def reconstruct_path(came_from, current, draw, vizulize=False):
     pathway = []
     while current in came_from:
         current = came_from[current]
         current.make_path()
-        draw()
+        if vizulize:
+            draw()
         pathway.append(current)
     for path in pathway:
         pass
@@ -149,7 +149,11 @@ def algorithm(draw, grid, start, end, game):
         open_set_hash.remove(current)
 
         if current == end:
-            game.pathfinding.pathway = reconstruct_path(came_from, end, draw)
+            if game.pathfinding_mode:
+                game.pathfinding.pathway = reconstruct_path(came_from, end, draw, True)
+            else:
+                game.pathfinding.pathway = reconstruct_path(came_from, end, draw)
+
             end.make_end()
             return True  # make path
 
