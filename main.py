@@ -88,10 +88,6 @@ class Game:
         self.game_ui.create_buttons()
         monster_spawn_pos = self.pf_grid[6][22].row, self.pf_grid[6][22].col
 
-        # Here is where we initialize our dynamic elements
-        monster1 = monster.Monster(monster_spawn_pos[0], monster_spawn_pos[1], self.pathfinding)
-        monsters.add(monster1)
-
         # Here we will initialize 16 x 9 ratios (My PC)
         if self.screen.get_size()[0] == 2560 and self.screen.get_size()[1] == 1440:
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 16))
@@ -104,11 +100,15 @@ class Game:
             self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 90))
             self.render_scale = 2.0
 
+        # Here is where we initialize our dynamic elements
+        monster1 = monster.Monster(monster_spawn_pos[0], monster_spawn_pos[1], self.pathfinding, self.render_scale,)
+        monsters.add(monster1)
+
         # pf_start, pf_end = self.start()
         # here we manage pathfinding initialization
         pf_start = self.pf_grid[6][21]
         pf_start.make_start()
-        pf_end = self.pf_grid[28][4]
+        pf_end = self.pf_grid[29][4]
         pf_end.make_end()
         pf_started = True
         print("We Finished Start")
@@ -198,6 +198,7 @@ class Game:
                         else:
                             if self.game_ui.check_click() == 'play':
                                 print("we would like to play")
+                                # self.paused = False
                                 self.pathfinding.update()
                                 row = tile_pos[0]
                                 col = tile_pos[1]
@@ -223,6 +224,7 @@ class Game:
 
                             if self.game_ui.check_click() == 'pause':
                                 print("we would like to pause")
+                                self.paused = True
                             if self.game_ui.check_click() == 'fast_forward':
                                 print("we would like to fast_forward")
 
@@ -257,15 +259,7 @@ class Game:
                     if event.key == pygame.K_p:
                         self.pathfinding_mode = not self.pathfinding_mode
                     if event.key == pygame.K_SPACE:
-                        if not self.pf_started:
-                            for row in self.pf_grid:
-                                for tile in row:
-                                    tile.update_neighbors(self.pf_grid)
-
-                            pf_algorithm(lambda: draw_pathfinding(self.display, self.pf_grid, ROWS, WIDTH),
-                                         self.pf_grid, pf_start, pf_end, self)
-                            if len(monsters) >= 1:
-                                monsters.sprites()[0].find_path()
+                        self.paused = not self.paused
 
             # Here we handle UI input
 

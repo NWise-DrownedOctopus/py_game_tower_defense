@@ -33,7 +33,7 @@ class Tower (pygame.sprite.Sprite):
         if self.display_radius:
             # Here is where we check if the monster is in range of the turret
             if self.range_mask.overlap(monster.monster_mask,
-               (monster.x_pos - self.target_radius_pos[0], monster.y_pos - self.target_radius_pos[1])):
+               (monster.screen_pos[0] - self.target_radius_pos[0], monster.screen_pos[1] - self.target_radius_pos[1])):
                 self.surface.blit(self.valid_target_gizmo, self.target_radius_pos)
                 # print(F"Monster in range of {self.tower_img}")
                 self.valid_target = monster

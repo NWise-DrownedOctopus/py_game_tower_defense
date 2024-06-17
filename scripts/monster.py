@@ -4,10 +4,10 @@ from pathfinding import Pathfinding
 
 
 class Monster (pygame.sprite.Sprite):
-    def __init__(self, x_pos, y_pos, pathfinding, max_health=10):
+    def __init__(self, x_pos, y_pos, pathfinding, render_scale, max_health=10):
         super().__init__()
         self.pos = (int(x_pos), int(y_pos))
-        self.screen_pos = self.pos[0] * 16, self.pos[1] * 16
+        self.screen_pos = self.pos[0] * 16 * render_scale, self.pos[1] * 16 * render_scale
         self.max_health = max_health
         self.current_health = 10
         self.healthBar = HealthBar(self, self.pos[0], self.pos[1])
@@ -53,6 +53,7 @@ class Monster (pygame.sprite.Sprite):
         # let's check if we made it to our finally destination
         if self.pathway_index == len(self.pathway) - 1:
             print("we have made it to our final destination")
+            self.kill()
             return
 
         # first lets check to see if we are within a reasonable distance to our target
