@@ -20,6 +20,7 @@ class Gem (pygame.sprite.Sprite):
         self.projectiles = pygame.sprite.Group()
         self.last_shot = time.time()
         self.shot_delay = 1
+        self.range = 2
 
     def draw(self):
         self.surface.blit(self.gem_img, self.pos)

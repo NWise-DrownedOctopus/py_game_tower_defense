@@ -113,12 +113,12 @@ def make_grid(rows, width):
     return grid
 
 
-def reconstruct_path(came_from, current, draw, vizulize=False):
+def reconstruct_path(came_from, current, draw, visualize=False):
     pathway = []
     while current in came_from:
         current = came_from[current]
         current.make_path()
-        if vizulize:
+        if visualize:
             draw()
         pathway.append(current)
     for path in pathway:
@@ -126,7 +126,7 @@ def reconstruct_path(came_from, current, draw, vizulize=False):
     return pathway
 
 
-def algorithm(draw, grid, start, end, game):
+def algorithm(draw, grid, start, end, game, visualize=False):
     count = 0
     open_set = PriorityQueue()
     open_set.put((0, count, start))
@@ -169,8 +169,8 @@ def algorithm(draw, grid, start, end, game):
                     open_set.put((f_score[neighbor], count, neighbor))
                     open_set_hash.add(neighbor)
                     neighbor.make_open()
-
-            draw()
+            if visualize:
+                draw()
 
         if current != start:
             current.make_closed()
@@ -210,10 +210,11 @@ class Pathfinding:
         self.game = game
         self.pathway = []
 
-    def update(self):
+    def update(self, visualize=False):
         # NOTE:
         # THIS is getting called every frame I'm pretty sure, and I think we could just call this once at the beginning,
         # and then once anytime the path changes
         check_tilemap(self.game.tilemap, self.game.pf_grid)
         # Here we enter the game loop, it is called "every frame"
-        draw_pathfinding(self.game.display, self.game.pf_grid, ROWS, WIDTH)
+        if visualize:
+            draw_pathfinding(self.game.display, self.game.pf_grid, ROWS, WIDTH)
