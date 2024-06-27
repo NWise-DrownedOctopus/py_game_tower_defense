@@ -18,6 +18,11 @@ def load_images(path):
     return images
 
 
+def draw_text(surf, text, font, text_col, x, y):
+    img = font.render(text, True, text_col)
+    surf.blit(img, (x, y))
+
+
 def draw_grid(self):
     # Here is where we are initializing the bg and bg grid
     '''

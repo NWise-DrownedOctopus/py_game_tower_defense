@@ -4,9 +4,10 @@ import os
 import pygame
 
 from scripts import tower
+from scripts import gem
 from scripts import monster
 from scripts import ui
-from scripts.utils import load_image, load_images
+from scripts.utils import load_image, load_images, draw_text
 from scripts.tilemap import Tilemap
 from pathfinding import Pathfinding, make_grid, draw_pathfinding
 from pathfinding import algorithm as pf_algorithm
@@ -31,19 +32,21 @@ class Game:
             'player': load_image("player.png"),
             'grass': load_images("grass"),
             'dirt': load_images("dirt"),
-            'build_indicator': load_image("build_indicator.png"),
-            'pathfinding_indicator': load_image("pathfinding_indicator.png"),
             'mouse_pointer': load_image("mouse_pointer.png"),
             'tower': load_image("tower.png"),
-            'l_side_bar': load_image("UI_L_SideBar.png"),
-            'r_side_bar': load_image("UI_R_SideBar.png"),
-            'top_bar': load_image("UI_TopBar.png"),
-            'bottom_bar': load_image("UI_BottomBar.png"),
-            'play_button': load_image("play_button.png"),
-            'pause_button': load_image("pause_button.png"),
-            'fast_forward_button': load_image("fast_forward_button.png")
+            'gem': load_image("gem.png"),
+            'l_side_bar': load_image("ui/UI_L_SideBar.png"),
+            'r_side_bar': load_image("ui/UI_R_SideBar.png"),
+            'top_bar': load_image("ui/UI_TopBar.png"),
+            'bottom_bar': load_image("ui/UI_BottomBar.png"),
+            'play_button': load_image("ui/play_button.png"),
+            'pause_button': load_image("ui/pause_button.png"),
+            'fast_forward_button': load_image("ui/fast_forward_button.png"),
+            'tower_button': load_image("ui/tower_button.png"),
+            'gem_button': load_image("ui/gem_button.png")
         }
 
+        self.text_font = pygame.font.SysFont("arial", 20)
         self.clock = pygame.time.Clock()
         self.bg_color = (25, 25, 25)
         self.build_mode = False
@@ -61,9 +64,18 @@ class Game:
         self.towers = pygame.sprite.Group()
         self.gems = pygame.sprite.Group()
         self.monsters = pygame.sprite.Group()
+        self.current_build_img = None
+        self.current_build_type = None
+        self.hoverables = []
+
+        # Here3 is where we can initialize resources
+        self.current_gold = 300
+        self.gem_cost = 60
+        self.tower_cost = 150
 
         # here is where we initialize our tilemap
-        self.tilemap = Tilemap(self, tile_size=16)
+        self.tile_size = 16
+        self.tilemap = Tilemap(self,  self.tile_size)
         self.pathfinding = Pathfinding(self)
         self.game_ui = ui.UI(self)
         self.pf_grid = make_grid(ROWS, WIDTH)
@@ -75,6 +87,7 @@ class Game:
         self.pf_end.make_end()
         filepath = r"data"
         self.render_scale = 1.0
+
         try:
             if os.path.exists(filepath):
                 print('loaded tilemap successfully')
@@ -108,17 +121,6 @@ class Game:
                 self.pathfinding.update(True)
             else:
                 self.pathfinding.update()
-            row = self.tile_pos[0]
-            col = self.tile_pos[1]
-            tile = self.pf_grid[row][col]
-            if not self.pf_start and tile != self.pf_end:
-                pf_start = tile
-                pf_start.make_start()
-            elif not self.pf_end and tile != self.pf_start:
-                pf_end = tile
-                pf_end.make_end()
-            elif tile != self.pf_end and tile != self.pf_start:
-                tile.make_barrier()
             if not self.pf_started and self.paused:
                 self.paused = False
                 for row in self.pf_grid:
@@ -132,6 +134,45 @@ class Game:
                                  self.pf_grid, self.pf_start, self.pf_end, self)
                 if len(self.monsters) >= 1:
                     self.monsters.sprites()[0].find_path()
+
+    def build_display(self):
+        self.current_build_img.set_alpha(100)
+        if self.tile_pos is not None:
+            if self.current_build_type == 'gem':
+                tower_open = False
+                for n_tower in self.towers:
+                    if self.tile_pos == n_tower.tile_pos and n_tower.has_gem == False:
+                        tower_open = True
+                if tower_open:
+                    self.display.blit(self.current_build_img,
+                                      (self.tile_pos[0] * self.tilemap.tile_size,
+                                       self.tile_pos[1] * self.tilemap.tile_size))
+                else:
+                    return
+            self.display.blit(self.current_build_img,
+                              (self.tile_pos[0] * self.tilemap.tile_size, self.tile_pos[1] * self.tilemap.tile_size))
+
+    def build(self):
+        if self.current_build_type == 'tower' and self.current_gold >= self.tower_cost:
+            tower_n = tower.Tower(
+                (self.tile_pos[0] * self.tilemap.tile_size, self.tile_pos[1] * self.tilemap.tile_size), self.tile_pos,
+                self.display, self)
+            self.towers.add(tower_n)
+            self.current_gold -= self.tower_cost
+        if self.current_build_type == 'gem' and self.current_gold >= self.gem_cost:
+            for n_tower in self.towers:
+                if self.tile_pos == n_tower.tile_pos:
+                    gem_n = gem.Gem(
+                        (self.tile_pos[0] * self.tilemap.tile_size, self.tile_pos[1] * self.tilemap.tile_size),
+                        n_tower,
+                        self.display, self)
+                    self.gems.add(gem_n)
+                    n_tower.has_gem = True
+                    self.current_gold -= self.gem_cost
+
+        self.current_build_img = None
+        self.current_build_type = None
+        self.build_mode = False
 
     def run(self):
         # here is where we initialize the game, before our while loop, this code only runs once
@@ -169,26 +210,24 @@ class Game:
                 self.tile_pos = (int(self.mpos[0] // self.tilemap.tile_size), int(self.mpos[1] // self.tilemap.tile_size))
 
             # Here we are making sure our tile_position doesn't go out of bounds of the current game display area
-            if self.tile_pos[0] <= 0:
-                self.tile_pos = (1, self.tile_pos[1])
-            if self.tile_pos[0] >= 33:
-                self.tile_pos = (33, self.tile_pos[1])
-            if self.tile_pos[1] <= 0:
-                self.tile_pos = (self.tile_pos[0], 0)
-            if self.tile_pos[1] >= 21:
-                self.tile_pos = (self.tile_pos[0], 21)
+            while self.tile_pos is not None:
+                if self.tile_pos[0] <= 0:
+                    self.tile_pos = None
+                    break
+                if self.tile_pos[0] >= 34:
+                    self.tile_pos = None
+                    break
+                if self.tile_pos[1] <= -1:
+                    self.tile_pos = None
+                    break
+                if self.tile_pos[1] >= 22:
+                    self.tile_pos = None
+                    break
+                break
 
             # Here is where we manage pathfinding
             if self.debug_mode:
-                self.display.blit(self.assets['pathfinding_indicator'], (600, 20))
                 self.pathfinding.update(True)
-
-            # here is where we handle build mode
-            if self.build_mode:
-                self.display.blit(self.assets['build_indicator'], (600, 320))
-                current_building = self.assets['tower'].copy()
-                current_building.set_alpha(100)
-                self.display.blit(current_building, (self.tile_pos[0] * self.tilemap.tile_size, self.tile_pos[1] * self.tilemap.tile_size))
 
             # Here is where we draw our static elements to the screen
             for player_tower in self.towers:
@@ -202,17 +241,28 @@ class Game:
                 enemy_monster.update()
 
             # Here is where we check if the monster is in range of the turret
-            for p_tower in self.towers:
-                if self.monsters is not None:
+            for p_gem in self.gems:
+                if len(self.monsters) > 0:
                     for e_monster in self.monsters:
-                        p_tower.detect_monster(e_monster)
+                        p_gem.detect_monster(e_monster)
+                else:
+                    p_gem.valid_target = None
             for p_gem in self.gems:
                 p_gem.update()
+
+            # Here we handle display changes for hovering gout mouse over it
+            for hoverable in self.hoverables:
+                if hoverable.rect.collidepoint(self.mpos):
+                    hoverable.on_hover()
 
             # Here we update our projectiles
             for player_gem in self.gems:
                 for projectile in player_gem.projectiles:
                     projectile.update()
+
+            # here is where we handle build mode
+            if self.build_mode:
+                self.build_display()
 
             # This is the event checker for each frame
             for event in pygame.event.get():
@@ -229,10 +279,8 @@ class Game:
                         self.clicking = True
                         if self.build_mode:
                             if self.clicking:
-                                tower_n = tower.Tower(
-                                    (self.tile_pos[0] * self.tilemap.tile_size, self.tile_pos[1] * self.tilemap.tile_size),
-                                    self.display)
-                                self.towers.add(tower_n)
+                                if self.tile_pos is not None:
+                                    self.build()
                         else:
                             if self.game_ui.check_click() == 'play':
                                 self.run_pathfinding()
@@ -241,6 +289,14 @@ class Game:
                                 self.paused = True
                             if self.game_ui.check_click() == 'fast_forward':
                                 print("we would like to fast_forward")
+                            if self.game_ui.check_click() == 'tower_button':
+                                self.current_build_img = self.assets['tower'].copy()
+                                self.current_build_type = 'tower'
+                                self.build_mode = not self.build_mode
+                            if self.game_ui.check_click() == 'gem_button':
+                                self.current_build_img = self.assets['gem'].copy()
+                                self.current_build_type = 'gem'
+                                self.build_mode = not self.build_mode
 
                         if self.debug_mode:
                             row = self.tile_pos[0]
@@ -274,6 +330,8 @@ class Game:
                         self.debug_mode = not self.debug_mode
                     if event.key == pygame.K_SPACE:
                         self.paused = not self.paused
+                    if event.key == pygame.K_ESCAPE:
+                        self.build_mode = False
 
             # Here we handle UI input
 
@@ -325,6 +383,8 @@ class Game:
 
                 for button in self.game_ui.buttons:
                     button.draw_button()
+                gold_text = "Current Gold:" + str(self.current_gold)
+                draw_text(self.screen, gold_text, self.text_font, (0, 0, 0), 2300, 200)
                 self.render_scale = 4.0
 
             # Here we display our mouse

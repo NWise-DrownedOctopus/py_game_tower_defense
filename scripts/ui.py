@@ -9,11 +9,15 @@ class UI:
         self.mpos = game.screen_mpos
 
     def create_buttons(self):
+        # This is for my pc
         if self.game.screen.get_size()[0] == 2560 and self.game.screen.get_size()[1] == 1440:
             pause_button = Button(self, 32, 32, (2250, 50), 'pause', self.game.assets["pause_button"])
             start_button = Button(self, 32, 32, (2350, 50), 'play', self.game.assets["play_button"])
             fast_forward_button = Button(self, 32, 32, (2450, 50), 'fast_forward',
                                          self.game.assets["fast_forward_button"])
+            tower_button = Button(self, 128, 128, (2225, 500), 'tower_button', self.game.assets["tower_button"])
+            gem_button = Button(self, 128, 128, (2400, 500), 'gem_button', self.game.assets["gem_button"])
+        # This is for my laptop
         if self.game.screen.get_size()[0] == 1440 and self.game.screen.get_size()[1] == 900:
             pause_button = Button(self, 32, 32, (1150, 50), 'pause', self.game.assets["pause_button"])
             start_button = Button(self, 32, 32, (1250, 50), 'play', self.game.assets["play_button"])
@@ -40,7 +44,7 @@ class Button:
         self.pos = pos
         self.rect = pygame.Rect(pos[0], pos[1], self.width, self.height)
         self.img = img
-        self.mask = pygame.mask.from_surface(self.img)
+        # .mask = pygame.mask.from_surface(self.img)
         self.name = name
         ui.buttons.append(self)
 

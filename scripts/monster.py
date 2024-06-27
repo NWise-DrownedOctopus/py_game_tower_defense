@@ -10,7 +10,7 @@ class Monster (pygame.sprite.Sprite):
         self.screen_pos = self.pos[0] * 16 * render_scale, self.pos[1] * 16 * render_scale
         self.max_health = max_health
         self.current_health = 10
-        self.healthBar = HealthBar(self, self.pos[0], self.pos[1])
+        self.healthBar = HealthBar(self, self.screen_pos[0], self.screen_pos[1])
         self.monster_img = pygame.image.load('art/centipede.png')
         self.monster_mask = pygame.mask.from_surface(self.monster_img)
         self.monster_move_speed = .1
@@ -22,12 +22,12 @@ class Monster (pygame.sprite.Sprite):
     def dmg(self, dmg):
         self.current_health -= dmg
         if self.current_health <= 0:
-            print("Monster should die now, it is at or below 0 health")
+            del self
 
     def draw(self, surface):
         surface.blit(self.monster_img, self.screen_pos)
         if self.current_health < self.max_health:
-            self.healthBar.draw(surface, self.pos)
+            self.healthBar.draw(surface, self.screen_pos)
 
     def find_path(self):
         print('monster tile path is:')
@@ -41,6 +41,11 @@ class Monster (pygame.sprite.Sprite):
     def update(self):
         # we don't need to update anything if the game is paused, so let's return if that's the case
         if self.pathfinding.game.paused:
+            return
+
+        # let us get destroyed if we have zero health remaining
+        if self.current_health <= 0:
+            self.kill()
             return
 
         # Here we want to move our monsters position towards our target position
