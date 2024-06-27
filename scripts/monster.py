@@ -18,6 +18,7 @@ class Monster (pygame.sprite.Sprite):
         self.target_pos = None
         self.pathway = None
         self.pathway_index = 0
+        self.gold_value = 8
 
     def dmg(self, dmg):
         self.current_health -= dmg
@@ -46,6 +47,7 @@ class Monster (pygame.sprite.Sprite):
         # let us get destroyed if we have zero health remaining
         if self.current_health <= 0:
             self.kill()
+            self.pathfinding.game.current_gold += self.gold_value
             return
 
         # Here we want to move our monsters position towards our target position

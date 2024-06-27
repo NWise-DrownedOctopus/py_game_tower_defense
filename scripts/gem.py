@@ -17,6 +17,7 @@ class Gem (pygame.sprite.Sprite):
         self.last_shot = time.time()
         self.shot_delay = 1
         self.range = 80
+        self.damage = 4
         self.game = game
         self.valid_target_gizmo = pygame.image.load('art/valid_target_gizmo.png')
         self.target_mask_gizmo = pygame.image.load('art/target_mask_gizmo.png')
@@ -62,12 +63,12 @@ class Gem (pygame.sprite.Sprite):
 
     def fire(self, monster):
         print(f"Gem: {self} calling fire()")
-        projectile = Projectile(self.pos, monster, self.surf)
+        projectile = Projectile(self.pos, monster, self.surf, self.damage)
         self.projectiles.add(projectile)
 
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self, start_pos, target, screen_rect):
+    def __init__(self, start_pos, target, screen_rect, damage):
         super().__init__()
         pygame.sprite.Sprite.__init__(self)
         self.img = pygame.image.load('art/bullet.png')
@@ -77,7 +78,7 @@ class Projectile(pygame.sprite.Sprite):
         self.rect = self.img.get_rect(center=start_pos)
         self.position = Vector2(start_pos)
         self.direction = (target.screen_pos[0], target.screen_pos[1]) - self.position
-        self.dmg = 2
+        self.dmg = damage
         radius, angle = self.direction.as_polar()
         self.img = pygame.transform.rotozoom(self.img, -angle-90, 1)
         self.velocity = self.direction.normalize() * 11

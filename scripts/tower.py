@@ -7,7 +7,6 @@ class Tower (pygame.sprite.Sprite):
     def __init__(self, pos, tile_pos, surface, game):
         super().__init__()
         pygame.init()
-        self.damage = 10
         self.attack_speed = 2
         self.pos = pos
         self.tile_pos = tile_pos
