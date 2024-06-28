@@ -21,23 +21,3 @@ def load_images(path):
 def draw_text(surf, text, font, text_col, x, y):
     img = font.render(text, True, text_col)
     surf.blit(img, (x, y))
-
-
-def draw_grid(self):
-    # Here is where we are initializing the bg and bg grid
-    '''
-    pygame.draw.rect(self.screen, self.bg_color, self.game_bg_rect)
-    for count in range(self.bg_grid_width_count - 1):
-        pygame.draw.line(self.screen, self.bg_grid_color,
-                         (self.bg_border,
-                          ((count + 1) * self.game_bg_rect_height / self.bg_grid_width_count + self.bg_border)),
-                         ((self.game_bg_rect_width + self.bg_border),
-                          ((count + 1) * self.game_bg_rect_height / self.bg_grid_width_count + self.bg_border)))
-
-    for count in range(self.bg_grid_height_count - 1):
-        pygame.draw.line(self.screen, self.bg_grid_color,
-                         (((count + 1) * self.game_bg_rect_width / self.bg_grid_height_count + self.bg_border),
-                          self.bg_border),
-                         (((count + 1) * self.game_bg_rect_width / self.bg_grid_height_count + self.bg_border),
-                          self.SCREEN_HEIGHT - self.bg_border))
-    '''

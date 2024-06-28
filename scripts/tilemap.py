@@ -1,5 +1,6 @@
 import json
 
+
 class Tilemap:
     """
     Our target is to have 16 x 16 tiles, that scale up x2 to be 32 x 32

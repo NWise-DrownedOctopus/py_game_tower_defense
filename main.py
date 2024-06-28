@@ -3,10 +3,7 @@ import os
 
 import pygame
 
-from scripts import tower
-from scripts import gem
-from scripts import monster
-from scripts import ui
+from scripts import tower, gem, level, monster, ui
 from scripts.utils import load_image, load_images, draw_text
 from scripts.tilemap import Tilemap
 from pathfinding import Pathfinding, make_grid, draw_pathfinding
@@ -73,6 +70,9 @@ class Game:
         self.gem_cost = 60
         self.tower_cost = 150
 
+        # here is where we initialize our level
+        self.level = level.Level(self)
+
         # here is where we initialize our tilemap
         self.tile_size = 16
         self.tilemap = Tilemap(self,  self.tile_size)
@@ -80,22 +80,25 @@ class Game:
         self.game_ui = ui.UI(self)
         self.pf_grid = make_grid(ROWS, WIDTH)
         self.pf_started = False
+
         # here we manage pathfinding initialization
         self.pf_start = self.pf_grid[6][21]
         self.pf_start.make_start()
         self.pf_end = self.pf_grid[29][4]
         self.pf_end.make_end()
-        filepath = r"data"
+        data_filepath = r"data"
         self.render_scale = 1.0
 
+        # Here is where we load all our data that is stored in files
         try:
-            if os.path.exists(filepath):
+            if os.path.exists(data_filepath):
                 print('loaded tilemap successfully')
                 self.tilemap.load("data/map.json")
+                self.level.load("data/level_01.json")
             else:
-                print("File not found: " + filepath)
+                print("File not found, but os path exist: " + data_filepath)
         except FileNotFoundError:
-            print("File not found: " + filepath)
+            print("File not found: " + data_filepath)
         except PermissionError:
             print("Did not have permission to load file")
 
