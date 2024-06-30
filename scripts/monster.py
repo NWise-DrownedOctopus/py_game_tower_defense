@@ -13,12 +13,14 @@ class Monster (pygame.sprite.Sprite):
         self.healthBar = HealthBar(self, self.screen_pos[0], self.screen_pos[1])
         self.monster_img = pygame.image.load('art/centipede.png')
         self.monster_mask = pygame.mask.from_surface(self.monster_img)
-        self.monster_move_speed = .1
+        self.monster_move_speed = .05
         self.pathfinding = pathfinding
         self.target_pos = None
         self.pathway = None
         self.pathway_index = 0
-        self.gold_value = 8
+        self.steel_value = 8
+        self.base_hit_cost = 10
+        self.is_dead = False
 
     def dmg(self, dmg):
         self.current_health -= dmg
@@ -31,12 +33,10 @@ class Monster (pygame.sprite.Sprite):
             self.healthBar.draw(surface, self.screen_pos)
 
     def find_path(self):
-        print('monster tile path is:')
         self.pathway = []
         for tile in self.pathfinding.pathway:
             self.pathway.append([str(tile.row), str(tile.col)])
         self.pathway.reverse()
-        print(self.pathway)
         self.target_pos = (int(self.pathway[self.pathway_index][0]), int(self.pathway[self.pathway_index][1]))
 
     def update(self):
@@ -47,7 +47,8 @@ class Monster (pygame.sprite.Sprite):
         # let us get destroyed if we have zero health remaining
         if self.current_health <= 0:
             self.kill()
-            self.pathfinding.game.current_gold += self.gold_value
+            self.pathfinding.game.current_steel += self.steel_value
+            self.is_dead = True
             return
 
         # Here we want to move our monsters position towards our target position
@@ -58,13 +59,11 @@ class Monster (pygame.sprite.Sprite):
         if self.pathway is None:
             return
         if self.pathway_index == len(self.pathway) - 1:
-            print("we have made it to our final destination")
             self.kill()
+            self.pathfinding.game.current_steel -= self.base_hit_cost
             return
 
         # first lets check to see if we are within a reasonable distance to our target
-        print('self.pos = ', self.pos)
-        print('self.target_pos = ', self.target_pos)
         self.pos = (float(self.pos[0]), float(self.pos[1]))
         self.target_pos = (float(self.target_pos[0]), float(self.target_pos[1]))
         threshold = .1
@@ -79,19 +78,19 @@ class Monster (pygame.sprite.Sprite):
         # We want to move towards the location, and our target is going to be in one of four locations
         # 1. Above us
         if self.target_pos[0] == self.pos[0] and self.target_pos[1] < self.pos[1]:
-            print("Target position is above us")
+            # print("Target position is above us")
             self.pos = (self.pos[0], self.pos[1] - self.monster_move_speed)
         # 2. To our right
         elif self.target_pos[0] > self.pos[0] and self.target_pos[1] == self.pos[1]:
-            print("Target position is to our right")
+            # print("Target position is to our right")
             self.pos = (self.pos[0] + self.monster_move_speed, self.pos[1])
         # 3. Below us
         elif self.target_pos[0] == self.pos[0] and self.target_pos[1] > self.pos[1]:
-            print("Target position is below us")
+            # print("Target position is below us")
             self.pos = (self.pos[0], self.pos[1] + self.monster_move_speed)
         # 4. To our Left
         elif self.target_pos[0] < self.pos[0] and self.target_pos[1] == self.pos[1]:
-            print("Target position is to our left")
+            # print("Target position is to our left")
             self.pos = (self.pos[0] - self.monster_move_speed, self.pos[1])
         # if none of these things our true, then we have gone off the grid
         else:

@@ -23,6 +23,7 @@ class Game:
             (pygame.display.get_desktop_sizes()[0][0], pygame.display.get_desktop_sizes()[0][1]))
 
         self.display = pygame.Surface((640, 360))
+        self.dt = 0
 
         # here we will import all the assets we need in our game at runtime
         self.assets = {
@@ -66,12 +67,14 @@ class Game:
         self.hoverables = []
 
         # Here3 is where we can initialize resources
-        self.current_gold = 300
+        self.current_steel = 300
         self.gem_cost = 60
         self.tower_cost = 150
 
         # here is where we initialize our level
         self.level = level.Level(self)
+        self.current_level = self.level.name
+        self.current_wave = self.level.current_wave
 
         # here is where we initialize our tilemap
         self.tile_size = 16
@@ -86,21 +89,9 @@ class Game:
         self.pf_start.make_start()
         self.pf_end = self.pf_grid[29][4]
         self.pf_end.make_end()
-        data_filepath = r"data"
+        self.monster_spawn_pos = None
+        self.data_filepath = r"data"
         self.render_scale = 1.0
-
-        # Here is where we load all our data that is stored in files
-        try:
-            if os.path.exists(data_filepath):
-                print('loaded tilemap successfully')
-                self.tilemap.load("data/map.json")
-                self.level.load("data/level_01.json")
-            else:
-                print("File not found, but os path exist: " + data_filepath)
-        except FileNotFoundError:
-            print("File not found: " + data_filepath)
-        except PermissionError:
-            print("Did not have permission to load file")
 
     def init_resolution(self):
         # Here we will initialize 16 x 9 ratios (My PC)
@@ -135,8 +126,15 @@ class Game:
                 else:
                     pf_algorithm(lambda: draw_pathfinding(self.display, self.pf_grid, ROWS, WIDTH),
                                  self.pf_grid, self.pf_start, self.pf_end, self)
-                if len(self.monsters) >= 1:
-                    self.monsters.sprites()[0].find_path()
+
+    def run_level(self):
+        self.level.update()
+
+    def spawn_monsters(self):
+        monster_n = monster.Monster(self.monster_spawn_pos[0], self.monster_spawn_pos[1], self.pathfinding,
+                                    self.render_scale)
+        self.monsters.add(monster_n)
+        monster_n.find_path()
 
     def build_display(self):
         self.current_build_img.set_alpha(100)
@@ -144,8 +142,12 @@ class Game:
             if self.current_build_type == 'gem':
                 tower_open = False
                 for n_tower in self.towers:
+                    print("build display thinks that there is a tower at: ", n_tower.tile_pos, " and our tile pos is ", self.tile_pos, " and the tower has_gem = ", n_tower.has_gem)
                     if self.tile_pos == n_tower.tile_pos and n_tower.has_gem == False:
                         tower_open = True
+                        print("tower is open")
+                    else:
+                        print("tower is closed")
                 if tower_open:
                     self.display.blit(self.current_build_img,
                                       (self.tile_pos[0] * self.tilemap.tile_size,
@@ -156,13 +158,13 @@ class Game:
                               (self.tile_pos[0] * self.tilemap.tile_size, self.tile_pos[1] * self.tilemap.tile_size))
 
     def build(self):
-        if self.current_build_type == 'tower' and self.current_gold >= self.tower_cost:
+        if self.current_build_type == 'tower' and self.current_steel >= self.tower_cost:
             tower_n = tower.Tower(
                 (self.tile_pos[0] * self.tilemap.tile_size, self.tile_pos[1] * self.tilemap.tile_size), self.tile_pos,
                 self.display, self)
             self.towers.add(tower_n)
-            self.current_gold -= self.tower_cost
-        if self.current_build_type == 'gem' and self.current_gold >= self.gem_cost:
+            self.current_steel -= self.tower_cost
+        if self.current_build_type == 'gem' and self.current_steel >= self.gem_cost:
             for n_tower in self.towers:
                 if self.tile_pos == n_tower.tile_pos:
                     gem_n = gem.Gem(
@@ -171,7 +173,7 @@ class Game:
                         self.display, self)
                     self.gems.add(gem_n)
                     n_tower.has_gem = True
-                    self.current_gold -= self.gem_cost
+                    self.current_steel -= self.gem_cost
 
         self.current_build_img = None
         self.current_build_type = None
@@ -184,10 +186,33 @@ class Game:
         self.game_ui.create_buttons()
         self.init_resolution()
 
+        # Here is where we load all our data that is stored in files
+        try:
+            if os.path.exists(self.data_filepath):
+                print('loaded tilemap successfully')
+                self.level.load("data/level_01.json")
+                map = self.level.map
+                self.tilemap.load("data/" + str(map) + ".json")
+            else:
+                print("File not found, but os path exist: " + self.data_filepath)
+        except FileNotFoundError:
+            print("File not found: " + self.data_filepath)
+        except PermissionError:
+            print("Did not have permission to load file")
+
         # Here is where we initialize our dynamic elements
-        monster_spawn_pos = self.pf_grid[6][22].row, self.pf_grid[6][22].col
-        monster1 = monster.Monster(monster_spawn_pos[0], monster_spawn_pos[1], self.pathfinding, self.render_scale,)
-        self.monsters.add(monster1)
+        self.monster_spawn_pos = self.pf_grid[6][22].row, self.pf_grid[6][22].col
+        for s_tower in self.level.starting_towers:
+            tower_pos = self.level.starting_towers[s_tower]
+            s_tower = tower.Tower(
+                (tower_pos[0] * self.tilemap.tile_size, tower_pos[1] * self.tilemap.tile_size), (tower_pos[0], tower_pos[1]),  # This makes me hate dynamic typing hour long trying to fix this
+                self.display, self)
+            self.towers.add(s_tower)
+            s_tower.has_gem = False
+
+        self.level.start_wave()
+        self.current_level = self.level.name
+        self.current_wave = '1'
 
         print("We Finished Start")
 
@@ -246,8 +271,7 @@ class Game:
             # Here is where we check if the monster is in range of the turret
             for p_gem in self.gems:
                 if len(self.monsters) > 0:
-                    for e_monster in self.monsters:
-                        p_gem.detect_monster(e_monster)
+                    p_gem.detect_monster()
                 else:
                     p_gem.valid_target = None
             for p_gem in self.gems:
@@ -266,6 +290,9 @@ class Game:
             # here is where we handle build mode
             if self.build_mode:
                 self.build_display()
+
+            # here is where we manage the level
+            self.run_level()
 
             # This is the event checker for each frame
             for event in pygame.event.get():
@@ -386,15 +413,19 @@ class Game:
 
                 for button in self.game_ui.buttons:
                     button.draw_button()
-                gold_text = "Current Gold:" + str(self.current_gold)
-                draw_text(self.screen, gold_text, self.text_font, (0, 0, 0), 2300, 200)
+                steel_text = "Current Steel: " + str(self.current_steel)
+                wave_text = "Current Wave: " + str(self.current_wave)
+                level_text = str(self.current_level)
+                draw_text(self.screen, steel_text, self.text_font, (0, 0, 0), 2300, 200)
+                draw_text(self.screen, level_text, self.text_font, (0, 0, 0), 2300, 250)
+                draw_text(self.screen, wave_text, self.text_font, (0, 0, 0), 2300, 300)
                 self.render_scale = 4.0
 
             # Here we display our mouse
             self.screen.blit(self.assets['mouse_pointer'], self.screen_mpos)
 
             pygame.display.update()
-            self.clock.tick(FPS)
+            self.dt = self.clock.tick(FPS) / 1000
 
 
 Game().run()

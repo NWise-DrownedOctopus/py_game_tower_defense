@@ -22,12 +22,10 @@ class Gem (pygame.sprite.Sprite):
         self.valid_target_gizmo = pygame.image.load('art/valid_target_gizmo.png')
         self.target_mask_gizmo = pygame.image.load('art/target_mask_gizmo.png')
         self.range_mask = pygame.mask.from_surface(self.target_mask_gizmo)
-        self.display_radius = True
         self.tile_size = 16
         self.target_radius_pos = [int(self.pos[0]) - (self.target_mask_gizmo.get_width() / 2) + (self.tile_size / 2),
                                   int(self.pos[1]) - (self.target_mask_gizmo.get_height() / 2) + (self.tile_size / 2)]
         self.targets = []
-        self.valid_target = None
         self.game.hoverables.append(self)
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.tile_size, self.tile_size)
 
@@ -35,10 +33,18 @@ class Gem (pygame.sprite.Sprite):
         self.surf.blit(self.gem_img, self.pos)
 
     def update(self):
-        if self.valid_target is not None:
-            if time.time() - self.last_shot > self.shot_delay:
-                self.fire(self.valid_target)
-                self.last_shot = time.time()
+        if self.game.paused:
+            self.last_shot += self.game.dt
+        if self.targets is not None and len(self.targets) > 0 and not self.game.paused:
+            print(len(self.targets))
+            current_target = self.targets[0]
+            for target in self.targets:
+                if target.pathway_index > current_target.pathway_index:
+                    current_target = target
+            if (time.time() - self.last_shot) > self.shot_delay:
+                if current_target in self.game.monsters:
+                    self.fire(current_target)
+                    self.last_shot = time.time()
 
     def on_hover(self):
         range_display_pos = (
@@ -46,23 +52,27 @@ class Gem (pygame.sprite.Sprite):
         self.valid_target_gizmo = pygame.transform.scale(self.valid_target_gizmo, (self.range * 2, self.range * 2))
         self.surf.blit(self.valid_target_gizmo, range_display_pos)
 
-    def detect_monster(self, monster):
+    def detect_monster(self):
+        # print("According to our gem, there are ", len(self.targets), " monsters in range")
+        self.targets = []
         range_display_pos = (
-        self.pos[0] + (self.tile_size / 2) - self.range, self.pos[1] + (self.tile_size / 2) - self.range)
+            self.pos[0] + (self.tile_size / 2) - self.range, self.pos[1] + (self.tile_size / 2) - self.range)
         self.target_mask_gizmo = pygame.transform.scale(self.target_mask_gizmo, (self.range * 2, self.range * 2))
         self.range_mask = pygame.mask.from_surface(self.target_mask_gizmo)
-        if self.display_radius:
+        for monster in self.game.monsters:
             # Here is where we check if the monster is in range of the turret
             if self.range_mask.overlap(monster.monster_mask,
-               (monster.screen_pos[0] - range_display_pos[0], monster.screen_pos[1] - range_display_pos[1])):
-                self.valid_target = monster
+                                       (monster.screen_pos[0] - range_display_pos[0],
+                                        monster.screen_pos[1] - range_display_pos[1])):
+                if monster not in self.targets and monster.is_dead == False:
+                    self.targets.append(monster)
             else:
-                self.valid_target = None
-        else:
-            self.valid_target = None
+                if monster in self.targets:
+                    self.targets.remove(monster)
+            if monster.is_dead:
+                self.targets.remove(monster)
 
     def fire(self, monster):
-        print(f"Gem: {self} calling fire()")
         projectile = Projectile(self.pos, monster, self.surf, self.damage)
         self.projectiles.add(projectile)
 
