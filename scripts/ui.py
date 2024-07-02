@@ -23,9 +23,13 @@ class UI:
             start_button = Button(self, 32, 32, (1250, 50), 'play', self.game.assets["play_button"])
             fast_forward_button = Button(self, 32, 32, (1350, 50), 'fast_forward',
                                          self.game.assets["fast_forward_button"])
-
-    def update(self):
-        pass
+        if self.game.screen.get_size()[0] == 1280 and self.game.screen.get_size()[1] == 720:
+            pause_button = Button(self, 32, 32, (1100, 20), 'pause', self.game.assets["pause_button"])
+            start_button = Button(self, 32, 32, (1165, 20), 'play', self.game.assets["play_button"])
+            fast_forward_button = Button(self, 32, 32, (1230, 20), 'fast_forward',
+                                         self.game.assets["fast_forward_button"])
+            tower_button = Button(self, 64, 64, (1100, 300), 'tower_button', self.game.assets["tower_button_small"])
+            gem_button = Button(self, 64, 64, (1200, 300), 'gem_button', self.game.assets["gem_button_small"])
 
     def check_click(self):
         if len(self.buttons) > 0:
@@ -44,7 +48,6 @@ class Button:
         self.pos = pos
         self.rect = pygame.Rect(pos[0], pos[1], self.width, self.height)
         self.img = img
-        # .mask = pygame.mask.from_surface(self.img)
         self.name = name
         ui.buttons.append(self)
 
