@@ -41,6 +41,12 @@ class Gem (pygame.sprite.Sprite):
             for target in self.targets:
                 if target.pathway_index > current_target.pathway_index:
                     current_target = target
+            if self.game.fast_forward:
+                if (time.time() - self.last_shot) > (self.shot_delay / 2):
+                    if current_target in self.game.monsters:
+                        self.fire(current_target)
+                        self.last_shot = time.time()
+                        return
             if (time.time() - self.last_shot) > self.shot_delay:
                 if current_target in self.game.monsters:
                     self.fire(current_target)

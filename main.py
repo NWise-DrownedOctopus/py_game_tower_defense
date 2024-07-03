@@ -59,6 +59,7 @@ class Game:
             self.screen_mpos = pygame.mouse.get_pos()
             self.tile_pos = None
             self.debug_mode = False
+            self.fast_forward = False
 
             # Here is where we can initialize the scene
             self.towers = pygame.sprite.Group()
@@ -329,7 +330,7 @@ class Game:
                                     print("we would like to pause")
                                     self.paused = True
                                 if self.game_ui.check_click() == 'fast_forward':
-                                    print("we would like to fast_forward")
+                                    self.fast_forward = not self.fast_forward
                                 if self.game_ui.check_click() == 'tower_button':
                                     print("We would like to tower")
                                     self.current_build_img = self.assets['tower'].copy()
@@ -375,6 +376,8 @@ class Game:
                             self.paused = not self.paused
                         if event.key == pygame.K_ESCAPE:
                             self.build_mode = False
+                        if event.key == pygame.K_q:
+                            self.fast_forward = not self.fast_forward
 
                 # Here we handle UI input
 
@@ -433,10 +436,14 @@ class Game:
                         button.draw_button()
                     steel_text = "Current Steel: " + str(self.current_steel)
                     wave_text = "Current Wave: " + str(self.current_wave)
+                    tower_build_text = str(self.tower_cost) + " Steel"
+                    gem_build_text = str(self.gem_cost) + " Steel"
                     level_text = str(self.current_level)
                     draw_text(self.screen, steel_text, self.text_font, (0, 0, 0), 1100, 70)
                     draw_text(self.screen, level_text, self.text_font, (0, 0, 0), 1100, 100)
                     draw_text(self.screen, wave_text, self.text_font, (0, 0, 0), 1100, 130)
+                    draw_text(self.screen, tower_build_text, self.text_font, (0, 0, 0), 1100, 375)
+                    draw_text(self.screen, gem_build_text, self.text_font, (0, 0, 0), 1195, 375)
                     self.render_scale = 2.0
 
                 # Here we display our mouse

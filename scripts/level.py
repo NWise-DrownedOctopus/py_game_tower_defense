@@ -69,13 +69,23 @@ class Level:
             # print("last_spawn time is: ", self.last_spawn)
             # print('time - last_spawn = ', time.time() - self.last_spawn)
             # print('spawn_delay = ', self.spawn_delay)
-            if (time.time() - self.last_spawn) > self.spawn_delay or self.remaining_spawns == int(self.waves[self.current_wave]):
-                if self.remaining_spawns == 0:
-                    return
-                self.game.spawn_monsters()
-                # print("Level just spawned a monster")
-                self.last_spawn = time.time()
-                self.remaining_spawns -= 1
+            if self.game.fast_forward:
+                if (time.time() - self.last_spawn) > (self.spawn_delay / 2) or self.remaining_spawns == int(
+                        self.waves[self.current_wave]):
+                    if self.remaining_spawns == 0:
+                        return
+                    self.game.spawn_monsters()
+                    # print("Level just spawned a monster")
+                    self.last_spawn = time.time()
+                    self.remaining_spawns -= 1
+            else:
+                if (time.time() - self.last_spawn) > self.spawn_delay or self.remaining_spawns == int(self.waves[self.current_wave]):
+                    if self.remaining_spawns == 0:
+                        return
+                    self.game.spawn_monsters()
+                    # print("Level just spawned a monster")
+                    self.last_spawn = time.time()
+                    self.remaining_spawns -= 1
         return
 
 

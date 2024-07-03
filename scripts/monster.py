@@ -15,6 +15,7 @@ class Monster (pygame.sprite.Sprite):
         self.monster_mask = pygame.mask.from_surface(self.monster_img)
         self.monster_move_speed = .05
         self.pathfinding = pathfinding
+        self.game = pathfinding.game
         self.target_pos = None
         self.pathway = None
         self.pathway_index = 0
@@ -41,13 +42,13 @@ class Monster (pygame.sprite.Sprite):
 
     def update(self):
         # we don't need to update anything if the game is paused, so let's return if that's the case
-        if self.pathfinding.game.paused:
+        if self.game.paused:
             return
 
         # let us get destroyed if we have zero health remaining
         if self.current_health <= 0:
             self.kill()
-            self.pathfinding.game.current_steel += self.steel_value
+            self.game.current_steel += self.steel_value
             self.is_dead = True
             return
 
@@ -60,7 +61,7 @@ class Monster (pygame.sprite.Sprite):
             return
         if self.pathway_index == len(self.pathway) - 1:
             self.kill()
-            self.pathfinding.game.current_steel -= self.base_hit_cost
+            self.game.current_steel -= self.base_hit_cost
             return
 
         # first lets check to see if we are within a reasonable distance to our target
@@ -76,24 +77,45 @@ class Monster (pygame.sprite.Sprite):
         self.target_pos = (float(self.target_pos[0]), float(self.target_pos[1]))
         # Now let us consider what we should do in the event that we are not at, or close to our target location
         # We want to move towards the location, and our target is going to be in one of four locations
-        # 1. Above us
-        if self.target_pos[0] == self.pos[0] and self.target_pos[1] < self.pos[1]:
-            # print("Target position is above us")
-            self.pos = (self.pos[0], self.pos[1] - self.monster_move_speed)
-        # 2. To our right
-        elif self.target_pos[0] > self.pos[0] and self.target_pos[1] == self.pos[1]:
-            # print("Target position is to our right")
-            self.pos = (self.pos[0] + self.monster_move_speed, self.pos[1])
-        # 3. Below us
-        elif self.target_pos[0] == self.pos[0] and self.target_pos[1] > self.pos[1]:
-            # print("Target position is below us")
-            self.pos = (self.pos[0], self.pos[1] + self.monster_move_speed)
-        # 4. To our Left
-        elif self.target_pos[0] < self.pos[0] and self.target_pos[1] == self.pos[1]:
-            # print("Target position is to our left")
-            self.pos = (self.pos[0] - self.monster_move_speed, self.pos[1])
-        # if none of these things our true, then we have gone off the grid
+        if self.game.fast_forward:
+            # 1. Above us
+            if self.target_pos[0] == self.pos[0] and self.target_pos[1] < self.pos[1]:
+                # print("Target position is above us")
+                self.pos = (self.pos[0], self.pos[1] - (self.monster_move_speed * 2))
+            # 2. To our right
+            elif self.target_pos[0] > self.pos[0] and self.target_pos[1] == self.pos[1]:
+                # print("Target position is to our right")
+                self.pos = (self.pos[0] + (self.monster_move_speed * 2), self.pos[1])
+            # 3. Below us
+            elif self.target_pos[0] == self.pos[0] and self.target_pos[1] > self.pos[1]:
+                # print("Target position is below us")
+                self.pos = (self.pos[0], self.pos[1] + (self.monster_move_speed * 2))
+            # 4. To our Left
+            elif self.target_pos[0] < self.pos[0] and self.target_pos[1] == self.pos[1]:
+                # print("Target position is to our left")
+                self.pos = (self.pos[0] - (self.monster_move_speed * 2), self.pos[1])
+            # if none of these things our true, then we have gone off the grid
+            else:
+                raise ValueError(print("Target position is out of bounds, target position is off grid"))
         else:
-            raise ValueError(print("Target position is out of bounds, target position is off grid"))
+            # 1. Above us
+            if self.target_pos[0] == self.pos[0] and self.target_pos[1] < self.pos[1]:
+                # print("Target position is above us")
+                self.pos = (self.pos[0], self.pos[1] - self.monster_move_speed)
+            # 2. To our right
+            elif self.target_pos[0] > self.pos[0] and self.target_pos[1] == self.pos[1]:
+                # print("Target position is to our right")
+                self.pos = (self.pos[0] + self.monster_move_speed, self.pos[1])
+            # 3. Below us
+            elif self.target_pos[0] == self.pos[0] and self.target_pos[1] > self.pos[1]:
+                # print("Target position is below us")
+                self.pos = (self.pos[0], self.pos[1] + self.monster_move_speed)
+            # 4. To our Left
+            elif self.target_pos[0] < self.pos[0] and self.target_pos[1] == self.pos[1]:
+                # print("Target position is to our left")
+                self.pos = (self.pos[0] - self.monster_move_speed, self.pos[1])
+            # if none of these things our true, then we have gone off the grid
+            else:
+                raise ValueError(print("Target position is out of bounds, target position is off grid"))
 
         self.screen_pos = self.pos[0] * 16, self.pos[1] * 16
