@@ -125,9 +125,9 @@ class Game:
         def run_level(self):
             self.level.update()
 
-        def spawn_monsters(self):
+        def spawn_monsters(self, m_type):
             monster_n = monster.Monster(self.monster_spawn_pos[0], self.monster_spawn_pos[1], self.pathfinding,
-                                        self.render_scale)
+                                        self.render_scale, m_type)
             self.monsters.add(monster_n)
             monster_n.find_path()
 

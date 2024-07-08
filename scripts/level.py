@@ -31,7 +31,7 @@ class Level:
         self.map = level_data['map']
 
         self.current_wave = '1'
-        self.remaining_spawns = int(self.waves[self.current_wave])
+        self.remaining_spawns = int(self.waves[self.current_wave][0])
         for key in self.waves:
             print("key: %s , type: %s" % (key, type(key)))
 
@@ -45,7 +45,7 @@ class Level:
 
     def start_wave(self):
         print(self.spawn_delay)
-        self.remaining_spawns = int(self.waves[self.current_wave])
+        self.remaining_spawns = int(self.waves[self.current_wave][0])
 
     def update(self):
         if self.game.paused:
@@ -60,21 +60,21 @@ class Level:
                 print("We should move to next wave")
                 self.current_wave = str(int(self.current_wave) + 1)
                 self.game.current_wave = self.current_wave
-                self.remaining_spawns = int(self.waves[self.current_wave])
+                self.remaining_spawns = int(self.waves[self.current_wave][0])
                 self.last_wave_start = time.time()
             if self.game.fast_forward:
                 if (time.time() - self.last_spawn) > (self.spawn_delay / 2) or self.remaining_spawns == int(
-                        self.waves[self.current_wave]):
+                        self.waves[self.current_wave][0]):
                     if self.remaining_spawns == 0:
                         return
-                    self.game.spawn_monsters()
+                    self.game.spawn_monsters(self.waves[self.current_wave][1])
                     self.last_spawn = time.time()
                     self.remaining_spawns -= 1
             else:
-                if (time.time() - self.last_spawn) > self.spawn_delay or self.remaining_spawns == int(self.waves[self.current_wave]):
+                if (time.time() - self.last_spawn) > self.spawn_delay or self.remaining_spawns == int(self.waves[self.current_wave][0]):
                     if self.remaining_spawns == 0:
                         return
-                    self.game.spawn_monsters()
+                    self.game.spawn_monsters(self.waves[self.current_wave][1])
                     self.last_spawn = time.time()
                     self.remaining_spawns -= 1
         return

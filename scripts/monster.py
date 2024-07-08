@@ -5,23 +5,39 @@ from pathfinding import Pathfinding
 
 
 class Monster (pygame.sprite.Sprite):
-    def __init__(self, x_pos, y_pos, pathfinding, render_scale, max_health=10):
+    def __init__(self, x_pos, y_pos, pathfinding, render_scale, m_type):
         super().__init__()
+        self.m_type = m_type
         self.pos = (int(x_pos), int(y_pos))
         self.screen_pos = self.pos[0] * 16 * render_scale, self.pos[1] * 16 * render_scale
-        self.max_health = max_health
-        self.current_health = 10
+
+        if self.m_type == "big":
+            self.max_health = 30
+            self.monster_img = pygame.image.load('art/centipede_big.png')
+            self.monster_move_speed = .02
+            self.steel_value = 12
+            self.base_hit_cost = 80
+        elif self.m_type == "fast":
+            self.max_health = 5
+            self.monster_img = pygame.image.load('art/centipede_fast.png')
+            self.monster_move_speed = .1
+            self.steel_value = 2
+            self.base_hit_cost = 5
+        else:
+            self.max_health = 10
+            self.monster_img = pygame.image.load('art/centipede.png')
+            self.monster_move_speed = .05
+            self.steel_value = 8
+            self.base_hit_cost = 10
+
+        self.current_health = self.max_health
         self.healthBar = HealthBar(self, self.screen_pos[0], self.screen_pos[1])
-        self.monster_img = pygame.image.load('art/centipede.png')
         self.monster_mask = pygame.mask.from_surface(self.monster_img)
-        self.monster_move_speed = .05
         self.pathfinding = pathfinding
         self.game = pathfinding.game
         self.target_pos = None
         self.pathway = None
         self.pathway_index = 0
-        self.steel_value = 8
-        self.base_hit_cost = 10
         self.is_dead = False
 
     def dmg(self, dmg):
