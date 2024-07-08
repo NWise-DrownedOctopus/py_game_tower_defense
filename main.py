@@ -3,8 +3,7 @@ import os
 
 import pygame
 
-import mainMenu
-from scripts import tower, gem, level, monster, ui
+from scripts import tower, gem, monster, ui, level
 from scripts.utils import load_image, load_images, draw_text
 from scripts.tilemap import Tilemap
 from pathfinding import Pathfinding, make_grid, draw_pathfinding
@@ -32,18 +31,7 @@ class Game:
                 'dirt': load_images("dirt"),
                 'mouse_pointer': load_image("mouse_pointer.png"),
                 'tower': load_image("tower.png"),
-                'gem': load_image("gem.png"),
-                'l_side_bar': load_image("ui/UI_L_SideBar.png"),
-                'r_side_bar': load_image("ui/UI_R_SideBar.png"),
-                'top_bar': load_image("ui/UI_TopBar.png"),
-                'bottom_bar': load_image("ui/UI_BottomBar.png"),
-                'play_button': load_image("ui/play_button.png"),
-                'pause_button': load_image("ui/pause_button.png"),
-                'fast_forward_button': load_image("ui/fast_forward_button.png"),
-                'tower_button': load_image("ui/tower_button.png"),
-                'gem_button': load_image("ui/gem_button.png"),
-                'tower_button_small': load_image("ui/tower_button_small.png"),
-                'gem_button_small': load_image("ui/gem_button_small.png")
+                'gem': load_image("gem.png")
             }
 
             self.text_font = pygame.font.SysFont("arial", 20)
@@ -76,7 +64,7 @@ class Game:
 
             # here is where we initialize our level
             self.level = level.Level(self)
-            self.current_level = self.level.name
+            self.current_level = None
             self.current_wave = self.level.current_wave
 
             # here is where we initialize our tilemap
@@ -187,17 +175,18 @@ class Game:
             self.build_mode = False
 
         def run(self):
+
             # here is where we initialize the game, before our while loop, this code only runs once
             pygame.mouse.set_visible(False)
 
-            self.game_ui.create_buttons()
+            self.game_ui.create_level_buttons(self.screen)
             self.init_resolution()
 
             # Here is where we load all our data that is stored in files
             try:
                 if os.path.exists(self.data_filepath):
                     print('loaded tilemap successfully')
-                    self.level.load("data/level_01.json")
+                    self.level.load("data/" + self.current_level)
                     map = self.level.map
                     self.tilemap.load("data/" + str(map) + ".json")
                 else:
@@ -218,7 +207,6 @@ class Game:
                 s_tower.has_gem = False
 
             self.level.start_wave()
-            self.current_level = self.level.name
             self.current_wave = '1'
 
             print("We Finished Start")
@@ -433,7 +421,7 @@ class Game:
                     pygame.draw.rect(self.screen, (200, 150, 10), pygame.Rect(32, 712, 1056, 8))
 
                     for button in self.game_ui.buttons:
-                        button.draw_button()
+                        button.draw_button(self.screen)
                     steel_text = "Current Steel: " + str(self.current_steel)
                     wave_text = "Current Wave: " + str(self.current_wave)
                     tower_build_text = str(self.tower_cost) + " Steel"

@@ -1,11 +1,13 @@
-import pygame, sys, main
-from scripts.utils import load_image, load_images, draw_text
+import pygame, sys
+from scripts.utils import load_image, draw_text
+import map
 
 mainClock = pygame.time.Clock()
 from pygame.locals import *
 pygame.init()
 pygame.display.set_caption("game base")
 screen = pygame.display.set_mode((1280, 720), 0, 32)
+clock = pygame.time.Clock()
 
 font = pygame.font.SysFont(None, 50)
 
@@ -27,15 +29,13 @@ def main_menu():
         bg = assets['background'].copy()
         screen.blit(pygame.transform.scale(bg, (1310, 720)), (-20, 0))
 
-
-
         mx, my = pygame.mouse.get_pos()
 
         button_1 = pygame.Rect(505, 605, 200, 50)
         button_2 = pygame.Rect(50, 200, 200, 50)
         if button_1.collidepoint((mx, my)):
             if click:
-                main.Game().run()
+                map.Map().run()
         if button_2.collidepoint((mx, my)):
             if click:
                 pass
@@ -58,8 +58,8 @@ def main_menu():
 
         draw_text(screen, 'Main Menu', font, (255, 255, 255), 515, 110)
 
-
         click = False
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -73,7 +73,7 @@ def main_menu():
                     click = True
 
         pygame.display.update()
-        mainClock.tick(60)
+        clock.tick(60)
 
 
 main_menu()

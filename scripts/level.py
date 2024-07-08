@@ -44,7 +44,6 @@ class Level:
         print("First Wave has ", self.remaining_spawns, " spawns")
 
     def start_wave(self):
-        # self.spawn_delay = self.wave_length / (self.waves[self.current_wave] - 1)
         print(self.spawn_delay)
         self.remaining_spawns = int(self.waves[self.current_wave])
 
@@ -53,7 +52,6 @@ class Level:
             self.last_spawn += self.game.dt
             self.last_wave_start += self.game.dt
         if not self.game.paused and not self.waves_finished:
-            # print("Wave last Start was ", time.time() - self.last_wave_start, " seconds ago")
             if (time.time() - self.last_wave_start) > self.wave_length:
                 if self.current_wave >= str(len(self.waves)):
                     self.waves_finished = True
@@ -64,18 +62,12 @@ class Level:
                 self.game.current_wave = self.current_wave
                 self.remaining_spawns = int(self.waves[self.current_wave])
                 self.last_wave_start = time.time()
-                # return
-            # print("The time is: ", time.time())
-            # print("last_spawn time is: ", self.last_spawn)
-            # print('time - last_spawn = ', time.time() - self.last_spawn)
-            # print('spawn_delay = ', self.spawn_delay)
             if self.game.fast_forward:
                 if (time.time() - self.last_spawn) > (self.spawn_delay / 2) or self.remaining_spawns == int(
                         self.waves[self.current_wave]):
                     if self.remaining_spawns == 0:
                         return
                     self.game.spawn_monsters()
-                    # print("Level just spawned a monster")
                     self.last_spawn = time.time()
                     self.remaining_spawns -= 1
             else:
@@ -83,7 +75,6 @@ class Level:
                     if self.remaining_spawns == 0:
                         return
                     self.game.spawn_monsters()
-                    # print("Level just spawned a monster")
                     self.last_spawn = time.time()
                     self.remaining_spawns -= 1
         return
