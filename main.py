@@ -4,7 +4,7 @@ import os
 import pygame
 
 from scripts import tower, gem, monster, ui, level
-from scripts.utils import load_image, load_images, draw_text
+from scripts.utils import load_image, load_images, draw_text, play_audio
 from scripts.tilemap import Tilemap
 from pathfinding import Pathfinding, make_grid, draw_pathfinding
 from pathfinding import algorithm as pf_algorithm
@@ -159,6 +159,7 @@ class Game:
                     self.display, self)
                 self.towers.add(tower_n)
                 self.current_steel -= self.tower_cost
+                play_audio('build')
             if self.current_build_type == 'gem' and self.current_steel >= self.gem_cost:
                 for n_tower in self.towers:
                     if self.tile_pos == n_tower.tile_pos:

@@ -1,7 +1,23 @@
 import os
 import pygame
 
+os.chdir('.')
+
 BASE_IMG_PATH = r"art/"
+BASE_AUDIO_PATH = r"audio/"
+pygame.mixer.init()
+
+sfx_assets = {
+    'fire': pygame.mixer.Sound(BASE_AUDIO_PATH + "laser_bolt.mp3"),
+    'build': pygame.mixer.Sound(BASE_AUDIO_PATH + "build_noise.mp3"),
+    'button': pygame.mixer.Sound(BASE_AUDIO_PATH + 'button_press.mp3'),
+    'death_1': pygame.mixer.Sound(BASE_AUDIO_PATH + 'death_noise_1.mp3'),
+    'death_2': pygame.mixer.Sound(BASE_AUDIO_PATH + 'death_noise_2.mp3')
+}
+
+
+def play_audio(sound):
+    sfx_assets[sound].play()
 
 
 def load_image(path):

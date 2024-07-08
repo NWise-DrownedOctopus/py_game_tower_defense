@@ -2,6 +2,7 @@
 # https://stackoverflow.com/questions/50348125/creating-a-auto-targeting-bullet
 import pygame
 from pygame.math import Vector2
+from scripts.utils import play_audio
 import time
 
 
@@ -81,6 +82,7 @@ class Gem (pygame.sprite.Sprite):
     def fire(self, monster):
         projectile = Projectile(self.pos, monster, self.surf, self.damage)
         self.projectiles.add(projectile)
+        play_audio('fire')
 
 
 class Projectile(pygame.sprite.Sprite):

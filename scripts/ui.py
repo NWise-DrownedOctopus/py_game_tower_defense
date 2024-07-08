@@ -1,5 +1,5 @@
 import pygame
-from scripts.utils import load_image
+from scripts.utils import load_image, play_audio
 
 
 class UI:
@@ -59,8 +59,10 @@ class UI:
                 # Check if we have a collision with the mpos point
                 if self.scene == "ow_map":
                     if button.rect.collidepoint(pygame.mouse.get_pos()[0] / 2, pygame.mouse.get_pos()[1] / 2):
+                        play_audio('button')
                         return button.name
                 if button.rect.collidepoint(pygame.mouse.get_pos()):
+                    play_audio('button')
                     return button.name
         else:
             print("No buttons were found when checking for click")

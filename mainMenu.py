@@ -1,5 +1,5 @@
 import pygame, sys
-from scripts.utils import load_image, draw_text
+from scripts.utils import load_image, draw_text, play_audio
 import map
 
 mainClock = pygame.time.Clock()
@@ -35,6 +35,7 @@ def main_menu():
         button_2 = pygame.Rect(50, 200, 200, 50)
         if button_1.collidepoint((mx, my)):
             if click:
+                play_audio('button')
                 map.Map().run()
         if button_2.collidepoint((mx, my)):
             if click:
