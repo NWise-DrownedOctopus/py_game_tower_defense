@@ -10,6 +10,7 @@ class Monster (pygame.sprite.Sprite):
         self.m_type = m_type
         self.pos = (int(x_pos), int(y_pos))
         self.screen_pos = self.pos[0] * 16 * render_scale, self.pos[1] * 16 * render_scale
+        self.current_rotation = 0
 
         if self.m_type == "big":
             self.max_health = 30
@@ -36,6 +37,7 @@ class Monster (pygame.sprite.Sprite):
         self.pathfinding = pathfinding
         self.game = pathfinding.game
         self.target_pos = None
+        self.target_rotation = 0
         self.pathway = None
         self.pathway_index = 0
         self.is_dead = False
@@ -46,6 +48,11 @@ class Monster (pygame.sprite.Sprite):
             del self
 
     def draw(self, surface):
+        print("Current current rotation = ", self.current_rotation)
+        if self.current_rotation != self.target_rotation:
+            delta_rotation = (self.current_rotation - self.target_rotation)
+            self.monster_img = pygame.transform.rotate(self.monster_img, delta_rotation)
+            self.current_rotation = self.target_rotation
         surface.blit(self.monster_img, self.screen_pos)
         if self.current_health < self.max_health:
             self.healthBar.draw(surface, self.screen_pos)
@@ -100,18 +107,22 @@ class Monster (pygame.sprite.Sprite):
             # 1. Above us
             if self.target_pos[0] == self.pos[0] and self.target_pos[1] < self.pos[1]:
                 # print("Target position is above us")
+                self.target_rotation = 270
                 self.pos = (self.pos[0], self.pos[1] - (self.monster_move_speed * 2))
             # 2. To our right
             elif self.target_pos[0] > self.pos[0] and self.target_pos[1] == self.pos[1]:
                 # print("Target position is to our right")
+                self.target_rotation = 0
                 self.pos = (self.pos[0] + (self.monster_move_speed * 2), self.pos[1])
             # 3. Below us
             elif self.target_pos[0] == self.pos[0] and self.target_pos[1] > self.pos[1]:
                 # print("Target position is below us")
+                self.target_rotation = 90
                 self.pos = (self.pos[0], self.pos[1] + (self.monster_move_speed * 2))
             # 4. To our Left
             elif self.target_pos[0] < self.pos[0] and self.target_pos[1] == self.pos[1]:
                 # print("Target position is to our left")
+                self.target_rotation = 180
                 self.pos = (self.pos[0] - (self.monster_move_speed * 2), self.pos[1])
             # if none of these things our true, then we have gone off the grid
             else:
@@ -120,21 +131,27 @@ class Monster (pygame.sprite.Sprite):
             # 1. Above us
             if self.target_pos[0] == self.pos[0] and self.target_pos[1] < self.pos[1]:
                 # print("Target position is above us")
+                self.target_rotation = 270
                 self.pos = (self.pos[0], self.pos[1] - self.monster_move_speed)
             # 2. To our right
             elif self.target_pos[0] > self.pos[0] and self.target_pos[1] == self.pos[1]:
                 # print("Target position is to our right")
+                self.target_rotation = 0
                 self.pos = (self.pos[0] + self.monster_move_speed, self.pos[1])
             # 3. Below us
             elif self.target_pos[0] == self.pos[0] and self.target_pos[1] > self.pos[1]:
                 # print("Target position is below us")
+                self.target_rotation = 90
                 self.pos = (self.pos[0], self.pos[1] + self.monster_move_speed)
             # 4. To our Left
             elif self.target_pos[0] < self.pos[0] and self.target_pos[1] == self.pos[1]:
                 # print("Target position is to our left")
+                self.target_rotation = 180
                 self.pos = (self.pos[0] - self.monster_move_speed, self.pos[1])
             # if none of these things our true, then we have gone off the grid
             else:
                 raise ValueError(print("Target position is out of bounds, target position is off grid"))
 
         self.screen_pos = self.pos[0] * 16, self.pos[1] * 16
+
+
