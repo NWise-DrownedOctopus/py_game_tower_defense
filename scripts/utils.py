@@ -5,7 +5,10 @@ os.chdir('.')
 
 BASE_IMG_PATH = r"art/"
 BASE_AUDIO_PATH = r"audio/"
+pygame.init()
 pygame.mixer.init()
+pygame.display.set_caption("tower defense game")
+pygame.display.set_mode((1280, 720))
 
 sfx_assets = {
     'fire': pygame.mixer.Sound(BASE_AUDIO_PATH + "laser_bolt.mp3"),
@@ -18,6 +21,23 @@ sfx_assets = {
     'BGM_Game_2': BASE_AUDIO_PATH + 'BGM_Game_2.wav'
 }
 
+vfx_assets = {
+    'projectile_img_sheet': [pygame.image.load('art/round_bullets_small.png').convert_alpha(), 6, 8]
+}
+
+
+def get_sheet_dim(sheet):
+    max_frame_width = vfx_assets[sheet][1]
+    max_frame_height = vfx_assets[sheet][2]
+    return max_frame_width, max_frame_height
+
+
+def get_image(sheet, frame, width, height):
+    image = pygame.Surface((width, height)).convert_alpha()
+    image.blit(vfx_assets[sheet][0], (0, 0), ((frame[0] * width), (frame[1] * width), width, height))
+    image.set_colorkey((0, 0, 0))
+
+    return image
 
 def play_audio(sound, loop=False):
     if loop:
