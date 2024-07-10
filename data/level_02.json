@@ -1,1 +1,1 @@
-{"name": "Level 1", "waves": {"1": 10, "2":  10, "3": 10}, "starting_towers": {"1": [10, 11]}, "starting_gems": {}, "map":  "map_01"}
+{"name": "Level 2", "waves": {"1": [3, "normal"], "2":  [3, "normal"], "3": [2, "big"]}, "starting_towers": {"1": [10, 11]}, "starting_gems": {}, "map":  "map_01"}

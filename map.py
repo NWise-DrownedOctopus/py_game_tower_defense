@@ -9,7 +9,7 @@ FPS = 60
 
 class Map:
     def __init__(self):
-        self.game = main.Game()
+        self.game = None
         self.levels = None
         self.bg_color = (25, 25, 25)
         self.clock = pygame.time.Clock()
@@ -77,6 +77,7 @@ class Map:
                             self.selected_level = '3'
                         if self.game_ui.check_click() == 'play' and self.selected_level is not None:
                             print("We tried to enter level")
+                            self.game = main.Game()
                             self.game.current_level = self.levels[self.selected_level][0]
                             self.game.run()
 

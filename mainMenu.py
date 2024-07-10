@@ -5,6 +5,7 @@ import map
 mainClock = pygame.time.Clock()
 from pygame.locals import *
 pygame.init()
+pygame.mixer.init(44100, -16, 2, 2048)
 pygame.display.set_caption("game base")
 screen = pygame.display.set_mode((1280, 720), 0, 32)
 clock = pygame.time.Clock()
@@ -25,6 +26,7 @@ assets = {
 }
 
 def main_menu():
+    play_audio('BGM_Menu', True)
     while True:
         bg = assets['background'].copy()
         screen.blit(pygame.transform.scale(bg, (1310, 720)), (-20, 0))

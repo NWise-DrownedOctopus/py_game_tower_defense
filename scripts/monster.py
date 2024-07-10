@@ -48,7 +48,7 @@ class Monster (pygame.sprite.Sprite):
             del self
 
     def draw(self, surface):
-        print("Current current rotation = ", self.current_rotation)
+        # print("Current current rotation = ", self.current_rotation)
         if self.current_rotation != self.target_rotation:
             delta_rotation = (self.current_rotation - self.target_rotation)
             self.monster_img = pygame.transform.rotate(self.monster_img, delta_rotation)

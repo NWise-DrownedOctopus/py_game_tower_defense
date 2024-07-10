@@ -29,11 +29,12 @@ class Level:
         self.starting_towers = level_data['starting_towers']
         self.starting_gems = level_data['starting_gems']
         self.map = level_data['map']
+        self.waves_finished = False
+        self.game.level_ended = False
+        self.game.paused = True
 
         self.current_wave = '1'
         self.remaining_spawns = int(self.waves[self.current_wave][0])
-        for key in self.waves:
-            print("key: %s , type: %s" % (key, type(key)))
 
         print("Level Name: ", self.name)
         print("Waves: ", self.waves)

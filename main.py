@@ -17,6 +17,8 @@ class Game:
         def __init__(self):
             pygame.init()
             pygame.display.set_caption("tower defense game")
+            # here is where we initialize the game, before our while loop, this code only runs once
+            pygame.mouse.set_visible(False)
 
             self.screen = pygame.display.set_mode(
                 (1280, 720))
@@ -48,6 +50,7 @@ class Game:
             self.tile_pos = None
             self.debug_mode = False
             self.fast_forward = False
+            self.level_ended = False
 
             # Here is where we can initialize the scene
             self.towers = pygame.sprite.Group()
@@ -104,6 +107,8 @@ class Game:
                 self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
 
         def run_pathfinding(self):
+            if self.level_ended:
+                return
             if self.game_ui.check_click() == 'play':
                 print("we would like to play")
                 if self.debug_mode:
@@ -124,6 +129,10 @@ class Game:
 
         def run_level(self):
             self.level.update()
+
+        def end_level(self):
+            self.level_ended = True
+            print("The Level has ended")
 
         def spawn_monsters(self, m_type):
             monster_n = monster.Monster(self.monster_spawn_pos[0], self.monster_spawn_pos[1], self.pathfinding,
@@ -176,9 +185,9 @@ class Game:
             self.build_mode = False
 
         def run(self):
-
-            # here is where we initialize the game, before our while loop, this code only runs once
-            pygame.mouse.set_visible(False)
+            # here we manage our BGM
+            play_audio('BGM_Game_1', True)
+            play_audio('BGM_Game_2', True)
 
             self.game_ui.create_level_buttons(self.screen)
             self.init_resolution()
@@ -208,12 +217,16 @@ class Game:
                 s_tower.has_gem = False
 
             self.level.start_wave()
+            self.fast_forward = False
             self.current_wave = '1'
 
             print("We Finished Start")
 
             # Here we enter the game loop, it is called "every frame"
             while True:
+                if self.level.waves_finished and len(self.monsters) == 0:
+                    self.end_level()
+                    break
                 # Here is where we can draw our background
                 self.screen.fill(self.bg_color)
                 self.display.fill(self.bg_color)
