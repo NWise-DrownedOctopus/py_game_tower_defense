@@ -4,12 +4,12 @@ import sys
 
 import pygame
 
-from scripts.utils import load_image, load_images
+from scripts.utils import load_image, load_images, load_sheet_images
 from scripts.tilemap import Tilemap
 
 FPS = 60
 
-RENDER_SCALE = 4
+RENDER_SCALE = 2
 
 
 class Editor:
@@ -19,37 +19,23 @@ class Editor:
 
         self.SCREEN_WIDTH = pygame.display.get_desktop_sizes()[0][0]
         self.SCREEN_HEIGHT = pygame.display.get_desktop_sizes()[0][1]
-        print(pygame.display.get_desktop_sizes()[0][0], pygame.display.get_desktop_sizes()[0][1])
+        self.screen = pygame.display.set_mode((1280, 720))
+        self.display = pygame.Surface((1280, 720))
 
         self.bg_color = (25, 25, 25)
 
-        # screen is now a "Surface" as that is the return type from setting the display mode
-        self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
-
-        # screen is now a "Surface" as that is the return type from setting the display mode
-        self.screen = pygame.display.set_mode(
-            (pygame.display.get_desktop_sizes()[0][0], pygame.display.get_desktop_sizes()[0][1]))
-
-        # Here we will initialize 16 x 9 ratios (My PC)
-        if self.screen.get_size()[0] == 2560 and self.screen.get_size()[1] == 1440:
-            self.display = pygame.Surface((640, 360))
-
-        # Here we will initialize 16 x 10 ratios (My Laptop)
-        if self.screen.get_size()[0] == 1440 and self.screen.get_size()[1] == 900:
-            self.display = pygame.Surface((640, 360))
-
         self.clock = pygame.time.Clock()
 
-        self.tile_size = 16
+        self.tile_size = 32
 
         # here we will import all the assets we need in our game at runtime
         self.assets = {
-            'grass': load_images("grass"),
-            'dirt': load_images("dirt")
+            'space_bg': load_images("/space_bg"),
+            'pathway': load_images("/pathway")
         }
 
         # here is where we initialize our tilemap
-        self.tilemap = Tilemap(self, tile_size=16)
+        self.tilemap = Tilemap(self, tile_size=32)
         filepath = r"data"
         try:
             if os.path.exists(filepath):
@@ -83,7 +69,7 @@ class Editor:
 
             mpos = pygame.mouse.get_pos()
             mpos = (mpos[0] / RENDER_SCALE, mpos[1] / RENDER_SCALE)
-            tile_pos = (int(mpos[0] // self.tilemap.tile_size), int(mpos[1] // self.tilemap.tile_size))
+            tile_pos = (int(mpos[0] // self.tilemap.tile_size * RENDER_SCALE), int(mpos[1] // self.tilemap.tile_size * RENDER_SCALE))
 
             # here we will preview our tile placement
             if self.on_grid:

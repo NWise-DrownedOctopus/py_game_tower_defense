@@ -8,7 +8,7 @@ class Tilemap:
     and so that we have plenty of room for UI on the sides of the screen
     """
 
-    def __init__(self, game, tile_size=16):
+    def __init__(self, game, tile_size):
         self.game = game
         self.tile_size = tile_size
         self.tilemap = {}

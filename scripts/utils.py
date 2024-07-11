@@ -21,8 +21,9 @@ sfx_assets = {
     'BGM_Game_2': BASE_AUDIO_PATH + 'BGM_Game_2.wav'
 }
 
-vfx_assets = {
-    'projectile_img_sheet': [pygame.image.load('art/round_bullets_small.png').convert_alpha(), 6, 8]
+sheet_assets = {
+    'projectile_img_sheet': [pygame.image.load('art/round_bullets_small.png').convert_alpha(), 6, 8],
+    'space_ground_tiles': [pygame.image.load('art/background_tiles.png').convert_alpha(), 32, 6, 12]
 }
 
 
@@ -36,8 +37,24 @@ def get_image(sheet, frame, width, height):
     image = pygame.Surface((width, height)).convert_alpha()
     image.blit(vfx_assets[sheet][0], (0, 0), ((frame[0] * width), (frame[1] * width), width, height))
     image.set_colorkey((0, 0, 0))
-
     return image
+
+
+def load_sheet_images(sheet):
+    size = sheet_assets[sheet][1]
+    rows = sheet_assets[sheet][2]
+    cols = sheet_assets[sheet][3]
+    images = []
+    for row in range(1, rows):
+        for col in range(1, cols):
+            image = pygame.Surface((size, size)).convert_alpha()
+            image.blit(sheet_assets[sheet][0], (0, 0), ((row * size), (col * size), size, size))
+            image.set_colorkey((0, 0, 0))
+            images.append(image)
+            print("row = {} col = {}".format(row, col))
+    print(images)
+    return images
+
 
 def play_audio(sound, loop=False):
     if loop:
@@ -59,6 +76,7 @@ def load_images(path):
     images = []
     for img_name in os.listdir(BASE_IMG_PATH + path):
         images.append(load_image(path + '/' + img_name))
+    print(images)
     return images
 
 

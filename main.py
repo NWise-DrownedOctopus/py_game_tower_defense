@@ -23,7 +23,7 @@ class Game:
             self.screen = pygame.display.set_mode(
                 (1280, 720))
 
-            self.display = pygame.Surface((640, 360))
+            self.display = pygame.Surface((1280, 720))
             self.dt = 0
 
             # here we will import all the assets we need in our game at runtime
@@ -31,6 +31,8 @@ class Game:
                 'player': load_image("player.png"),
                 'grass': load_images("grass"),
                 'dirt': load_images("dirt"),
+                'pathway': load_images("pathway"),
+                'space_bg': load_images("space_bg"),
                 'mouse_pointer': load_image("mouse_pointer.png"),
                 'tower': load_image("tower.png"),
                 'gem': load_image("gem.png")
@@ -71,7 +73,7 @@ class Game:
             self.current_wave = self.level.current_wave
 
             # here is where we initialize our tilemap
-            self.tile_size = 16
+            self.tile_size = 32
             self.tilemap = Tilemap(self,  self.tile_size)
             self.pathfinding = Pathfinding(self)
             self.game_ui = ui.UI(self)
@@ -250,6 +252,8 @@ class Game:
                     self.mpos = ((self.screen_mpos[0] / self.render_scale), (self.screen_mpos[1] / self.render_scale))
                     self.tile_pos = (
                     int(self.mpos[0] // self.tilemap.tile_size), int(self.mpos[1] // self.tilemap.tile_size))
+
+                print(self.tile_pos)
 
                 # Here we are making sure our tile_position doesn't go out of bounds of the current game display area
                 while self.tile_pos is not None:
