@@ -87,7 +87,7 @@ class Game:
             self.pf_end.make_end()
             self.monster_spawn_pos = None
             self.data_filepath = r"data"
-            self.render_scale = 1.0
+            self.render_scale = 2.0
 
         def init_resolution(self):
             # Here we will initialize 16 x 9 ratios (My PC)
@@ -104,7 +104,7 @@ class Game:
             elif self.screen.get_size()[0] == 1280 and self.screen.get_size()[1] == 720:
                 print("Small screen detected")
                 self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 0))
-                self.render_scale = 1.0
+                self.render_scale = 2.0
             else:
                 self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
 
@@ -156,17 +156,18 @@ class Game:
                             print("tower is closed")
                     if tower_open:
                         self.display.blit(self.current_build_img,
-                                          (self.tile_pos[0] * self.tilemap.tile_size,
-                                           self.tile_pos[1] * self.tilemap.tile_size))
+                                          (self.tile_pos[0] * self.tilemap.tile_size * self.render_scale,
+                                           self.tile_pos[1] * self.tilemap.tile_size * self.render_scale))
+                        return
                     else:
                         return
                 self.display.blit(self.current_build_img,
-                                  (self.tile_pos[0] * self.tilemap.tile_size, self.tile_pos[1] * self.tilemap.tile_size))
+                                  (self.tile_pos[0] * self.tilemap.tile_size * self.render_scale, self.tile_pos[1] * self.tilemap.tile_size * self.render_scale))
 
         def build(self):
             if self.current_build_type == 'tower' and self.current_steel >= self.tower_cost:
                 tower_n = tower.Tower(
-                    (self.tile_pos[0] * self.tilemap.tile_size, self.tile_pos[1] * self.tilemap.tile_size), self.tile_pos,
+                    (self.tile_pos[0] * self.tilemap.tile_size * self.render_scale, self.tile_pos[1] * self.tilemap.tile_size * self.render_scale), self.tile_pos,
                     self.display, self)
                 self.towers.add(tower_n)
                 self.current_steel -= self.tower_cost
@@ -175,7 +176,7 @@ class Game:
                 for n_tower in self.towers:
                     if self.tile_pos == n_tower.tile_pos:
                         gem_n = gem.Gem(
-                            (self.tile_pos[0] * self.tilemap.tile_size, self.tile_pos[1] * self.tilemap.tile_size),
+                            (self.tile_pos[0] * self.tilemap.tile_size * self.render_scale, self.tile_pos[1] * self.tilemap.tile_size * self.render_scale),
                             n_tower,
                             self.display, self)
                         self.gems.add(gem_n)
@@ -254,6 +255,7 @@ class Game:
                     int(self.mpos[0] // self.tilemap.tile_size), int(self.mpos[1] // self.tilemap.tile_size))
 
                 print(self.tile_pos)
+                print(self.screen_mpos)
 
                 # Here we are making sure our tile_position doesn't go out of bounds of the current game display area
                 while self.tile_pos is not None:
