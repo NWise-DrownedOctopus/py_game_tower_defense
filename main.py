@@ -10,8 +10,8 @@ from pathfinding import Pathfinding, make_grid, draw_pathfinding
 from pathfinding import algorithm as pf_algorithm
 
 FPS = 60
-WIDTH = 640
-ROWS = 40
+WIDTH = 1280
+ROWS = 34
 
 class Game:
         def __init__(self):
@@ -81,10 +81,10 @@ class Game:
             self.pf_started = False
 
             # here we manage pathfinding initialization
-            self.pf_start = self.pf_grid[6][21]
-            self.pf_start.make_start()
-            self.pf_end = self.pf_grid[29][4]
-            self.pf_end.make_end()
+            self.pf_start = None
+            # self.pf_start.make_start()
+            self.pf_end = None
+            # self.pf_end.make_end()
             self.monster_spawn_pos = None
             self.data_filepath = r"data"
             self.render_scale = 2.0
@@ -112,7 +112,6 @@ class Game:
             if self.level_ended:
                 return
             if self.game_ui.check_click() == 'play':
-                print("we would like to play")
                 if self.debug_mode:
                     self.pathfinding.update(True)
                 else:
@@ -137,6 +136,7 @@ class Game:
             print("The Level has ended")
 
         def spawn_monsters(self, m_type):
+            print(self.monster_spawn_pos[0], self.monster_spawn_pos[1])
             monster_n = monster.Monster(self.monster_spawn_pos[0], self.monster_spawn_pos[1], self.pathfinding,
                                         self.render_scale, m_type)
             self.monsters.add(monster_n)
@@ -210,11 +210,10 @@ class Game:
                 print("Did not have permission to load file")
 
             # Here is where we initialize our dynamic elements
-            self.monster_spawn_pos = self.pf_grid[6][22].row, self.pf_grid[6][22].col
             for s_tower in self.level.starting_towers:
                 tower_pos = self.level.starting_towers[s_tower]
                 s_tower = tower.Tower(
-                    (tower_pos[0] * self.tilemap.tile_size, tower_pos[1] * self.tilemap.tile_size), (tower_pos[0], tower_pos[1]),  # This makes me hate dynamic typing hour long trying to fix this
+                    (tower_pos[0] * self.tilemap.tile_size * 2, tower_pos[1] * self.tilemap.tile_size * 2), (tower_pos[0], tower_pos[1]),  # This makes me hate dynamic typing hour long trying to fix this
                     self.display, self)
                 self.towers.add(s_tower)
                 s_tower.has_gem = False
@@ -222,6 +221,19 @@ class Game:
             self.level.start_wave()
             self.fast_forward = False
             self.current_wave = '1'
+            self.pathfinding.update()
+            spawn_pos = self.level.monster_spawn_pos["1"]
+            base_pos = self.level.base_pos
+            self.pf_start = self.pf_grid[spawn_pos[0]][spawn_pos[1]]
+            self.monster_spawn_pos = spawn_pos
+            self.pf_start.make_start()
+            self.pf_end = self.pf_grid[base_pos[0]][base_pos[1]]
+            self.pf_end.make_end()
+            for row in self.pf_grid:
+                for tile in row:
+                    tile.update_neighbors(self.pf_grid)
+            pf_algorithm(lambda: draw_pathfinding(self.display, self.pf_grid, ROWS, WIDTH),
+                         self.pf_grid, self.pf_start, self.pf_end, self)
 
             print("We Finished Start")
 
@@ -254,8 +266,8 @@ class Game:
                     self.tile_pos = (
                     int(self.mpos[0] // self.tilemap.tile_size), int(self.mpos[1] // self.tilemap.tile_size))
 
-                print(self.tile_pos)
-                print(self.screen_mpos)
+                # print(self.tile_pos)
+                # print(self.screen_mpos)
 
                 # Here we are making sure our tile_position doesn't go out of bounds of the current game display area
                 while self.tile_pos is not None:
@@ -275,7 +287,7 @@ class Game:
 
                 # Here is where we manage pathfinding
                 if self.debug_mode:
-                    self.pathfinding.update(True)
+                    draw_pathfinding(self.display, self.pf_grid, ROWS, WIDTH)
 
                 # Here is where we draw our static elements to the screen
                 for player_tower in self.towers:
@@ -299,7 +311,7 @@ class Game:
 
                 # Here we handle display changes for hovering gout mouse over it
                 for hoverable in self.hoverables:
-                    if hoverable.rect.collidepoint(self.mpos):
+                    if hoverable.rect.collidepoint(self.screen_mpos):
                         hoverable.on_hover()
 
                 # Here we update our projectiles

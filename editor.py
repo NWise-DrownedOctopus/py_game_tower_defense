@@ -69,11 +69,12 @@ class Editor:
 
             mpos = pygame.mouse.get_pos()
             mpos = (mpos[0] / RENDER_SCALE, mpos[1] / RENDER_SCALE)
-            tile_pos = (int(mpos[0] // self.tilemap.tile_size * RENDER_SCALE), int(mpos[1] // self.tilemap.tile_size * RENDER_SCALE))
+            tile_pos = (int(mpos[0] // self.tilemap.tile_size), int(mpos[1] // self.tilemap.tile_size))
+            print(tile_pos)
 
             # here we will preview our tile placement
             if self.on_grid:
-                self.display.blit(current_tile, (tile_pos[0] * self.tilemap.tile_size, tile_pos[1] * self.tilemap.tile_size))
+                self.display.blit(current_tile, (tile_pos[0] * self.tilemap.tile_size * RENDER_SCALE, tile_pos[1] * self.tilemap.tile_size * RENDER_SCALE))
             else:
                 self.display.blit(current_tile, mpos)
 

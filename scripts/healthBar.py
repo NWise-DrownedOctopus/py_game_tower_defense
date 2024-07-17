@@ -8,7 +8,7 @@ class HealthBar:
     health_color = pygame.Color(0, 255, 0)
 
     def __init__(self, monster_target, obj_x=0, obj_y=0, v_offset=1, h_offset=3):
-        if obj_x == 0 or obj_y == 0:
+        if obj_x == 0 and obj_y == 0:
             raise ValueError("Do we not have a target for the health bar?")
         self.position = (obj_x, obj_y - v_offset)
         self.monster_target = monster_target

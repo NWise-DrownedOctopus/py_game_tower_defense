@@ -16,13 +16,13 @@ class Gem (pygame.sprite.Sprite):
         self.projectiles = pygame.sprite.Group()
         self.last_shot = time.time()
         self.shot_delay = 1
-        self.range = 80
+        self.range = 100
         self.damage = 4
         self.game = game
         self.valid_target_gizmo = pygame.image.load('art/valid_target_gizmo.png')
         self.target_mask_gizmo = pygame.image.load('art/target_mask_gizmo.png')
         self.range_mask = pygame.mask.from_surface(self.target_mask_gizmo)
-        self.tile_size = 16
+        self.tile_size = 32
         self.target_radius_pos = [int(self.pos[0]) - (self.target_mask_gizmo.get_width() / 2) + (self.tile_size / 2),
                                   int(self.pos[1]) - (self.target_mask_gizmo.get_height() / 2) + (self.tile_size / 2)]
         self.targets = []
@@ -53,6 +53,7 @@ class Gem (pygame.sprite.Sprite):
                     self.last_shot = time.time()
 
     def on_hover(self):
+        print("on_hover is being called")
         range_display_pos = (
             self.pos[0] + (self.tile_size / 2) - self.range, self.pos[1] + (self.tile_size / 2) - self.range)
         self.valid_target_gizmo = pygame.transform.scale(self.valid_target_gizmo, (self.range * 2, self.range * 2))
@@ -101,16 +102,17 @@ class Projectile(pygame.sprite.Sprite):
         self.position = Vector2(start_pos)
         self.direction = (target.screen_pos[0], target.screen_pos[1]) - self.position
         self.dmg = damage
-        radius, angle = self.direction.as_polar()
-        self.velocity = self.direction.normalize() * 11
+        self.velocity = None
         self.projectile_mask = pygame.mask.from_surface(self.img)
 
     def update(self):
         if self.gem.game.paused:
             self.screen_surface.blit(self.img, self.position)
             return
-        self.direction = (self.target.screen_pos[0], self.target.screen_pos[1]) - self.position
-        self.velocity = self.direction.normalize() * 2
+        self.direction = (self.target.screen_pos[0] + 16, self.target.screen_pos[1] + 16) - self.position
+        self.velocity = self.direction.normalize() * 4
+        if self.gem.game.fast_forward:
+            self.velocity = self.direction.normalize() * 8
         new_position = (self.position[0] + self.velocity[0], self.position[1] + self.velocity[1])
         self.position = Vector2(new_position)
         self.rect.center = new_position  # And the rect.

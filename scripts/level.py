@@ -18,6 +18,8 @@ class Level:
         self.remaining_spawns = 0
         self.waves_finished = False
         self.map = None
+        self.monster_spawn_pos = None
+        self.base_pos = None
 
     def load(self, path):
         f = open(path, 'r')
@@ -32,6 +34,8 @@ class Level:
         self.waves_finished = False
         self.game.level_ended = False
         self.game.paused = True
+        self.monster_spawn_pos = level_data['monster_spawn_pos']
+        self.base_pos = level_data['base_pos']
 
         self.current_wave = '1'
         self.remaining_spawns = int(self.waves[self.current_wave][0])

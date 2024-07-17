@@ -28,14 +28,14 @@ sheet_assets = {
 
 
 def get_sheet_dim(sheet):
-    max_frame_width = vfx_assets[sheet][1]
-    max_frame_height = vfx_assets[sheet][2]
+    max_frame_width = sheet_assets[sheet][1]
+    max_frame_height = sheet_assets[sheet][2]
     return max_frame_width, max_frame_height
 
 
 def get_image(sheet, frame, width, height):
     image = pygame.Surface((width, height)).convert_alpha()
-    image.blit(vfx_assets[sheet][0], (0, 0), ((frame[0] * width), (frame[1] * width), width, height))
+    image.blit(sheet_assets[sheet][0], (0, 0), ((frame[0] * width), (frame[1] * width), width, height))
     image.set_colorkey((0, 0, 0))
     return image
 

@@ -8,9 +8,10 @@ from scripts.utils import load_images
 from scripts.tilemap import Tilemap
 
 FPS = 60
-WIDTH = 640
-ROWS = 40
-RENDER_SCALE = 4
+WIDTH = 1280
+ROWS = 22
+COLS = 34
+RENDER_SCALE = 2
 
 RED = (190, 47, 66)
 GREEN = (100, 160, 63)
@@ -34,6 +35,7 @@ class Tile:
         self.neighbors = []
         self.width = width
         self.total_rows = total_rows
+        print("Tile at ({},{})".format(self.row, self.col))
 
     def get_pos(self):
         return self.row, self.col
@@ -75,7 +77,7 @@ class Tile:
         self.color = PURPLE
 
     def draw(self, surf):
-        pygame.draw.circle(surf, self.color, (self.x + 8, self.y + 8), 3)
+        pygame.draw.circle(surf, self.color, (self.x + 16, self.y + 16), 6)
 
     def update_neighbors(self, grid):
         self.neighbors = []
@@ -103,13 +105,13 @@ def h(t1, t2):
 
 def make_grid(rows, width):
     grid = []
-    gap = width // rows
-    for i in range(rows):
+    cols = 34
+    # gap = width // rows
+    for i in range(cols):
         grid.append([])
         for j in range(rows):
-            tile = Tile(i, j, gap,  rows)
+            tile = Tile(i, j, 32,  rows)
             grid[i].append(tile)
-
     return grid
 
 
@@ -123,6 +125,7 @@ def reconstruct_path(came_from, current, draw, visualize=False):
         pathway.append(current)
     for path in pathway:
         pass
+    print("reconstruct_path, pathway: ", pathway)
     return pathway
 
 
@@ -139,6 +142,7 @@ def algorithm(draw, grid, start, end, game, visualize=False):
     open_set_hash = {start}
 
     while not open_set.empty():
+        print("While not open_set.empty()")
         for event in pygame.event.get():
             # This is where we make sure the game breaks out of the loop when the player wishes to exit
             if event.type == pygame.QUIT:
@@ -149,17 +153,17 @@ def algorithm(draw, grid, start, end, game, visualize=False):
         open_set_hash.remove(current)
 
         if current == end:
+            print("current == end")
             if game.pathfinding_mode:
                 game.pathfinding.pathway = reconstruct_path(came_from, end, draw, True)
+                print("We have put a pathway into our pathfinding to be used my monsters via our algorithm script")
             else:
                 game.pathfinding.pathway = reconstruct_path(came_from, end, draw)
-
             end.make_end()
             return True  # make path
-
         for neighbor in current.neighbors:
+            print("We are checking neighbor in current.neighbors")
             temp_g_score = g_score[current] + 1
-
             if temp_g_score < g_score[neighbor]:
                 came_from[neighbor] = current
                 g_score[neighbor] = temp_g_score
@@ -171,19 +175,10 @@ def algorithm(draw, grid, start, end, game, visualize=False):
                     neighbor.make_open()
             if visualize:
                 draw()
-
         if current != start:
             current.make_closed()
-
+    print("Here is where we broke out of algorithm")
     return False
-
-
-def draw_grid(surf, rows, width):
-    gap = width // rows
-    for i in range(rows):
-        pygame.draw.line(surf, GREY, (0, i * gap), (width, i * gap))
-        for j in range(rows):
-            pygame.draw.line(surf, GREY, (j * gap, 0), (j * gap, width))
 
 
 def draw_pathfinding(surf, grid, rows, width):
@@ -193,16 +188,12 @@ def draw_pathfinding(surf, grid, rows, width):
 
 
 def check_tilemap(tilemap, grid):
-    for i in range(1, ROWS):
+    for i in range(COLS):
         for j in range(ROWS):
             path_tile_pos = (i, j)
             if tilemap.get_tile(path_tile_pos) is not None:
-                if tilemap.get_tile(path_tile_pos)["type"] != "dirt":
+                if tilemap.get_tile(path_tile_pos)["type"] != "pathway":
                     grid[i][j].make_barrier()
-            else:
-                grid[i][j].make_barrier()
-            if tilemap.get_tile(path_tile_pos) is None:
-                grid[i][j].make_barrier()
 
 
 class Pathfinding:
@@ -211,10 +202,8 @@ class Pathfinding:
         self.pathway = []
 
     def update(self, visualize=False):
-        # NOTE:
-        # THIS is getting called every frame I'm pretty sure, and I think we could just call this once at the beginning,
-        # and then once anytime the path changes
         check_tilemap(self.game.tilemap, self.game.pf_grid)
         # Here we enter the game loop, it is called "every frame"
         if visualize:
-            draw_pathfinding(self.game.display, self.game.pf_grid, ROWS, WIDTH)
+            # draw_pathfinding(self.game.display, self.game.pf_grid, ROWS, WIDTH)
+            pass

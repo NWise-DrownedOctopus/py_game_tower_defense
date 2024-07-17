@@ -9,24 +9,24 @@ class Monster (pygame.sprite.Sprite):
         super().__init__()
         self.m_type = m_type
         self.pos = (int(x_pos), int(y_pos))
-        self.screen_pos = self.pos[0] * 16 * render_scale, self.pos[1] * 16 * render_scale
+        self.screen_pos = self.pos[0] * 32 * render_scale, self.pos[1] * 32 * render_scale
         self.current_rotation = 0
 
         if self.m_type == "big":
             self.max_health = 30
-            self.monster_img = pygame.image.load('art/centipede_big.png')
+            self.monster_img = pygame.image.load('art/monsters/monsters_22.png')
             self.monster_move_speed = .02
             self.steel_value = 12
             self.base_hit_cost = 80
         elif self.m_type == "fast":
             self.max_health = 5
-            self.monster_img = pygame.image.load('art/centipede_fast.png')
+            self.monster_img = pygame.image.load('art/monsters/monsters_26.png')
             self.monster_move_speed = .1
             self.steel_value = 2
             self.base_hit_cost = 5
         else:
             self.max_health = 10
-            self.monster_img = pygame.image.load('art/centipede.png')
+            self.monster_img = pygame.image.load('art/monsters/monsters_20.png')
             self.monster_move_speed = .05
             self.steel_value = 8
             self.base_hit_cost = 10
@@ -152,6 +152,6 @@ class Monster (pygame.sprite.Sprite):
             else:
                 raise ValueError(print("Target position is out of bounds, target position is off grid"))
 
-        self.screen_pos = self.pos[0] * 16, self.pos[1] * 16
+        self.screen_pos = self.pos[0] * 32, self.pos[1] * 32
 
 
