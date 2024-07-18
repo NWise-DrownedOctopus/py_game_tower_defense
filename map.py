@@ -15,7 +15,8 @@ class Map:
         self.clock = pygame.time.Clock()
         self.render_scale = 2.0
 
-        self.assets = {'mouse_pointer': load_image("mouse_pointer.png")}
+        self.assets = {'mouse_pointer': load_image("mouse_pointer.png"),
+                       'planet_bg': load_image("ui/planet_bg.png")}
 
         pygame.init()
         pygame.display.set_caption("tower defense game")
@@ -24,7 +25,7 @@ class Map:
             (1280, 720))
 
         self.screen_mpos = None
-        self.text_font = pygame.font.SysFont("arial", 20)
+        self.text_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 20)
 
         self.display = pygame.Surface((640, 360))
         self.dt = 0
@@ -53,6 +54,8 @@ class Map:
             # Here is where we can draw our background
             self.screen.fill(self.bg_color)
             self.display.fill(self.bg_color)
+            self.display.blit(pygame.transform.scale(self.assets["planet_bg"], (self.display.get_size()[1], self.display.get_size()[1])), (150, 0))
+
 
             # here is where we manage the mouse position input
             self.screen_mpos = pygame.mouse.get_pos()[0] / 2, pygame.mouse.get_pos()[1] / 2
@@ -86,9 +89,9 @@ class Map:
 
             self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 8))
 
-            draw_text(self.screen, 'Level 1', self.text_font, (255, 255, 255), 200, 185)
-            draw_text(self.screen, 'Level 2', self.text_font, (255, 255, 255), 400, 385)
-            draw_text(self.screen, 'Level 3', self.text_font, (255, 255, 255), 300, 285)
+            draw_text(self.screen, 'Level 1', self.text_font, (255, 255, 255), 560, 185)
+            draw_text(self.screen, 'Level 2', self.text_font, (255, 255, 255), 460, 385)
+            draw_text(self.screen, 'Level 3', self.text_font, (255, 255, 255), 765, 285)
 
             pygame.display.update()
             self.dt = self.clock.tick(FPS) / 1000

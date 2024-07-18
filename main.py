@@ -38,7 +38,7 @@ class Game:
                 'gem': load_image("gem.png")
             }
 
-            self.text_font = pygame.font.SysFont("arial", 20)
+            self.text_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 10)
             self.clock = pygame.time.Clock()
             self.bg_color = (25, 25, 25)
             self.build_mode = False
@@ -444,13 +444,13 @@ class Game:
                 if self.screen.get_size()[0] == 1280  and self.screen.get_size()[1] == 720:
                     self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 8))
                     # Left bar
-                    pygame.draw.rect(self.screen, (245, 190, 37), pygame.Rect(0, 0, 32, 720))
+                    pygame.draw.rect(self.screen, (76, 65, 103), pygame.Rect(0, 0, 32, 720))
                     # Right bar
-                    pygame.draw.rect(self.screen, (245, 190, 37), pygame.Rect(1088, 0, 192, 720))
+                    pygame.draw.rect(self.screen, (76, 65, 103), pygame.Rect(1088, 0, 192, 720))
                     # Top bar
-                    pygame.draw.rect(self.screen, (200, 150, 10), pygame.Rect(32, 0, 1056, 8))
+                    pygame.draw.rect(self.screen, (52, 47, 67), pygame.Rect(32, 0, 1056, 8))
                     # Bottom bar
-                    pygame.draw.rect(self.screen, (200, 150, 10), pygame.Rect(32, 712, 1056, 8))
+                    pygame.draw.rect(self.screen, (52, 47, 67), pygame.Rect(32, 712, 1056, 8))
 
                     for button in self.game_ui.buttons:
                         button.draw_button(self.screen)

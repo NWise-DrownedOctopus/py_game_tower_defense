@@ -10,7 +10,7 @@ pygame.display.set_caption("game base")
 screen = pygame.display.set_mode((1280, 720), 0, 32)
 clock = pygame.time.Clock()
 
-font = pygame.font.SysFont(None, 50)
+font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 50)
 
 click = False
 assets = {
@@ -45,21 +45,21 @@ def main_menu():
         # Start button
         button_frame_img = assets['buttonFrame'].copy()
         button_frame_img.set_colorkey((255,255,255))
-        screen.blit(pygame.transform.scale(button_frame_img, (210, 70)), (500, 600))
+        # screen.blit(pygame.transform.scale(button_frame_img, (210, 70)), (500, 600))
         button_img = assets['button'].copy()
         button_img.set_colorkey((255, 255, 255))
-        screen.blit(pygame.transform.scale(button_img, (200, 50)), (505, 605))
-        draw_text(screen, 'Play', font, (255, 255, 255), 565, 615)
+        # screen.blit(pygame.transform.scale(button_img, (200, 50)), (505, 605))
+        draw_text(screen, 'PLAY', font, (198, 172, 201), 540, 615)
 
         # Title
         title_frame = assets['title'].copy()
         title_frame.set_colorkey((255, 255, 255))
-        screen.blit(pygame.transform.scale(title_frame, (250, 80)), (480, 90))
+        # screen.blit(pygame.transform.scale(title_frame, (250, 80)), (480, 90))
         title_frame = assets['title_frame'].copy()
         title_frame.set_colorkey((255, 255, 255))
-        screen.blit(pygame.transform.scale(title_frame, (250, 80)), (480, 90))
+        # screen.blit(pygame.transform.scale(title_frame, (250, 80)), (480, 90))
 
-        draw_text(screen, 'Main Menu', font, (255, 255, 255), 515, 110)
+        draw_text(screen, 'ERROUR', font, (198, 172, 201), 500, 110)
 
         click = False
 

@@ -48,10 +48,10 @@ class UI:
 
     def create_over_world_buttons(self):
         if pygame.display.get_surface().get_width() == 1280 and pygame.display.get_surface().get_height() == 720:
-            l1_button = Button(self, 32, 32, (100, 100), 'l1', self.assets["mars_hex_01"])
-            l2_button = Button(self, 32, 32, (200, 200), 'l2', self.assets["mars_hex_01"])
-            l3_button = Button(self, 32, 32, (150, 150), 'l3', self.assets["mars_hex_01"])
-            start_button = Button(self, 32, 32, (300, 300), 'play', self.assets["play_button"])
+            l1_button = Button(self, 32, 32, (300, 100), 'l1', self.assets["mars_hex_01"])
+            l2_button = Button(self, 32, 32, (250, 200), 'l2', self.assets["mars_hex_01"])
+            l3_button = Button(self, 32, 32, (400, 150), 'l3', self.assets["mars_hex_01"])
+            start_button = Button(self, 32, 32, (590, 310), 'play', self.assets["play_button"])
 
     def check_click(self):
         if len(self.buttons) > 0:
