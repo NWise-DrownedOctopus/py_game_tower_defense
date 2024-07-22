@@ -1,14 +1,16 @@
-import pygame, sys
+import pygame, sys, json
 from scripts.utils import load_image, draw_text, play_audio
 import map
 
 mainClock = pygame.time.Clock()
 from pygame.locals import *
+from scripts import ui
 pygame.init()
 pygame.mixer.init(44100, -16, 2, 2048)
 pygame.display.set_caption("game base")
 screen = pygame.display.set_mode((1280, 720), 0, 32)
 clock = pygame.time.Clock()
+button_1_size = [500, 110]
 
 font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 50)
 
@@ -27,41 +29,17 @@ assets = {
 
 def main_menu():
     play_audio('BGM_Menu', True)
+    menu_ui = ui.UI("main_menu")
+    menu_ui.create_menu_buttons(screen)
+    clicking = False
     while True:
         bg = assets['background'].copy()
         screen.blit(pygame.transform.scale(bg, (1310, 720)), (-20, 0))
+        menu_ui.draw_menu_text(screen)
+        for button in menu_ui.buttons:
+            button.draw_button(screen)
 
         mx, my = pygame.mouse.get_pos()
-
-        button_1 = pygame.Rect(505, 605, 200, 50)
-        button_2 = pygame.Rect(50, 200, 200, 50)
-        if button_1.collidepoint((mx, my)):
-            if click:
-                play_audio('button')
-                map.Map().run()
-        if button_2.collidepoint((mx, my)):
-            if click:
-                pass
-        # Start button
-        button_frame_img = assets['buttonFrame'].copy()
-        button_frame_img.set_colorkey((255,255,255))
-        # screen.blit(pygame.transform.scale(button_frame_img, (210, 70)), (500, 600))
-        button_img = assets['button'].copy()
-        button_img.set_colorkey((255, 255, 255))
-        # screen.blit(pygame.transform.scale(button_img, (200, 50)), (505, 605))
-        draw_text(screen, 'PLAY', font, (198, 172, 201), 540, 615)
-
-        # Title
-        title_frame = assets['title'].copy()
-        title_frame.set_colorkey((255, 255, 255))
-        # screen.blit(pygame.transform.scale(title_frame, (250, 80)), (480, 90))
-        title_frame = assets['title_frame'].copy()
-        title_frame.set_colorkey((255, 255, 255))
-        # screen.blit(pygame.transform.scale(title_frame, (250, 80)), (480, 90))
-
-        draw_text(screen, 'ERROUR', font, (198, 172, 201), 500, 110)
-
-        click = False
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -73,10 +51,32 @@ def main_menu():
                     sys.exit()
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    click = True
+                    clicking = True
+                if menu_ui.check_click() == 'new_game':
+                    create_save('data/save.json')
+                    save_data = load('data/save.json')
+                    map.Map(save_data).run()
+                    break
+                if menu_ui.check_click() == 'continue':
+                    save_data = load('data/save.json')
+                    map.Map(save_data).run()
+                    break
 
         pygame.display.update()
         clock.tick(60)
+
+
+def load(path):
+    f = open(path, 'r')
+    save_data = json.load(f)
+    f.close()
+    return save_data
+
+
+def create_save(path):
+    f = open(path, 'w')
+    json.dump({'l1': 0, 'l2': 0, 'l3': 0}, f)
+    f.close()
 
 
 main_menu()

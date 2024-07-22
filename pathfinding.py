@@ -142,7 +142,6 @@ def algorithm(draw, grid, start, end, game, visualize=False):
     open_set_hash = {start}
 
     while not open_set.empty():
-        print("While not open_set.empty()")
         for event in pygame.event.get():
             # This is where we make sure the game breaks out of the loop when the player wishes to exit
             if event.type == pygame.QUIT:
@@ -162,7 +161,6 @@ def algorithm(draw, grid, start, end, game, visualize=False):
             end.make_end()
             return True  # make path
         for neighbor in current.neighbors:
-            print("We are checking neighbor in current.neighbors")
             temp_g_score = g_score[current] + 1
             if temp_g_score < g_score[neighbor]:
                 came_from[neighbor] = current

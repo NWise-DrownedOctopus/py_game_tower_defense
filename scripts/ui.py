@@ -1,12 +1,16 @@
 import pygame
-from scripts.utils import load_image, play_audio
+from scripts.utils import load_image, play_audio, draw_text
 
 
 class UI:
     def __init__(self, scene):
         self.scene = scene
         self.buttons = []
-        # self.scene = game.screen_mpos
+        self.font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 50)
+        self.font_color = (198, 172, 201)
+        self.sub_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 30)
+        self.button_1_pos = [510, 450]
+        self.button_2_pos = [510, 600]
 
         self.assets = {
             'l_side_bar': load_image("ui/UI_L_SideBar.png"),
@@ -20,7 +24,8 @@ class UI:
             'gem_button': load_image("ui/gem_button.png"),
             'tower_button_small': load_image("ui/tower_button_small.png"),
             'gem_button_small': load_image("ui/gem_button_small.png"),
-            'mars_hex_01': load_image("ui/mars_hex_01.png")
+            'mars_hex_01': load_image("ui/mars_hex_01.png"),
+            'mars_hex_select_01': load_image("ui/mars_hex_select_01.png")
         }
 
     def create_level_buttons(self, surf):
@@ -51,13 +56,27 @@ class UI:
             l1_button = Button(self, 32, 32, (300, 100), 'l1', self.assets["mars_hex_01"])
             l2_button = Button(self, 32, 32, (250, 200), 'l2', self.assets["mars_hex_01"])
             l3_button = Button(self, 32, 32, (400, 150), 'l3', self.assets["mars_hex_01"])
-            start_button = Button(self, 32, 32, (590, 310), 'play', self.assets["play_button"])
+
+    def create_menu_buttons(self, screen):
+        if pygame.display.get_surface().get_width() == 1280 and pygame.display.get_surface().get_height() == 720:
+            button_1_pos = [375, 605]
+            button_2_pos = [510, 605]
+            new_game_button = Button(self, 500, 110, (self.button_1_pos[0], self.button_1_pos[1]), 'new_game')
+            continue_button = Button(self, 500, 110, (self.button_2_pos[0], self.button_2_pos[1]), 'continue')
+
+    def draw_menu_text(self, screen):
+        draw_text(screen, 'ERROUR', self.font, self.font_color, 480, 100)
+        draw_text(screen, 'NEW GAME', self.sub_font, self.font_color, self.button_1_pos[0], self.button_1_pos[1])
+        draw_text(screen, 'CONTINUE', self.sub_font, self.font_color, self.button_2_pos[0], self.button_2_pos[1])
 
     def check_click(self):
+        print("We called check_click")
         if len(self.buttons) > 0:
+            print("We detect: ", len(self.buttons), " buttons")
             for button in self.buttons:
                 # Check if we have a collision with the mpos point
                 if self.scene == "ow_map":
+                    print("We are in ow_map scene")
                     if button.rect.collidepoint(pygame.mouse.get_pos()[0] / 2, pygame.mouse.get_pos()[1] / 2):
                         play_audio('button')
                         return button.name
@@ -69,7 +88,7 @@ class UI:
 
 
 class Button:
-    def __init__(self, ui, width, height, pos, name, img):
+    def __init__(self, ui, width, height, pos, name, img=None):
         self.ui = ui
         self.width, self.height = width, height
         self.pos = pos
@@ -82,7 +101,17 @@ class Button:
         print("We clicked on a button")
 
     def draw_button(self, surf):
-        surf.blit(self.img, self.pos)
+        if self.img is not None:
+            surf.blit(self.img, self.pos)
+
+    def draw_button_hover(self, surf):
+        surf.blit(self.ui.assets['mars_hex_select_01'], self.pos)
+
+    def check_hover(self):
+        if self.ui.scene == "ow_map":
+            if self.rect.collidepoint(pygame.mouse.get_pos()[0] / 2, pygame.mouse.get_pos()[1] / 2):
+                return True
+
 
 
 def button_pressed(self, button):

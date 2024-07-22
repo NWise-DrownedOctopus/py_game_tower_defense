@@ -8,15 +8,20 @@ import main
 FPS = 60
 
 class Map:
-    def __init__(self):
+    def __init__(self, save_data=None):
         self.game = None
         self.levels = None
         self.bg_color = (25, 25, 25)
         self.clock = pygame.time.Clock()
         self.render_scale = 2.0
+        self.save_data = save_data
+        print("Our save data is", self.save_data)
 
         self.assets = {'mouse_pointer': load_image("mouse_pointer.png"),
-                       'planet_bg': load_image("ui/planet_bg.png")}
+                       'planet_bg': load_image("ui/planet_bg.png"),
+                       'mars_hex_01': load_image("ui/mars_hex_01.png"),
+                       'mars_hex_select_01': load_image("ui/mars_hex_select_01.png"),
+                       'play_button': load_image("ui/play_button.png")}
 
         pygame.init()
         pygame.display.set_caption("tower defense game")
@@ -46,7 +51,10 @@ class Map:
 
         self.load('data/overworld_map.json')
 
-        self.game_ui.create_over_world_buttons()
+        if pygame.display.get_surface().get_width() == 1280 and pygame.display.get_surface().get_height() == 720:
+            l1_button = ui.Button(self.game_ui, 32, 32, (300, 100), 'l1', self.assets["mars_hex_01"])
+            l2_button = ui.Button(self.game_ui, 32, 32, (250, 200), 'l2', self.assets["mars_hex_01"])
+            l3_button = ui.Button(self.game_ui, 32, 32, (400, 150), 'l3', self.assets["mars_hex_01"])
 
         print("We Finished Start in map")
 
@@ -63,6 +71,9 @@ class Map:
             # Here we display our UI
             for button in self.game_ui.buttons:
                 button.draw_button(self.display)
+                if button.check_hover():
+                    button.draw_button_hover(self.display)
+
 
             for event in pygame.event.get():
                 # This is where we make sure the game breaks out of the loop when the player wishes to exit
@@ -74,15 +85,24 @@ class Map:
                     if event.button == 1:
                         if self.game_ui.check_click() == 'l1':
                             self.selected_level = '1'
-                        if self.game_ui.check_click() == 'l2':
-                            self.selected_level = '2'
-                        if self.game_ui.check_click() == 'l3':
-                            self.selected_level = '3'
-                        if self.game_ui.check_click() == 'play' and self.selected_level is not None:
                             print("We tried to enter level")
                             self.game = main.Game()
                             self.game.current_level = self.levels[self.selected_level][0]
                             self.game.run()
+                        elif self.game_ui.check_click() == 'l2':
+                            self.selected_level = '2'
+                            print("We tried to enter level")
+                            self.game = main.Game()
+                            self.game.current_level = self.levels[self.selected_level][0]
+                            self.game.run()
+                        elif self.game_ui.check_click() == 'l3':
+                            self.selected_level = '3'
+                            print("We tried to enter level")
+                            self.game = main.Game()
+                            self.game.current_level = self.levels[self.selected_level][0]
+                            self.game.run()
+                        else:
+                            print("We clicked, but no button name returned")
 
             # Here we display our mouse
             self.display.blit(self.assets['mouse_pointer'], self.screen_mpos)
