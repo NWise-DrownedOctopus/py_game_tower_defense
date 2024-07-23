@@ -76,7 +76,7 @@ class Game:
             self.tile_size = 32
             self.tilemap = Tilemap(self,  self.tile_size)
             self.pathfinding = Pathfinding(self)
-            self.game_ui = ui.UI(self)
+            self.game_ui = ui.UI("game")
             self.pf_grid = make_grid(ROWS, WIDTH)
             self.pf_started = False
 
@@ -455,6 +455,9 @@ class Game:
 
                     for button in self.game_ui.buttons:
                         button.draw_button(self.screen)
+                        if button.check_hover():
+                            button.draw_button_hover(self.screen)
+
                     steel_text = "Current Steel: " + str(self.current_steel)
                     wave_text = "Current Wave: " + str(self.current_wave)
                     tower_build_text = str(self.tower_cost) + " Steel"
