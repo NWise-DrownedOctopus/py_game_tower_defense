@@ -17,12 +17,6 @@ class Map:
         self.save_data = save_data
         print("Our save data is", self.save_data)
 
-        self.assets = {'mouse_pointer': load_image("mouse_pointer.png"),
-                       'planet_bg': load_image("ui/planet_bg.png"),
-                       'mars_hex_01': load_image("ui/mars_hex_01.png"),
-                       'mars_hex_select_01': load_image("ui/mars_hex_select_01.png"),
-                       'play_button': load_image("ui/play_button.png")}
-
         pygame.init()
         pygame.display.set_caption("tower defense game")
 
@@ -52,9 +46,9 @@ class Map:
         self.load('data/overworld_map.json')
 
         if pygame.display.get_surface().get_width() == 1280 and pygame.display.get_surface().get_height() == 720:
-            l1_button = ui.Button(self.game_ui, 32, 32, (300, 100), 'l1', self.assets["mars_hex_01"])
-            l2_button = ui.Button(self.game_ui, 32, 32, (250, 200), 'l2', self.assets["mars_hex_01"])
-            l3_button = ui.Button(self.game_ui, 32, 32, (400, 150), 'l3', self.assets["mars_hex_01"])
+            l1_button = ui.Button(self.game_ui, 32, 32, (300, 100), 'l1', self.game_ui.assets["mars_hex_01"], self.game_ui.assets['mars_hex_select_01'])
+            l2_button = ui.Button(self.game_ui, 32, 32, (250, 200), 'l2', self.game_ui.assets["mars_hex_01"], self.game_ui.assets['mars_hex_select_01'])
+            l3_button = ui.Button(self.game_ui, 32, 32, (400, 150), 'l3', self.game_ui.assets["mars_hex_01"], self.game_ui.assets['mars_hex_select_01'])
 
         print("We Finished Start in map")
 
@@ -62,7 +56,7 @@ class Map:
             # Here is where we can draw our background
             self.screen.fill(self.bg_color)
             self.display.fill(self.bg_color)
-            self.display.blit(pygame.transform.scale(self.assets["planet_bg"], (self.display.get_size()[1], self.display.get_size()[1])), (150, 0))
+            self.display.blit(pygame.transform.scale(self.game_ui.assets["planet_bg"], (self.display.get_size()[1], self.display.get_size()[1])), (150, 0))
 
 
             # here is where we manage the mouse position input
@@ -105,7 +99,7 @@ class Map:
                             print("We clicked, but no button name returned")
 
             # Here we display our mouse
-            self.display.blit(self.assets['mouse_pointer'], self.screen_mpos)
+            self.display.blit(self.game_ui.assets['mouse_pointer'], self.screen_mpos)
 
             self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 8))
 

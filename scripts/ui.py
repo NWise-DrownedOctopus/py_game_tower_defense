@@ -9,8 +9,6 @@ class UI:
         self.font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 50)
         self.font_color = (198, 172, 201)
         self.sub_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 30)
-        self.button_1_pos = [510, 450]
-        self.button_2_pos = [510, 600]
 
         self.assets = {
             'l_side_bar': load_image("ui/UI_L_SideBar.png"),
@@ -25,7 +23,11 @@ class UI:
             'tower_button_small': load_image("ui/tower_button_small.png"),
             'gem_button_small': load_image("ui/gem_button_small.png"),
             'mars_hex_01': load_image("ui/mars_hex_01.png"),
-            'mars_hex_select_01': load_image("ui/mars_hex_select_01.png")
+            'mars_hex_select_01': load_image("ui/mars_hex_select_01.png"),
+            'planet_bg': load_image("ui/planet_bg.png"),
+            'mouse_pointer': load_image("mouse_pointer.png"),
+            'wave_button_hover': load_image("ui/wave_button_hover.png"),
+            'wave_button': load_image("ui/wave_button.png")
         }
 
     def create_level_buttons(self, surf):
@@ -51,24 +53,6 @@ class UI:
             tower_button = Button(self, 64, 64, (1100, 300), 'tower_button', self.assets["tower_button_small"])
             gem_button = Button(self, 64, 64, (1200, 300), 'gem_button', self.assets["gem_button_small"])
 
-    def create_over_world_buttons(self):
-        if pygame.display.get_surface().get_width() == 1280 and pygame.display.get_surface().get_height() == 720:
-            l1_button = Button(self, 32, 32, (300, 100), 'l1', self.assets["mars_hex_01"])
-            l2_button = Button(self, 32, 32, (250, 200), 'l2', self.assets["mars_hex_01"])
-            l3_button = Button(self, 32, 32, (400, 150), 'l3', self.assets["mars_hex_01"])
-
-    def create_menu_buttons(self, screen):
-        if pygame.display.get_surface().get_width() == 1280 and pygame.display.get_surface().get_height() == 720:
-            button_1_pos = [375, 605]
-            button_2_pos = [510, 605]
-            new_game_button = Button(self, 500, 110, (self.button_1_pos[0], self.button_1_pos[1]), 'new_game')
-            continue_button = Button(self, 500, 110, (self.button_2_pos[0], self.button_2_pos[1]), 'continue')
-
-    def draw_menu_text(self, screen):
-        draw_text(screen, 'ERROUR', self.font, self.font_color, 480, 100)
-        draw_text(screen, 'NEW GAME', self.sub_font, self.font_color, self.button_1_pos[0], self.button_1_pos[1])
-        draw_text(screen, 'CONTINUE', self.sub_font, self.font_color, self.button_2_pos[0], self.button_2_pos[1])
-
     def check_click(self):
         print("We called check_click")
         if len(self.buttons) > 0:
@@ -86,14 +70,22 @@ class UI:
         else:
             print("No buttons were found when checking for click")
 
+    def create_wave_display(self, waves):
+        print("We created a wave_display, we have ", len(waves), " waves")
+        count = 0
+        for wave in waves:
+            wave_button = Button(self, 32, 150, (0, int(150 * count)), ('w', + count), self.assets['wave_button'], self.assets['wave_button_hover'])
+            count += 1
+
 
 class Button:
-    def __init__(self, ui, width, height, pos, name, img=None):
+    def __init__(self, ui, width, height, pos, name, img=None, hover_img=None):
         self.ui = ui
         self.width, self.height = width, height
         self.pos = pos
         self.rect = pygame.Rect(pos[0], pos[1], self.width, self.height)
         self.img = img
+        self.hover_img = hover_img
         self.name = name
         ui.buttons.append(self)
 
@@ -105,19 +97,10 @@ class Button:
             surf.blit(self.img, self.pos)
 
     def draw_button_hover(self, surf):
-        surf.blit(self.ui.assets['mars_hex_select_01'], self.pos)
+        if self.hover_img is not None:
+            surf.blit(self.hover_img, self.pos)
 
     def check_hover(self):
         if self.ui.scene == "ow_map":
             if self.rect.collidepoint(pygame.mouse.get_pos()[0] / 2, pygame.mouse.get_pos()[1] / 2):
                 return True
-
-
-
-def button_pressed(self, button):
-    print(r"Button: {button} pressed")
-
-
-
-
-

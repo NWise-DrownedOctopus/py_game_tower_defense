@@ -12,9 +12,9 @@ class Level:
         self.current_wave = None
         self.last_spawn = time.time()
         self.game = game
-        self.wave_length = 12  # if I make this too short, we could run into an issue with not spawning enough
+        self.wave_length = 14  # if I make this too short, we could run into an issue with not spawning enough
         self.last_wave_start = time.time()
-        self.spawn_delay = 1
+        self.spawn_delay = None
         self.remaining_spawns = 0
         self.waves_finished = False
         self.map = None
@@ -49,7 +49,7 @@ class Level:
         print("First Wave has ", self.remaining_spawns, " spawns")
 
     def start_wave(self):
-        print(self.spawn_delay)
+        self.spawn_delay = 14 / int(self.waves[self.current_wave][0])
         self.remaining_spawns = int(self.waves[self.current_wave][0])
 
     def update(self):

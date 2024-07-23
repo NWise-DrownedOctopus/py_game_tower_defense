@@ -235,6 +235,7 @@ class Game:
             pf_algorithm(lambda: draw_pathfinding(self.display, self.pf_grid, ROWS, WIDTH),
                          self.pf_grid, self.pf_start, self.pf_end, self)
 
+            self.game_ui.create_wave_display(self.level.waves)
             print("We Finished Start")
 
             # Here we enter the game loop, it is called "every frame"

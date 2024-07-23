@@ -30,12 +30,19 @@ assets = {
 def main_menu():
     play_audio('BGM_Menu', True)
     menu_ui = ui.UI("main_menu")
-    menu_ui.create_menu_buttons(screen)
+    if pygame.display.get_surface().get_width() == 1280 and pygame.display.get_surface().get_height() == 720:
+        button_1_pos = [510, 450]
+        button_2_pos = [510, 600]
+        new_game_button = ui.Button(menu_ui, 500, 110, (button_1_pos[0], button_1_pos[1]), 'new_game')
+        continue_button = ui.Button(menu_ui, 500, 110, (button_2_pos[0], button_2_pos[1]), 'continue')
+    # menu_ui.create_menu_buttons(screen)
     clicking = False
     while True:
         bg = assets['background'].copy()
         screen.blit(pygame.transform.scale(bg, (1310, 720)), (-20, 0))
-        menu_ui.draw_menu_text(screen)
+        draw_text(screen, 'ERROUR', menu_ui.font, menu_ui.font_color, 480, 100)
+        draw_text(screen, 'NEW GAME', menu_ui.sub_font, menu_ui.font_color, button_1_pos[0], button_1_pos[1])
+        draw_text(screen, 'CONTINUE', menu_ui.sub_font, menu_ui.font_color, button_2_pos[0], button_2_pos[1])
         for button in menu_ui.buttons:
             button.draw_button(screen)
 
