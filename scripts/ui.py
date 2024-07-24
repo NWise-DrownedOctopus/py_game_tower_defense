@@ -9,6 +9,10 @@ class UI:
         self.font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 50)
         self.font_color = (198, 172, 201)
         self.sub_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 30)
+        self.context_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 10)
+        self.context_text_color = (220, 220, 220)
+        self.info_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 8)
+        self.info_text_color = (247, 226, 107)
         self.wave_data = None
 
         self.assets = {
@@ -78,7 +82,7 @@ class UI:
         count = 0
         for wave in waves:
             w_data = self.wave_data[str(count+1)]
-            wave_button = Button(self, 32, 150, (0, int(150 * count)), ('w', + count), self.assets['wave_button'], self.assets['wave_button_hover'], w_data)
+            wave_button = Button(self, 32, 80, (0, int(80 * count)), ('w', + count), self.assets['wave_button'], self.assets['wave_button_hover'], w_data)
             count += 1
 
 
@@ -106,10 +110,68 @@ class Button:
             print("We called draw_button_hover")
             surf.blit(self.hover_img, self.pos)
         if self.context is not None:
-            self.draw_context()
+            self.draw_context(surf)
 
-    def draw_context(self):
-        print(self.context)
+    def draw_context(self, surf):
+        mpos = pygame.mouse.get_pos()
+        if mpos[1] < 230:
+            s = pygame.Surface((350, 200))
+            context_pos = (mpos[0] + 20, 20)
+        elif mpos[0] > 900:
+            s = pygame.Surface((350, 200))
+            context_pos = (mpos[0] - 320, mpos[1] - 200)
+        else:
+            s = pygame.Surface((350, 200))
+            context_pos = (mpos[0] + 20, mpos[1] - 200)
+        l_bar = pygame.Surface((5, 200))
+        l_bar.fill((0, 0, 0))
+        r_bar = pygame.Surface((5, 200))
+        r_bar.fill((0, 0, 0))
+        top_bar = pygame.Surface((350, 5))
+        top_bar.fill((0, 0, 0))
+        bot_bar = pygame.Surface((350, 5))
+        bot_bar.fill((0, 0, 0))
+        s.set_alpha(128)  # alpha level
+        s.fill((20, 20, 20))
+        s.blit(l_bar, (0, 0))
+        s.blit(r_bar, (345, 0))
+        s.blit(top_bar, (0, 0))
+        s.blit(bot_bar, (0, 195))
+
+        wavenum_text = self.ui.context_font.render('Wave # of #', True, self.ui.context_text_color)
+        wavenum_text_rect = wavenum_text.get_rect(center=(s.get_width() / 2, 20))
+        s.blit(wavenum_text, wavenum_text_rect)
+
+        enemy_count_text = self.ui.context_font.render('# TYPE', True, self.ui.context_text_color)
+        enemy_count_text_rect = enemy_count_text.get_rect(center=(s.get_width() / 2, 45))
+        s.blit(enemy_count_text, enemy_count_text_rect)
+
+        break_bar = pygame.Surface((200, 3))
+        break_bar.fill((0, 0, 0))
+        s.blit(break_bar, (50, 60))
+
+        hit_points_text = self.ui.context_font.render('Hitpoints: #', True, self.ui.context_text_color)
+        hit_points_text_rect = hit_points_text.get_rect(center=(s.get_width() / 2, 75))
+        s.blit(hit_points_text, hit_points_text_rect)
+
+        speed_text = self.ui.context_font.render('Speed: #', True, self.ui.context_text_color)
+        speed_text_rect = speed_text.get_rect(center=(s.get_width() / 2, 100))
+        s.blit(speed_text, speed_text_rect)
+
+        steel_text = self.ui.context_font.render('Steel gain per kill: #', True, self.ui.context_text_color)
+        steel_text_rect = steel_text.get_rect(center=(s.get_width() / 2, 125))
+        s.blit(steel_text, steel_text_rect)
+
+        break_bar = pygame.Surface((200, 3))
+        break_bar.fill((0, 0, 0))
+        s.blit(break_bar, (50, 150))
+
+        info_text = self.ui.info_font.render('Click to start this and all waves above now', True, self.ui.info_text_color)
+        info_text_rect = info_text.get_rect(center=(s.get_width() / 2, 175))
+        s.blit(info_text, info_text_rect)
+
+
+        surf.blit(s, context_pos)
 
     def check_hover(self):
         if self.ui.scene == "ow_map":

@@ -445,9 +445,9 @@ class Game:
                 if self.screen.get_size()[0] == 1280  and self.screen.get_size()[1] == 720:
                     self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 8))
                     # Left bar
-                    pygame.draw.rect(self.screen, (76, 65, 103), pygame.Rect(0, 0, 32, 720))
+                    pygame.draw.rect(self.screen, (41, 39, 43), pygame.Rect(0, 0, 32, 720))
                     # Right bar
-                    pygame.draw.rect(self.screen, (76, 65, 103), pygame.Rect(1088, 0, 192, 720))
+                    pygame.draw.rect(self.screen, (41, 39, 43), pygame.Rect(1088, 0, 192, 720))
                     # Top bar
                     pygame.draw.rect(self.screen, (52, 47, 67), pygame.Rect(32, 0, 1056, 8))
                     # Bottom bar
