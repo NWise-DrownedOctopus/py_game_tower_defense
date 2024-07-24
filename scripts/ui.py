@@ -9,6 +9,7 @@ class UI:
         self.font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 50)
         self.font_color = (198, 172, 201)
         self.sub_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 30)
+        self.wave_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 20)
         self.context_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 10)
         self.context_text_color = (220, 220, 220)
         self.info_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 8)
@@ -104,6 +105,13 @@ class Button:
     def draw_button(self, surf):
         if self.img is not None:
             surf.blit(self.img, self.pos)
+            if self.name[0] == 'w':
+                wave_num = str(self.name[1] + 1)
+                wave_num = self.ui.wave_font.render(wave_num, True, self.ui.font_color)
+                wave_num_rect = wave_num.get_rect(center=(self.rect.width / 2, self.rect.y + 70))
+                # draw_text(surf, wave_num, self.ui.wave_font, self.ui.font_color, self.rect.x + 10, self.rect.y - 70)
+                surf.blit(wave_num, wave_num_rect)
+
 
     def draw_button_hover(self, surf):
         if self.hover_img is not None:
@@ -138,11 +146,14 @@ class Button:
         s.blit(top_bar, (0, 0))
         s.blit(bot_bar, (0, 195))
 
-        wavenum_text = self.ui.context_font.render('Wave # of #', True, self.ui.context_text_color)
+        wave_data = self.ui.wave_data[str(self.name[1] + 1)]
+        text = 'Wave ' + str(self.name[1] + 1) + ' of ' + str(len(self.ui.wave_data))
+        wavenum_text = self.ui.context_font.render(text, True, self.ui.context_text_color)
         wavenum_text_rect = wavenum_text.get_rect(center=(s.get_width() / 2, 20))
         s.blit(wavenum_text, wavenum_text_rect)
 
-        enemy_count_text = self.ui.context_font.render('# TYPE', True, self.ui.context_text_color)
+        text = str(wave_data[0]) + ' ' + str(wave_data[1])
+        enemy_count_text = self.ui.context_font.render(text, True, self.ui.context_text_color)
         enemy_count_text_rect = enemy_count_text.get_rect(center=(s.get_width() / 2, 45))
         s.blit(enemy_count_text, enemy_count_text_rect)
 
@@ -150,15 +161,30 @@ class Button:
         break_bar.fill((0, 0, 0))
         s.blit(break_bar, (50, 60))
 
-        hit_points_text = self.ui.context_font.render('Hitpoints: #', True, self.ui.context_text_color)
+        text = 'Hitpoints: ' + str(wave_data[2])
+        hit_points_text = self.ui.context_font.render(text, True, self.ui.context_text_color)
         hit_points_text_rect = hit_points_text.get_rect(center=(s.get_width() / 2, 75))
         s.blit(hit_points_text, hit_points_text_rect)
 
-        speed_text = self.ui.context_font.render('Speed: #', True, self.ui.context_text_color)
+        if str(wave_data[1]) == "big":
+            speed = .02
+        elif str(wave_data[1]) == "normal":
+            speed = .05
+        elif str(wave_data[1]) == "fast":
+            speed = .1
+        text = 'Speed: ' + str(speed)
+        speed_text = self.ui.context_font.render(text, True, self.ui.context_text_color)
         speed_text_rect = speed_text.get_rect(center=(s.get_width() / 2, 100))
         s.blit(speed_text, speed_text_rect)
 
-        steel_text = self.ui.context_font.render('Steel gain per kill: #', True, self.ui.context_text_color)
+        if str(wave_data[1]) == "big":
+            steel = 12
+        elif str(wave_data[1]) == "normal":
+            steel = 8
+        elif str(wave_data[1]) == "fast":
+            steel = 2
+        text = 'Steel gain per kill: ' + str(steel)
+        steel_text = self.ui.context_font.render(text, True, self.ui.context_text_color)
         steel_text_rect = steel_text.get_rect(center=(s.get_width() / 2, 125))
         s.blit(steel_text, steel_text_rect)
 
