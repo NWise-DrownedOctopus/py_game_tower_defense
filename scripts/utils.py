@@ -1,4 +1,4 @@
-import os
+import os, json
 import pygame
 
 os.chdir('.')
@@ -83,3 +83,18 @@ def load_images(path):
 def draw_text(surf, text, font, text_col, x, y):
     img = font.render(text, True, text_col)
     surf.blit(img, (x, y))
+
+
+def load_save(path):
+    f = open(path, 'r')
+    save_data = json.load(f)
+    print("We loaded our save data, now it is this: ", save_data)
+    f.close()
+    return save_data
+
+def save_game(path, level, save_data):
+    print("We saved the game, and completed: ", level)
+    f = open(path, 'w')
+    save_data[level] = 1
+    json.dump(save_data, f)
+    f.close()

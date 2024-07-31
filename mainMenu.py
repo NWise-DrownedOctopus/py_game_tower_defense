@@ -1,5 +1,5 @@
 import pygame, sys, json
-from scripts.utils import load_image, draw_text, play_audio
+from scripts.utils import load_image, draw_text, play_audio, load_save
 import map
 
 mainClock = pygame.time.Clock()
@@ -61,11 +61,11 @@ def main_menu():
                     clicking = True
                 if menu_ui.check_click() == 'new_game':
                     create_save('data/save.json')
-                    save_data = load('data/save.json')
+                    save_data = load_save('data/save.json')
                     map.Map(save_data).run()
                     break
                 if menu_ui.check_click() == 'continue':
-                    save_data = load('data/save.json')
+                    save_data = load_save('data/save.json')
                     map.Map(save_data).run()
                     break
 

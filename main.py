@@ -4,10 +4,11 @@ import os
 import pygame
 
 from scripts import tower, gem, monster, ui, level
-from scripts.utils import load_image, load_images, draw_text, play_audio
+from scripts.utils import load_image, load_images, draw_text, play_audio, load_save, save_game
 from scripts.tilemap import Tilemap
 from pathfinding import Pathfinding, make_grid, draw_pathfinding
 from pathfinding import algorithm as pf_algorithm
+import map
 
 FPS = 60
 WIDTH = 1280
@@ -61,6 +62,7 @@ class Game:
             self.current_build_img = None
             self.current_build_type = None
             self.hoverables = []
+            self.gem_stash = []
 
             # Here3 is where we can initialize resources
             self.current_steel = 300
@@ -69,6 +71,7 @@ class Game:
 
             # here is where we initialize our level
             self.level = level.Level(self)
+            self.save_data = load_save('data/save.json')
             self.current_level = None
             self.current_wave = self.level.current_wave
 
@@ -82,9 +85,7 @@ class Game:
 
             # here we manage pathfinding initialization
             self.pf_start = None
-            # self.pf_start.make_start()
             self.pf_end = None
-            # self.pf_end.make_end()
             self.monster_spawn_pos = None
             self.data_filepath = r"data"
             self.render_scale = 2.0
@@ -133,7 +134,16 @@ class Game:
 
         def end_level(self):
             self.level_ended = True
+            if self.level.name == "Level 1":
+                save_game('data/save.json', 'l1', self.save_data)
+            elif self.level.name == "Level 2":
+                save_game('data/save.json', 'l2', self.save_data)
+            elif self.level.name == "Level 3":
+                save_game('data/save.json', 'l3', self.save_data)
+            ui.save_data = load_save('data/save.json')
+            self.save_data = load_save('data/save.json')
             print("The Level has ended")
+            map.Map(self.save_data).run()
 
         def spawn_monsters(self, m_type):
             print(self.monster_spawn_pos[0], self.monster_spawn_pos[1])
@@ -216,7 +226,17 @@ class Game:
                     (tower_pos[0] * self.tilemap.tile_size * 2, tower_pos[1] * self.tilemap.tile_size * 2), (tower_pos[0], tower_pos[1]),  # This makes me hate dynamic typing hour long trying to fix this
                     self.display, self)
                 self.towers.add(s_tower)
-                s_tower.has_gem = False
+                for s_gem in self.level.starting_gems:
+                    gem_pos = self.level.starting_gems[s_gem]
+                    if gem_pos == tower_pos:
+                        s_gem = gem.Gem(
+                            (gem_pos[0] * self.tilemap.tile_size * self.render_scale, gem_pos[1] * self.tilemap.tile_size * self.render_scale),
+                            s_tower,
+                            self.display, self)
+                        s_tower.has_gem = True
+                        self.gems.add(s_gem)
+                    else:
+                        s_tower.has_gem = False
 
             self.level.start_wave()
             self.fast_forward = False
@@ -266,9 +286,6 @@ class Game:
                     self.mpos = ((self.screen_mpos[0] / self.render_scale), (self.screen_mpos[1] / self.render_scale))
                     self.tile_pos = (
                     int(self.mpos[0] // self.tilemap.tile_size), int(self.mpos[1] // self.tilemap.tile_size))
-
-                # print(self.tile_pos)
-                # print(self.screen_mpos)
 
                 # Here we are making sure our tile_position doesn't go out of bounds of the current game display area
                 while self.tile_pos is not None:
@@ -442,7 +459,7 @@ class Game:
                     draw_text(self.screen, wave_text, self.text_font, (0, 0, 0), 2300, 300)
                     self.render_scale = 4.0
 
-                if self.screen.get_size()[0] == 1280  and self.screen.get_size()[1] == 720:
+                if self.screen.get_size()[0] == 1280 and self.screen.get_size()[1] == 720:
                     self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 8))
                     # Left bar
                     pygame.draw.rect(self.screen, (41, 39, 43), pygame.Rect(0, 0, 32, 720))
@@ -453,10 +470,25 @@ class Game:
                     # Bottom bar
                     pygame.draw.rect(self.screen, (52, 47, 67), pygame.Rect(32, 712, 1056, 8))
 
+                    # draw gem_stash
+                    self.game_ui.draw_gem_stash(self.screen)
+
                     for button in self.game_ui.buttons:
                         button.draw_button(self.screen)
                         if button.check_hover():
                             button.draw_button_hover(self.screen)
+
+                    for _tower in self.towers:
+                        if self.build_mode:
+                            break
+                        if _tower.check_hover():
+                            _tower.hover(self.screen)
+
+                    if not self.paused:
+                        if self.fast_forward:
+                            self.game_ui.update_wave_display(True)
+                        else:
+                            self.game_ui.update_wave_display()
 
                     steel_text = "Current Steel: " + str(self.current_steel)
                     wave_text = "Current Wave: " + str(self.current_wave)

@@ -1,1 +1,1 @@
-{"name": "Level 3", "waves": {"1": [10, "normal"], "2":  [10, "fast"], "3": [5, "big"]}, "starting_towers": {"1": [29, 16]}, "starting_gems": {}, "map":  "map_03", "monster_spawn_pos":  {"1": [29, 21]}, "base_pos":  [16, 5]}
+{"name": "Level 3", "waves": {"1": [14, "normal", 10], "2":  [16, "fast", 5], "3": [5, "big", 30], "4": [16, "normal", 10], "5":  [18, "normal", 10], "6":  [5, "big", 30]}, "starting_towers": {"1": [27, 9], "2":  [29, 16], "3":  [21, 16]}, "starting_gems": {"1":  [27, 9]}, "map":  "map_03", "monster_spawn_pos":  {"1": [29, 21]}, "base_pos":  [16, 5]}

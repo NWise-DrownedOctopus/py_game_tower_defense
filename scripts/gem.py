@@ -13,11 +13,13 @@ class Gem (pygame.sprite.Sprite):
         self.pos = pos
         self.surf = surf
         self.tower = tower
+        self.tower.gem = self
         self.projectiles = pygame.sprite.Group()
         self.last_shot = time.time()
         self.shot_delay = 1
         self.range = 100
         self.damage = 4
+        self.hit_count = 0
         self.game = game
         self.valid_target_gizmo = pygame.image.load('art/valid_target_gizmo.png')
         self.target_mask_gizmo = pygame.image.load('art/target_mask_gizmo.png')
@@ -35,7 +37,7 @@ class Gem (pygame.sprite.Sprite):
     def update(self):
         if self.game.paused:
             self.last_shot += self.game.dt
-        if self.targets is not None and len(self.targets) > 0 and not self.game.paused:
+        if self.targets is not [] and len(self.targets) > 0 and not self.game.paused:
             print(len(self.targets))
             current_target = self.targets[0]
             for target in self.targets:
@@ -45,11 +47,13 @@ class Gem (pygame.sprite.Sprite):
                 if (time.time() - self.last_shot) > (self.shot_delay / 2):
                     if current_target in self.game.monsters:
                         self.fire(current_target)
+                        self.hit_count += 1
                         self.last_shot = time.time()
                         return
             if (time.time() - self.last_shot) > self.shot_delay:
                 if current_target in self.game.monsters:
                     self.fire(current_target)
+                    self.hit_count += 1
                     self.last_shot = time.time()
 
     def on_hover(self):

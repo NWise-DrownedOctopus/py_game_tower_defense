@@ -68,6 +68,7 @@ class Level:
                 self.remaining_spawns = int(self.waves[self.current_wave][0])
                 self.last_wave_start = time.time()
             if self.game.fast_forward:
+                self.last_wave_start -= self.game.dt
                 if (time.time() - self.last_spawn) > (self.spawn_delay / 2) or self.remaining_spawns == int(
                         self.waves[self.current_wave][0]):
                     if self.remaining_spawns == 0:
