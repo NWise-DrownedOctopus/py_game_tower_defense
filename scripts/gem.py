@@ -13,15 +13,7 @@ class Gem (pygame.sprite.Sprite):
         self.pos = pos
         self.surf = surf
         self.tower = tower
-<<<<<<< HEAD
-        self.x_pos = pos[0]
-        self.y_pos = pos[1]
-        self.gem_img = load_image('gem.png')
-        self.gem_img_pos = [int(self.x_pos - (self.gem_img.get_width() / 2)),
-                            int(self.y_pos - self.gem_img.get_height() / 2)]
-=======
         self.tower.gem = self
->>>>>>> StaticCam
         self.projectiles = pygame.sprite.Group()
         self.last_shot = time.time()
         self.shot_delay = 1
@@ -39,15 +31,6 @@ class Gem (pygame.sprite.Sprite):
         self.game.hoverables.append(self)
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.tile_size, self.tile_size)
 
-<<<<<<< HEAD
-    def update(self, offset):
-        self.surface.blit(self.gem_img, (self.gem_img_pos[0] - offset[0], self.gem_img_pos[1] - offset[1]))
-        if self.tower.valid_target is not None:
-            if time.time() - self.last_shot > self.shot_delay:
-                self.fire(self.tower.valid_target)
-                self.last_shot = time.time()
-        # print(f"number of projectiles: {len(self.projectiles)}")
-=======
     def draw(self, range_display=False):
         self.surf.blit(self.gem_img, self.pos)
 
@@ -99,7 +82,6 @@ class Gem (pygame.sprite.Sprite):
                     self.targets.remove(monster)
             if monster.is_dead:
                 self.targets.remove(monster)
->>>>>>> StaticCam
 
     def fire(self, monster):
         projectile = Projectile(self.pos, monster, self.surf, self.damage, self)
@@ -127,17 +109,6 @@ class Projectile(pygame.sprite.Sprite):
         self.velocity = None
         self.projectile_mask = pygame.mask.from_surface(self.img)
 
-<<<<<<< HEAD
-    def update(self, offset):
-        # print(f"Projectile: {self}, is starting at position {self.position}")
-        self.direction = (self.target.x_pos, self.target.y_pos) - self.position
-        self.velocity = self.direction.normalize() * 5
-        new_position = (self.position[0] + self.velocity[0], self.position[1] + self.velocity[1])
-        self.position = Vector2(new_position)
-        self.rect.center = new_position  # And the rect.
-        # print(f"Projectile: {self}, is ending at position {self.position}")
-        self.screen_surface.blit(self.img, (new_position[0] - offset[0], new_position[1] - offset[1]))
-=======
     def update(self):
         if self.gem.game.paused:
             self.screen_surface.blit(self.img, self.position)
@@ -157,7 +128,6 @@ class Projectile(pygame.sprite.Sprite):
         print(self.frame)
         self.img = get_image('projectile_img_sheet', self.frame, 8, 8)
         self.screen_surface.blit(self.img, new_position)
->>>>>>> StaticCam
 
 
         # Here we will handle what happens when we collide with a monster

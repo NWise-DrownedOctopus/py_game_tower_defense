@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-import os
-import pygame
-
-BASE_IMG_PATH = 'art/'
-=======
 import os, json
 import pygame
 
@@ -69,7 +63,6 @@ def play_audio(sound, loop=False):
         pygame.mixer.music.play(-1, 0.0)
         return
     sfx_assets[sound].play()
->>>>>>> StaticCam
 
 
 def load_image(path):
@@ -83,29 +76,6 @@ def load_images(path):
     images = []
     for img_name in os.listdir(BASE_IMG_PATH + path):
         images.append(load_image(path + '/' + img_name))
-<<<<<<< HEAD
-    return images
-
-
-def draw_grid(self):
-    # Here is where we are initializing the bg and bg grid
-    '''
-    pygame.draw.rect(self.screen, self.bg_color, self.game_bg_rect)
-    for count in range(self.bg_grid_width_count - 1):
-        pygame.draw.line(self.screen, self.bg_grid_color,
-                         (self.bg_border,
-                          ((count + 1) * self.game_bg_rect_height / self.bg_grid_width_count + self.bg_border)),
-                         ((self.game_bg_rect_width + self.bg_border),
-                          ((count + 1) * self.game_bg_rect_height / self.bg_grid_width_count + self.bg_border)))
-
-    for count in range(self.bg_grid_height_count - 1):
-        pygame.draw.line(self.screen, self.bg_grid_color,
-                         (((count + 1) * self.game_bg_rect_width / self.bg_grid_height_count + self.bg_border),
-                          self.bg_border),
-                         (((count + 1) * self.game_bg_rect_width / self.bg_grid_height_count + self.bg_border),
-                          self.SCREEN_HEIGHT - self.bg_border))
-    '''
-=======
     print(images)
     return images
 
@@ -128,4 +98,3 @@ def save_game(path, level, save_data):
     save_data[level] = 1
     json.dump(save_data, f)
     f.close()
->>>>>>> StaticCam

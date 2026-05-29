@@ -5,11 +5,7 @@ from pathfinding import Pathfinding
 
 
 class Monster (pygame.sprite.Sprite):
-<<<<<<< HEAD
-    def __init__(self, game, x_pos, y_pos, max_health=10):
-=======
     def __init__(self, x_pos, y_pos, pathfinding, render_scale, m_type):
->>>>>>> StaticCam
         super().__init__()
         self.m_type = m_type
         self.pos = (int(x_pos), int(y_pos))
@@ -38,13 +34,6 @@ class Monster (pygame.sprite.Sprite):
         self.current_health = self.max_health
         self.healthBar = HealthBar(self, self.screen_pos[0], self.screen_pos[1])
         self.monster_mask = pygame.mask.from_surface(self.monster_img)
-<<<<<<< HEAD
-        self.monster_move_speed = 10
-        self.monster_movement = [False, False]
-        self.size = (16, 16)
-        self.player_rect = self.rect()
-        self.game = game
-=======
         self.pathfinding = pathfinding
         self.game = pathfinding.game
         self.target_pos = None
@@ -52,7 +41,6 @@ class Monster (pygame.sprite.Sprite):
         self.pathway = None
         self.pathway_index = 0
         self.is_dead = False
->>>>>>> StaticCam
 
     def dmg(self, dmg):
         self.current_health -= dmg
@@ -166,17 +154,4 @@ class Monster (pygame.sprite.Sprite):
 
         self.screen_pos = self.pos[0] * 32, self.pos[1] * 32
 
-<<<<<<< HEAD
-    def update(self, surface, pos):
-        surface.blit(self.monster_img, (pos[0], pos[1]))
-        self.x_pos = pos[0]
-        self.y_pos = pos[1]
-
-        # broke the health bar when I started working on the camera offset variables
-        # self.healthBar.draw(surface, pos)
-
-    def rect(self):
-        return pygame.Rect(self.x_pos, self.y_pos, self.size[0], self.size[1])
-=======
->>>>>>> StaticCam
 
