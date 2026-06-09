@@ -418,7 +418,7 @@ class Game:
                             self.fast_forward = not self.fast_forward
 
                 # Here we handle UI input
-                draw_text(self.display, "Pathfinding", )
+                draw_text(self.display, "Pathfinding", self.text_font, (255, 255, 255), 10, 10)
 
                 # Here we start the loop by drawing the background of the scene first
                 if self.screen.get_size()[0] == 1440 and self.screen.get_size()[1] == 900:

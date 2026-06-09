@@ -51,8 +51,6 @@ def load_sheet_images(sheet):
             image.blit(sheet_assets[sheet][0], (0, 0), ((row * size), (col * size), size, size))
             image.set_colorkey((0, 0, 0))
             images.append(image)
-            print("row = {} col = {}".format(row, col))
-    print(images)
     return images
 
 

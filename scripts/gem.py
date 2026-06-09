@@ -23,6 +23,7 @@ class Gem (pygame.sprite.Sprite):
         self.game = game
         self.valid_target_gizmo = pygame.image.load('art/valid_target_gizmo.png')
         self.target_mask_gizmo = pygame.image.load('art/target_mask_gizmo.png')
+        self.gem_img = load_image('gem.png')
         self.range_mask = pygame.mask.from_surface(self.target_mask_gizmo)
         self.tile_size = 32
         self.target_radius_pos = [int(self.pos[0]) - (self.target_mask_gizmo.get_width() / 2) + (self.tile_size / 2),
@@ -78,7 +79,7 @@ class Gem (pygame.sprite.Sprite):
                 if monster not in self.targets and monster.is_dead == False:
                     self.targets.append(monster)
             else:
-                if monster in self.targets:
+                if monster.is_dead and monster in self.targets:
                     self.targets.remove(monster)
             if monster.is_dead:
                 self.targets.remove(monster)
@@ -139,3 +140,4 @@ class Projectile(pygame.sprite.Sprite):
         if not self.screen_rect.contains(self.rect):
             print(f"Killing projectile")
             self.kill()
+
