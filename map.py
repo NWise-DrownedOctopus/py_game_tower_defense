@@ -16,7 +16,6 @@ class Map:
         self.render_scale = 2.0
         self.save_data = save_data
         self.map_ended = False
-        print("Our save data is", self.save_data)
 
         pygame.init()
         pygame.display.set_caption("tower defense game")
@@ -53,8 +52,6 @@ class Map:
             if self.save_data['l2'] == 1:
                 l3_button = ui.Button(self.game_ui, 32, 32, (400, 150), 'l3', self.game_ui.assets["mars_hex_01"], self.game_ui.assets['mars_hex_select_01'])
 
-        print("We Finished Start in map")
-
         while True:
             if self.map_ended:
                 break
@@ -82,31 +79,25 @@ class Map:
                     if event.button == 1:
                         if self.game_ui.check_click() == 'l1':
                             self.selected_level = '1'
-                            print("We tried to enter level")
                             self.game = main.Game()
                             self.game.current_level = self.levels[self.selected_level][0]
                             self.game.run()
                         elif self.game_ui.check_click() == 'l2':
                             self.selected_level = '2'
-                            print("We tried to enter level")
                             self.game = main.Game()
                             self.game.current_level = self.levels[self.selected_level][0]
                             self.game.run()
                         elif self.game_ui.check_click() == 'l3':
                             self.selected_level = '3'
-                            print("We tried to enter level")
                             self.game = main.Game()
                             self.game.current_level = self.levels[self.selected_level][0]
                             self.game.run()
-                        else:
-                            print("We clicked, but no button name returned")
                         self.map_ended = True
 
             # Here we display our mouse
             self.display.blit(self.game_ui.assets['mouse_pointer'], self.screen_mpos)
 
             self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 8))
-            print("We are about to draw level text, our save_data is: ", self.save_data)
             draw_text(self.screen, 'Level 1', self.text_font, (255, 255, 255), 560, 185)
             if self.save_data['l1'] == 1:
                 draw_text(self.screen, 'Level 2', self.text_font, (255, 255, 255), 460, 385)

@@ -48,7 +48,6 @@ class Monster (pygame.sprite.Sprite):
             del self
 
     def draw(self, surface):
-        # print("Current current rotation = ", self.current_rotation)
         if self.current_rotation != self.target_rotation:
             delta_rotation = (self.current_rotation - self.target_rotation)
             self.monster_img = pygame.transform.rotate(self.monster_img, delta_rotation)
@@ -106,22 +105,18 @@ class Monster (pygame.sprite.Sprite):
         if self.game.fast_forward:
             # 1. Above us
             if self.target_pos[0] == self.pos[0] and self.target_pos[1] < self.pos[1]:
-                # print("Target position is above us")
                 self.target_rotation = 270
                 self.pos = (self.pos[0], self.pos[1] - (self.monster_move_speed * 2))
             # 2. To our right
             elif self.target_pos[0] > self.pos[0] and self.target_pos[1] == self.pos[1]:
-                # print("Target position is to our right")
                 self.target_rotation = 0
                 self.pos = (self.pos[0] + (self.monster_move_speed * 2), self.pos[1])
             # 3. Below us
             elif self.target_pos[0] == self.pos[0] and self.target_pos[1] > self.pos[1]:
-                # print("Target position is below us")
                 self.target_rotation = 90
                 self.pos = (self.pos[0], self.pos[1] + (self.monster_move_speed * 2))
             # 4. To our Left
             elif self.target_pos[0] < self.pos[0] and self.target_pos[1] == self.pos[1]:
-                # print("Target position is to our left")
                 self.target_rotation = 180
                 self.pos = (self.pos[0] - (self.monster_move_speed * 2), self.pos[1])
             # if none of these things our true, then we have gone off the grid
@@ -130,22 +125,18 @@ class Monster (pygame.sprite.Sprite):
         else:
             # 1. Above us
             if self.target_pos[0] == self.pos[0] and self.target_pos[1] < self.pos[1]:
-                # print("Target position is above us")
                 self.target_rotation = 270
                 self.pos = (self.pos[0], self.pos[1] - self.monster_move_speed)
             # 2. To our right
             elif self.target_pos[0] > self.pos[0] and self.target_pos[1] == self.pos[1]:
-                # print("Target position is to our right")
                 self.target_rotation = 0
                 self.pos = (self.pos[0] + self.monster_move_speed, self.pos[1])
             # 3. Below us
             elif self.target_pos[0] == self.pos[0] and self.target_pos[1] > self.pos[1]:
-                # print("Target position is below us")
                 self.target_rotation = 90
                 self.pos = (self.pos[0], self.pos[1] + self.monster_move_speed)
             # 4. To our Left
             elif self.target_pos[0] < self.pos[0] and self.target_pos[1] == self.pos[1]:
-                # print("Target position is to our left")
                 self.target_rotation = 180
                 self.pos = (self.pos[0] - self.monster_move_speed, self.pos[1])
             # if none of these things our true, then we have gone off the grid

@@ -1,4 +1,3 @@
-# Nicholas Wise
 import pygame
 from pygame.math import Vector2
 from scripts.utils import play_audio, get_image, get_sheet_dim
@@ -39,7 +38,6 @@ class Gem (pygame.sprite.Sprite):
         if self.game.paused:
             self.last_shot += self.game.dt
         if self.targets is not [] and len(self.targets) > 0 and not self.game.paused:
-            print(len(self.targets))
             current_target = self.targets[0]
             for target in self.targets:
                 if target.pathway_index > current_target.pathway_index:
@@ -58,14 +56,12 @@ class Gem (pygame.sprite.Sprite):
                     self.last_shot = time.time()
 
     def on_hover(self):
-        print("on_hover is being called")
         range_display_pos = (
             self.pos[0] + (self.tile_size / 2) - self.range, self.pos[1] + (self.tile_size / 2) - self.range)
         self.valid_target_gizmo = pygame.transform.scale(self.valid_target_gizmo, (self.range * 2, self.range * 2))
         self.surf.blit(self.valid_target_gizmo, range_display_pos)
 
     def detect_monster(self):
-        # print("According to our gem, there are ", len(self.targets), " monsters in range")
         self.targets = []
         range_display_pos = (
             self.pos[0] + (self.tile_size / 2) - self.range, self.pos[1] + (self.tile_size / 2) - self.range)
@@ -126,18 +122,15 @@ class Projectile(pygame.sprite.Sprite):
             self.frame[0] = 0
         if self.frame[1] >= self.max_frame_height:
             self.frame[1] = 0
-        print(self.frame)
         self.img = get_image('projectile_img_sheet', self.frame, 8, 8)
         self.screen_surface.blit(self.img, new_position)
 
 
         # Here we will handle what happens when we collide with a monster
         if self.projectile_mask.overlap(self.target.monster_mask, (self.target.screen_pos[0] - self.position[0], self.target.screen_pos[1] - self.position[1])):
-            # print("Projectile has collided")
             self.target.dmg(self.dmg)
             self.kill()
 
         if not self.screen_rect.contains(self.rect):
-            print(f"Killing projectile")
             self.kill()
 

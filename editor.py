@@ -1,7 +1,5 @@
 import os
 import sys
-
-
 import pygame
 
 from scripts.utils import load_image, load_images, load_sheet_images
@@ -10,7 +8,6 @@ from scripts.tilemap import Tilemap
 FPS = 60
 
 RENDER_SCALE = 2
-
 
 class Editor:
     def __init__(self):
@@ -39,10 +36,7 @@ class Editor:
         filepath = r"data"
         try:
             if os.path.exists(filepath):
-                print('loaded tilemap successfully')
                 self.tilemap.load("data/map.json")
-            else:
-                print("File not found: " + filepath)
         except FileNotFoundError:
             print("File not found: " + filepath)
         except PermissionError:
@@ -70,7 +64,6 @@ class Editor:
             mpos = pygame.mouse.get_pos()
             mpos = (mpos[0] / RENDER_SCALE, mpos[1] / RENDER_SCALE)
             tile_pos = (int(mpos[0] // self.tilemap.tile_size), int(mpos[1] // self.tilemap.tile_size))
-            print(tile_pos)
 
             # here we will preview our tile placement
             if self.on_grid:
@@ -138,21 +131,16 @@ class Editor:
                     if event.key == pygame.K_g:
                         self.on_grid = not self.on_grid
                     if event.key == pygame.K_o:
-                        print('We Hit o')
                         self.tilemap.save('data/map.json')
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT:
-                        print("left up")
                         self.tile_variant = (self.tile_variant + 1) % len(self.assets[self.tile_list[self.tile_group]])
                     if event.key == pygame.K_RIGHT:
-                        print("right up")
                         self.tile_variant = (self.tile_variant - 1) % len(self.assets[self.tile_list[self.tile_group]])
                     if event.key == pygame.K_UP:
-                        print("Up up")
                         self.tile_group = (self.tile_group - 1) % len(self.tile_list)
                         self.tile_variant = 0
                     if event.key == pygame.K_DOWN:
-                        print("Down up")
                         self.tile_group = (self.tile_group + 1) % len(self.tile_list)
                         self.tile_variant = 0
                     if event.key == pygame.K_LSHIFT:

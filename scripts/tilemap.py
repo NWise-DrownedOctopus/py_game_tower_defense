@@ -1,6 +1,5 @@
 import json
 
-
 class Tilemap:
 
     def __init__(self, game, tile_size):
@@ -10,12 +9,9 @@ class Tilemap:
         self.offgrid_tiles = []
 
     def save(self, path):
-        print('We called save function')
         f = open(path, 'w')
         json.dump({'tilemap': self.tilemap, 'tile_size': self.tile_size, 'offgrid': self.offgrid_tiles}, f)
-        print(f)
         f.close()
-        print(f)
 
     def load(self, path):
         f = open(path, 'r')

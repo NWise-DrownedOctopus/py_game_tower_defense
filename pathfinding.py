@@ -35,7 +35,6 @@ class Tile:
         self.neighbors = []
         self.width = width
         self.total_rows = total_rows
-        print("Tile at ({},{})".format(self.row, self.col))
 
     def get_pos(self):
         return self.row, self.col
@@ -125,7 +124,6 @@ def reconstruct_path(came_from, current, draw, visualize=False):
         pathway.append(current)
     for path in pathway:
         pass
-    print("reconstruct_path, pathway: ", pathway)
     return pathway
 
 
@@ -152,10 +150,8 @@ def algorithm(draw, grid, start, end, game, visualize=False):
         open_set_hash.remove(current)
 
         if current == end:
-            print("current == end")
             if game.pathfinding_mode:
                 game.pathfinding.pathway = reconstruct_path(came_from, end, draw, True)
-                print("We have put a pathway into our pathfinding to be used my monsters via our algorithm script")
             else:
                 game.pathfinding.pathway = reconstruct_path(came_from, end, draw)
             end.make_end()
@@ -175,7 +171,6 @@ def algorithm(draw, grid, start, end, game, visualize=False):
                 draw()
         if current != start:
             current.make_closed()
-    print("Here is where we broke out of algorithm")
     return False
 
 

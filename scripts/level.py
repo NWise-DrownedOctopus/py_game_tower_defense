@@ -40,14 +40,6 @@ class Level:
         self.current_wave = '1'
         self.remaining_spawns = int(self.waves[self.current_wave][0])
 
-        print("Level Name: ", self.name)
-        print("Waves: ", self.waves)
-        print("number of waves: ", len(self.waves))
-        print("map name: ", self.map)
-        print("Starting towers: ", self.starting_towers)
-        print("Starting gems", self.starting_gems)
-        print("First Wave has ", self.remaining_spawns, " spawns")
-
     def start_wave(self):
         self.spawn_delay = 14 / int(self.waves[self.current_wave][0])
         self.remaining_spawns = int(self.waves[self.current_wave][0])
@@ -60,9 +52,7 @@ class Level:
             if (time.time() - self.last_wave_start) > self.wave_length:
                 if self.current_wave >= str(len(self.waves)):
                     self.waves_finished = True
-                    print("Waves finished spawning")
                     return
-                print("We should move to next wave")
                 self.current_wave = str(int(self.current_wave) + 1)
                 self.game.current_wave = self.current_wave
                 self.remaining_spawns = int(self.waves[self.current_wave][0])
@@ -84,11 +74,3 @@ class Level:
                     self.last_spawn = time.time()
                     self.remaining_spawns -= 1
         return
-
-
-class Wave:
-    def __init__(self):
-        self.enemy_count = None
-
-    def load_wave(self, filename):
-        pass

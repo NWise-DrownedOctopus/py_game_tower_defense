@@ -61,25 +61,18 @@ class UI:
             gem_button = Button(self, 64, 64, (1200, 300), 'gem_button', self.assets["gem_button_small"])
 
     def check_click(self):
-        print("We called check_click")
         if len(self.buttons) > 0:
-            print("We detect: ", len(self.buttons), " buttons")
             for button in self.buttons:
                 # Check if we have a collision with the mpos point
                 if self.scene == "ow_map":
-                    print("We are in ow_map scene")
                     if button.rect.collidepoint(pygame.mouse.get_pos()[0] / 2, pygame.mouse.get_pos()[1] / 2):
                         play_audio('button')
                         return button.name
                 if button.rect.collidepoint(pygame.mouse.get_pos()):
                     play_audio('button')
                     return button.name
-        else:
-            print("No buttons were found when checking for click")
 
     def create_wave_display(self, waves):
-        print("We created a wave_display, we have ", len(waves), " waves")
-        print(waves)
         self.wave_data = waves
         count = 0
         for wave in waves:
@@ -90,7 +83,6 @@ class UI:
     def draw_gem_stash(self, surf):
         surf.blit(pygame.transform.scale(self.assets['gem_stash'], (165, 165)), (1100, 400))
 
-
     def update_wave_display(self, ff=False):
         movement = 80 / 14 / 60
         if ff:
@@ -100,7 +92,7 @@ class UI:
                 button.pos = (button.pos[0], button.pos[1] - movement)
                 if button.pos[1] < 0:
                     self.buttons.remove(button)
-
+                    
 
 class Button:
     def __init__(self, ui, width, height, pos, name, img=None, hover_img=None, context=None):
@@ -113,9 +105,6 @@ class Button:
         self.name = name
         self.context = context
         ui.buttons.append(self)
-
-    def button_presed(self, action):
-        print("We clicked on a button")
 
     def draw_button(self, surf):
         if self.img is not None:
@@ -130,7 +119,6 @@ class Button:
 
     def draw_button_hover(self, surf):
         if self.hover_img is not None:
-            print("We called draw_button_hover")
             surf.blit(self.hover_img, self.pos)
         if self.context is not None:
             self.draw_context(surf)

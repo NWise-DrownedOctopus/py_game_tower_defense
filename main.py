@@ -64,7 +64,7 @@ class Game:
             self.hoverables = []
             self.gem_stash = []
 
-            # Here3 is where we can initialize resources
+            # Here is where we can initialize resources
             self.current_steel = 300
             self.gem_cost = 60
             self.tower_cost = 150
@@ -103,7 +103,6 @@ class Game:
                 self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 90))
                 self.render_scale = 2.0
             elif self.screen.get_size()[0] == 1280 and self.screen.get_size()[1] == 720:
-                print("Small screen detected")
                 self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 0))
                 self.render_scale = 2.0
             else:
@@ -142,11 +141,9 @@ class Game:
                 save_game('data/save.json', 'l3', self.save_data)
             ui.save_data = load_save('data/save.json')
             self.save_data = load_save('data/save.json')
-            print("The Level has ended")
             map.Map(self.save_data).run()
 
         def spawn_monsters(self, m_type):
-            print(self.monster_spawn_pos[0], self.monster_spawn_pos[1])
             monster_n = monster.Monster(self.monster_spawn_pos[0], self.monster_spawn_pos[1], self.pathfinding,
                                         self.render_scale, m_type)
             self.monsters.add(monster_n)
@@ -158,12 +155,8 @@ class Game:
                 if self.current_build_type == 'gem':
                     tower_open = False
                     for n_tower in self.towers:
-                        print("build display thinks that there is a tower at: ", n_tower.tile_pos, " and our tile pos is ", self.tile_pos, " and the tower has_gem = ", n_tower.has_gem)
                         if self.tile_pos == n_tower.tile_pos and n_tower.has_gem == False:
                             tower_open = True
-                            print("tower is open")
-                        else:
-                            print("tower is closed")
                     if tower_open:
                         self.display.blit(self.current_build_img,
                                           (self.tile_pos[0] * self.tilemap.tile_size * self.render_scale,
@@ -208,12 +201,9 @@ class Game:
             # Here is where we load all our data that is stored in files
             try:
                 if os.path.exists(self.data_filepath):
-                    print('loaded tilemap successfully')
                     self.level.load("data/" + self.current_level)
                     map = self.level.map
                     self.tilemap.load("data/" + str(map) + ".json")
-                else:
-                    print("File not found, but os path exist: " + self.data_filepath)
             except FileNotFoundError:
                 print("File not found: " + self.data_filepath)
             except PermissionError:
@@ -256,7 +246,6 @@ class Game:
                          self.pf_grid, self.pf_start, self.pf_end, self)
 
             self.game_ui.create_wave_display(self.level.waves)
-            print("We Finished Start")
 
             # Here we enter the game loop, it is called "every frame"
             while True:
@@ -365,17 +354,14 @@ class Game:
                                 if self.game_ui.check_click() == 'play':
                                     self.run_pathfinding()
                                 if self.game_ui.check_click() == 'pause':
-                                    print("we would like to pause")
                                     self.paused = True
                                 if self.game_ui.check_click() == 'fast_forward':
                                     self.fast_forward = not self.fast_forward
                                 if self.game_ui.check_click() == 'tower_button':
-                                    print("We would like to tower")
                                     self.current_build_img = self.assets['tower'].copy()
                                     self.current_build_type = 'tower'
                                     self.build_mode = not self.build_mode
                                 if self.game_ui.check_click() == 'gem_button':
-                                    print("We would like to gem")
                                     self.current_build_img = self.assets['gem'].copy()
                                     self.current_build_type = 'gem'
                                     self.build_mode = not self.build_mode
@@ -508,3 +494,6 @@ class Game:
 
                 pygame.display.update()
                 self.dt = self.clock.tick(FPS) / 1000
+                
+                
+                
