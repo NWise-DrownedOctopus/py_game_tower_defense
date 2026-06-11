@@ -42,7 +42,7 @@ class Projectile(pygame.sprite.Sprite):
             
     def _check_collision(self):
         if self.projectile_mask.overlap(self.target.monster_mask, (self.target.screen_pos[0] - self.position[0], self.target.screen_pos[1] - self.position[1])):
-            self.target.dmg(self.dmg)
+            self.target.take_dmg(self.dmg)
             self.kill()
     
     def _advance_frame(self):

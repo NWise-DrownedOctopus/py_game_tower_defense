@@ -152,7 +152,7 @@ class Game:
 
         def spawn_monsters(self, m_type):
             monster_n = monster.Monster(self.monster_spawn_pos[0], self.monster_spawn_pos[1], self.pathfinding,
-                                        self.render_scale, self.assets['monsters'][m_type], self.monster_data[m_type])
+                                        self.assets['monsters'][m_type], self.monster_data[m_type])
             self.monsters.add(monster_n)
             monster_n.find_path()
 
