@@ -68,7 +68,6 @@ class Gem (pygame.sprite.Sprite):
         self.target_mask_gizmo = pygame.transform.scale(self.target_mask_gizmo, (self.range * 2, self.range * 2))
         self.range_mask = pygame.mask.from_surface(self.target_mask_gizmo)
         for monster in self.game.monsters:
-            # Here is where we check if the monster is in range of the turret
             if self.range_mask.overlap(monster.monster_mask,
                                        (monster.screen_pos[0] - range_display_pos[0],
                                         monster.screen_pos[1] - range_display_pos[1])):

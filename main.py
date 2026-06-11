@@ -209,6 +209,7 @@ class Game:
             try:
                 if os.path.exists(self.data_filepath):
                     self.level.load("data/" + self.current_level)
+                    self.level.start()
                     map = self.level.map
                     self.tilemap.load("data/" + str(map) + ".json")
             except FileNotFoundError:
@@ -218,13 +219,13 @@ class Game:
 
             # Here is where we initialize our dynamic elements
             for s_tower in self.level.starting_towers:
-                tower_pos = self.level.starting_towers[s_tower]
+                tower_pos = s_tower
                 s_tower = tower.Tower(
                     (tower_pos[0] * self.tilemap.tile_size * 2, tower_pos[1] * self.tilemap.tile_size * 2), (tower_pos[0], tower_pos[1]),  # This makes me hate dynamic typing hour long trying to fix this
                     self.display, self)
                 self.towers.add(s_tower)
                 for s_gem in self.level.starting_gems:
-                    gem_pos = self.level.starting_gems[s_gem]
+                    gem_pos = s_gem
                     if gem_pos == tower_pos:
                         s_gem = gem.Gem(
                             (gem_pos[0] * self.tilemap.tile_size * self.render_scale, gem_pos[1] * self.tilemap.tile_size * self.render_scale),
@@ -239,7 +240,7 @@ class Game:
             self.fast_forward = False
             self.current_wave = '1'
             self.pathfinding.update()
-            spawn_pos = self.level.monster_spawn_pos["1"]
+            spawn_pos = self.level.monster_spawn_pos
             base_pos = self.level.base_pos
             self.pf_start = self.pf_grid[spawn_pos[0]][spawn_pos[1]]
             self.monster_spawn_pos = spawn_pos

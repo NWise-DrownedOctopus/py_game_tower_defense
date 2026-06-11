@@ -76,7 +76,7 @@ class UI:
         self.wave_data = waves
         count = 0
         for wave in waves:
-            w_data = self.wave_data[str(count+1)]
+            w_data = self.wave_data[count]
             wave_button = Button(self, 32, 80, (0, int(80 * count)), ('w', + count), self.assets['wave_button'], self.assets['wave_button_hover'], w_data)
             count += 1
 
