@@ -84,3 +84,9 @@ def save_game(path, level, save_data):
     save_data[level] = 1
     json.dump(save_data, f)
     f.close()
+    
+def load_monsters(path):
+    f = open(path, 'r')
+    monster_data = json.load(f)
+    f.close()
+    return monster_data

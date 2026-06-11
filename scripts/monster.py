@@ -1,38 +1,24 @@
 import pygame
-from scripts.healthBar import HealthBar
+from scripts.health_bar import HealthBar
 from scripts.utils import play_audio
 from pathfinding import Pathfinding
 
 
 class Monster (pygame.sprite.Sprite):
-    def __init__(self, x_pos, y_pos, pathfinding, render_scale, m_type):
+    def __init__(self, x_pos, y_pos, pathfinding, render_scale, img, monster_data):
         super().__init__()
-        self.m_type = m_type
         self.pos = (int(x_pos), int(y_pos))
         self.screen_pos = self.pos[0] * 32 * render_scale, self.pos[1] * 32 * render_scale
         self.current_rotation = 0
-
-        if self.m_type == "big":
-            self.max_health = 30
-            self.monster_img = pygame.image.load('art/monsters/monsters_22.png')
-            self.monster_move_speed = .02
-            self.steel_value = 12
-            self.base_hit_cost = 80
-        elif self.m_type == "fast":
-            self.max_health = 5
-            self.monster_img = pygame.image.load('art/monsters/monsters_26.png')
-            self.monster_move_speed = .1
-            self.steel_value = 2
-            self.base_hit_cost = 5
-        else:
-            self.max_health = 10
-            self.monster_img = pygame.image.load('art/monsters/monsters_20.png')
-            self.monster_move_speed = .05
-            self.steel_value = 8
-            self.base_hit_cost = 10
+        
+        self.max_health = monster_data['max_health']
+        self.monster_img = img
+        self.monster_move_speed = monster_data['move_speed']
+        self.steel_value = monster_data['steel_value']
+        self.base_hit_cost = monster_data['hit_cost']
 
         self.current_health = self.max_health
-        self.healthBar = HealthBar(self, self.screen_pos[0], self.screen_pos[1])
+        self.healthBar = HealthBar(self.screen_pos[0], self.screen_pos[1])
         self.monster_mask = pygame.mask.from_surface(self.monster_img)
         self.pathfinding = pathfinding
         self.game = pathfinding.game
@@ -54,7 +40,7 @@ class Monster (pygame.sprite.Sprite):
             self.current_rotation = self.target_rotation
         surface.blit(self.monster_img, self.screen_pos)
         if self.current_health < self.max_health:
-            self.healthBar.draw(surface, self.screen_pos)
+            self.healthBar.draw(surface, self.screen_pos, self.current_health/self.max_health)
 
     def find_path(self):
         self.pathway = []

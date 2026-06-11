@@ -4,7 +4,7 @@ import os
 import pygame
 
 from scripts import tower, gem, monster, ui, level
-from scripts.utils import load_image, load_images, draw_text, play_audio, load_save, save_game
+from scripts.utils import load_image, load_images, draw_text, play_audio, load_save, save_game, load_monsters
 from scripts.tilemap import Tilemap
 from pathfinding import Pathfinding, make_grid, draw_pathfinding
 from pathfinding import algorithm as pf_algorithm
@@ -26,6 +26,9 @@ class Game:
 
             self.display = pygame.Surface((1280, 720))
             self.dt = 0
+            
+            # here is where we initalize our monsters
+            self.monster_data = load_monsters('data/monsters.json')
 
             # here we will import all the assets we need in our game at runtime
             self.assets = {
@@ -36,7 +39,11 @@ class Game:
                 'space_bg': load_images("space_bg"),
                 'mouse_pointer': load_image("mouse_pointer.png"),
                 'tower': load_image("tower.png"),
-                'gem': load_image("gem.png")
+                'gem': load_image("gem.png"),
+                'monsters': {
+                    m_type: load_image('monsters/' + data['image'])
+                    for m_type, data in self.monster_data.items()
+                }
             }
 
             self.text_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 10)
@@ -145,7 +152,7 @@ class Game:
 
         def spawn_monsters(self, m_type):
             monster_n = monster.Monster(self.monster_spawn_pos[0], self.monster_spawn_pos[1], self.pathfinding,
-                                        self.render_scale, m_type)
+                                        self.render_scale, self.assets['monsters'][m_type], self.monster_data[m_type])
             self.monsters.add(monster_n)
             monster_n.find_path()
 
