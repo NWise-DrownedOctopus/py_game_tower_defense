@@ -1,6 +1,7 @@
 import pygame
-from scripts.utils import play_audio, get_image, get_sheet_dim, load_image
 import time
+
+from scripts.utils import play_audio, load_image
 from scripts.projectile import Projectile
 
 class Gem (pygame.sprite.Sprite):
@@ -16,6 +17,7 @@ class Gem (pygame.sprite.Sprite):
         self.shot_delay = 1
         self.range = 100
         self.damage = 4
+        self.projectile_speed = 4
         self.hit_count = 0
         self.game = game
         self.valid_target_gizmo = pygame.image.load('art/valid_target_gizmo.png')
@@ -79,6 +81,6 @@ class Gem (pygame.sprite.Sprite):
                 self.targets.remove(monster)
 
     def fire(self, monster):
-        projectile = Projectile(self.pos, monster, self.surf, self.damage, self)
+        projectile = Projectile(self.pos, monster, self.surf, self.damage, self.projectile_speed, self.game)
         self.projectiles.add(projectile)
         play_audio('fire')

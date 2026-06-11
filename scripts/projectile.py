@@ -1,51 +1,52 @@
 import pygame
 from pygame.math import Vector2
-from scripts.utils import play_audio, get_image, get_sheet_dim, load_image
+from scripts.utils import get_image, get_sheet_dim
+
+PROJECTILE_IMG_SHEET = 'projectile_img_sheet'
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self, start_pos, target, screen_rect, damage, gem):
+    def __init__(self, start_pos, target, screen_rect, damage, speed, game):
         super().__init__()
-        pygame.sprite.Sprite.__init__(self)
         self.frame = [0, 3]
         self.frame_width = 8
         self.frame_height = 8
-        self.max_frame_width, self.max_frame_height = get_sheet_dim('projectile_img_sheet')
-        self.img = get_image('projectile_img_sheet', self.frame, self.frame_width, self.frame_height)
+        self.max_frame_width, self.max_frame_height = get_sheet_dim(PROJECTILE_IMG_SHEET)
+        self.img = get_image(PROJECTILE_IMG_SHEET, self.frame, self.frame_width, self.frame_height)
         self.target = target
-        self.gem = gem
+        self.game = game
+        self.speed = speed
         self.screen_surface = screen_rect
         self.screen_rect = screen_rect.get_rect()
         self.rect = self.img.get_rect(center=start_pos)
         self.position = Vector2(start_pos)
-        self.direction = (target.screen_pos[0], target.screen_pos[1]) - self.position
         self.dmg = damage
-        self.velocity = None
         self.projectile_mask = pygame.mask.from_surface(self.img)
+        
+    def draw(self):
+        self.screen_surface.blit(self.img, self.position)
 
     def update(self):
-        if self.gem.game.paused:
-            self.screen_surface.blit(self.img, self.position)
+        if self.game.paused:
             return
-        self.direction = (self.target.screen_pos[0] + 16, self.target.screen_pos[1] + 16) - self.position
-        self.velocity = self.direction.normalize() * 4
-        if self.gem.game.fast_forward:
-            self.velocity = self.direction.normalize() * 8
-        new_position = (self.position[0] + self.velocity[0], self.position[1] + self.velocity[1])
-        self.position = Vector2(new_position)
-        self.rect.center = new_position  # And the rect.
-        self.frame[0] += 1
-        if self.frame[0] >= self.max_frame_width:
-            self.frame[0] = 0
-        if self.frame[1] >= self.max_frame_height:
-            self.frame[1] = 0
-        self.img = get_image('projectile_img_sheet', self.frame, 8, 8)
-        self.screen_surface.blit(self.img, new_position)
-
-        # Here we will handle what happens when we collide with a monster
+        tile_half = (self.game.tile_size // 2)
+        direction = (self.target.screen_pos[0] + tile_half, self.target.screen_pos[1] + tile_half) - self.position
+        velocity = direction.normalize() * self.speed * 2 if self.game.fast_forward else direction.normalize() * self.speed
+        new_position = Vector2(self.position[0] + velocity[0], self.position[1] + velocity[1])
+        self.position = new_position
+        self.rect.center = new_position        
+        self._advance_frame()        
+        self.img = get_image(PROJECTILE_IMG_SHEET, self.frame, self.frame_width, self.frame_height)   
+        self._check_collision()        
+        if not self.screen_rect.contains(self.rect):
+            self.kill()
+            
+    def _check_collision(self):
         if self.projectile_mask.overlap(self.target.monster_mask, (self.target.screen_pos[0] - self.position[0], self.target.screen_pos[1] - self.position[1])):
             self.target.dmg(self.dmg)
             self.kill()
-
-        if not self.screen_rect.contains(self.rect):
-            self.kill()
+    
+    def _advance_frame(self):
+        self.frame[0] += 1      
+        if self.frame[0] >= self.max_frame_width:
+            self.frame[0] = 0
             

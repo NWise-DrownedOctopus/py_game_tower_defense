@@ -325,6 +325,7 @@ class Game:
                 for player_gem in self.gems:
                     for projectile in player_gem.projectiles:
                         projectile.update()
+                        projectile.draw()
 
                 # here is where we handle build mode
                 if self.build_mode:
