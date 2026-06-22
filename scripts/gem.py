@@ -1,7 +1,7 @@
 import pygame
 import time
 
-from scripts.utils import play_audio, load_image
+from scripts.utils import play_audio, load_image, load_mask
 from scripts.projectile import Projectile
 
 class Gem (pygame.sprite.Sprite):
@@ -20,36 +20,30 @@ class Gem (pygame.sprite.Sprite):
         self.projectile_speed = 4
         self.hit_count = 0
         self.game = game
-        self.valid_target_gizmo = pygame.image.load('art/valid_target_gizmo.png')
-        self.target_mask_gizmo = pygame.image.load('art/target_mask_gizmo.png')
+        self.valid_target_gizmo = load_image('valid_target_gizmo.png')
+        self.target_mask_gizmo = load_mask('target_mask_gizmo.png')
+        self.valid_target_gizmo = pygame.transform.scale(self.valid_target_gizmo, (self.range * 2, self.range * 2))
+        self.target_mask_gizmo = pygame.transform.scale(self.target_mask_gizmo, (self.range * 2, self.range * 2))
         self.gem_img = load_image('gem.png')
         self.range_mask = pygame.mask.from_surface(self.target_mask_gizmo)
-        self.tile_size = 32
-        self.target_radius_pos = [int(self.pos[0]) - (self.target_mask_gizmo.get_width() / 2) + (self.tile_size / 2),
-                                  int(self.pos[1]) - (self.target_mask_gizmo.get_height() / 2) + (self.tile_size / 2)]
+        self.tile_size = self.game.tile_size
         self.targets = []
         self.game.hoverables.append(self)
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.tile_size, self.tile_size)
 
-    def draw(self, range_display=False):
+    def draw(self):
         self.surf.blit(self.gem_img, self.pos)
 
     def update(self):
         if self.game.paused:
             self.last_shot += self.game.dt
-        if self.targets is not [] and len(self.targets) > 0 and not self.game.paused:
+        if len(self.targets) > 0 and not self.game.paused:
             current_target = self.targets[0]
             for target in self.targets:
                 if target.pathway_index > current_target.pathway_index:
                     current_target = target
-            if self.game.fast_forward:
-                if (time.time() - self.last_shot) > (self.shot_delay / 2):
-                    if current_target in self.game.monsters:
-                        self.fire(current_target)
-                        self.hit_count += 1
-                        self.last_shot = time.time()
-                        return
-            if (time.time() - self.last_shot) > self.shot_delay:
+            delay = self.shot_delay / 2 if self.game.fast_forward else self.shot_delay
+            if (time.time() - self.last_shot) > delay:
                 if current_target in self.game.monsters:
                     self.fire(current_target)
                     self.hit_count += 1
@@ -58,26 +52,18 @@ class Gem (pygame.sprite.Sprite):
     def on_hover(self):
         range_display_pos = (
             self.pos[0] + (self.tile_size / 2) - self.range, self.pos[1] + (self.tile_size / 2) - self.range)
-        self.valid_target_gizmo = pygame.transform.scale(self.valid_target_gizmo, (self.range * 2, self.range * 2))
         self.surf.blit(self.valid_target_gizmo, range_display_pos)
 
     def detect_monster(self):
         self.targets = []
         range_display_pos = (
             self.pos[0] + (self.tile_size / 2) - self.range, self.pos[1] + (self.tile_size / 2) - self.range)
-        self.target_mask_gizmo = pygame.transform.scale(self.target_mask_gizmo, (self.range * 2, self.range * 2))
-        self.range_mask = pygame.mask.from_surface(self.target_mask_gizmo)
         for monster in self.game.monsters:
             if self.range_mask.overlap(monster.monster_mask,
                                        (monster.screen_pos[0] - range_display_pos[0],
                                         monster.screen_pos[1] - range_display_pos[1])):
-                if monster not in self.targets and monster.is_dead == False:
+                if monster not in self.targets and not monster.is_dead:
                     self.targets.append(monster)
-            else:
-                if monster.is_dead and monster in self.targets:
-                    self.targets.remove(monster)
-            if monster.is_dead:
-                self.targets.remove(monster)
 
     def fire(self, monster):
         projectile = Projectile(self.pos, monster, self.surf, self.damage, self.projectile_speed, self.game)

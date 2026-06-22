@@ -40,6 +40,8 @@ class Game:
                 'mouse_pointer': load_image("mouse_pointer.png"),
                 'tower': load_image("tower.png"),
                 'gem': load_image("gem.png"),
+                'valid_target_gizmo': load_image("valid_target_gizmo.png"),
+                'target_mask_gizmo': load_image("target_mask_gizmo.png"),
                 'monsters': {
                     m_type: load_image('monsters/' + data['image'])
                     for m_type, data in self.monster_data.items()

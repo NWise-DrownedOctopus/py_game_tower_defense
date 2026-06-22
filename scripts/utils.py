@@ -62,6 +62,10 @@ def load_image(path):
     img.set_colorkey((0, 0, 0))
     return img
 
+def load_mask(path):
+    mask = pygame.image.load(BASE_IMG_PATH + path)
+    return mask
+
 # This script loads a whole folder of images based on the specified folder
 def load_images(path):
     images = []
