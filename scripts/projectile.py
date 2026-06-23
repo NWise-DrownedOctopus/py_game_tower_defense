@@ -1,6 +1,6 @@
 import pygame
 from pygame.math import Vector2
-from scripts.utils.utils import get_image, get_sheet_dim
+from scripts.utils.assets import get_image, get_sheet_dim
 
 PROJECTILE_IMG_SHEET = 'projectile_img_sheet'
 
@@ -10,8 +10,8 @@ class Projectile(pygame.sprite.Sprite):
         self.frame = [0, 3]
         self.frame_width = 8
         self.frame_height = 8
-        self.max_frame_width, self.max_frame_height = get_sheet_dim(PROJECTILE_IMG_SHEET)
-        self.img = get_image(PROJECTILE_IMG_SHEET, self.frame, self.frame_width, self.frame_height)
+        self.max_frame_width, self.max_frame_height = get_sheet_dim(PROJECTILE_IMG_SHEET, game.sheet_assets)
+        self.img = get_image(PROJECTILE_IMG_SHEET, self.frame, self.frame_width, self.frame_height, game.sheet_assets)
         self.target = target
         self.game = game
         self.speed = speed
@@ -35,7 +35,7 @@ class Projectile(pygame.sprite.Sprite):
         self.position = new_position
         self.rect.center = new_position        
         self._advance_frame()        
-        self.img = get_image(PROJECTILE_IMG_SHEET, self.frame, self.frame_width, self.frame_height)   
+        self.img = get_image(PROJECTILE_IMG_SHEET, self.frame, self.frame_width, self.frame_height, self.game.sheet_assets)   
         self._check_collision()        
         if not self.screen_rect.contains(self.rect):
             self.kill()

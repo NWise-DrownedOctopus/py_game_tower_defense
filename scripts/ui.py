@@ -1,5 +1,5 @@
 import pygame
-from scripts.utils.utils import load_image, play_audio
+from scripts.utils.assets import load_image
 from scripts.utils.ui_utils import build_context_panel
 
 BUTTON_HEIGHT = 80
@@ -66,10 +66,10 @@ class UI:
                 # Check if we have a collision with the mpos point
                 if self.scene == "ow_map":
                     if button.rect.collidepoint(pygame.mouse.get_pos()[0] / 2, pygame.mouse.get_pos()[1] / 2):
-                        play_audio('button')
+                        # play_audio('button')
                         return button.name
                 if button.rect.collidepoint(pygame.mouse.get_pos()):
-                    play_audio('button')
+                    # play_audio('button')
                     return button.name
             return False
 

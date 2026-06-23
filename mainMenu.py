@@ -1,5 +1,7 @@
 import pygame, sys, json
-from scripts.utils.utils import load_image, draw_text, play_audio, load_save
+from scripts.utils.assets import load_image
+from scripts.utils.ui_utils import draw_text
+from scripts.utils.save import load_save
 import map
 
 mainClock = pygame.time.Clock()
@@ -28,7 +30,7 @@ assets = {
 }
 
 def main_menu():
-    play_audio('BGM_Menu', True)
+    # play_audio('BGM_Menu', True)
     menu_ui = ui.UI("main_menu", pygame.display)
     if pygame.display.get_surface().get_width() == 1280 and pygame.display.get_surface().get_height() == 720:
         button_1_pos = [510, 450]

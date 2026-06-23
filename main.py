@@ -4,7 +4,10 @@ import os
 import pygame
 
 from scripts import tower, gem, monster, ui, level
-from scripts.utils.utils import load_image, load_images, draw_text, play_audio, load_save, save_game, load_monsters
+from scripts.utils.audio import play_audio
+from scripts.utils.assets import load_image, load_images
+from scripts.utils.ui_utils import draw_text
+from scripts.utils.save import load_save, save_game, load_monsters
 from scripts.tilemap import Tilemap
 from pathfinding import Pathfinding, make_grid, draw_pathfinding
 from pathfinding import algorithm as pf_algorithm
@@ -13,6 +16,7 @@ import map
 FPS = 60
 WIDTH = 1280
 ROWS = 34
+BASE_AUDIO_PATH = r"audio/"
 
 class Game:
         def __init__(self):
@@ -46,6 +50,22 @@ class Game:
                     m_type: load_image('monsters/' + data['image'])
                     for m_type, data in self.monster_data.items()
                 }
+            }
+            
+            self.sheet_assets = {
+                'projectile_img_sheet': [pygame.image.load('art/round_bullets_small.png').convert_alpha(), 6, 8],
+                'space_ground_tiles': [pygame.image.load('art/background_tiles.png').convert_alpha(), 32, 6, 12]
+            }
+            
+            self.sfx_assets = {
+                'fire': pygame.mixer.Sound(BASE_AUDIO_PATH + "laser_bolt.mp3"),
+                'build': pygame.mixer.Sound(BASE_AUDIO_PATH + "build_noise.mp3"),
+                'button': pygame.mixer.Sound(BASE_AUDIO_PATH + 'button_press.mp3'),
+                'death_1': pygame.mixer.Sound(BASE_AUDIO_PATH + 'death_noise_1.mp3'),
+                'death_2': pygame.mixer.Sound(BASE_AUDIO_PATH + 'death_noise_2.mp3'),
+                'BGM_Menu': BASE_AUDIO_PATH + 'BGM_Menu.wav',
+                'BGM_Game_1': BASE_AUDIO_PATH + 'BGM_Game_1.wav',
+                'BGM_Game_2': BASE_AUDIO_PATH + 'BGM_Game_2.wav'
             }
 
             self.text_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 10)
@@ -201,8 +221,8 @@ class Game:
 
         def run(self):
             # here we manage our BGM
-            play_audio('BGM_Game_1', True)
-            play_audio('BGM_Game_2', True)
+            play_audio('BGM_Game_1', self.sfx_assets, True)
+            play_audio('BGM_Game_2', self.sfx_assets, True)
 
             self.game_ui.create_level_buttons(self.screen)
             self.init_resolution()

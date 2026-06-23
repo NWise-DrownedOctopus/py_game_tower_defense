@@ -1,6 +1,6 @@
 import pygame
 from scripts.health_bar import HealthBar
-from scripts.utils.utils import play_audio
+from scripts.utils.audio import play_audio
 
 
 class Monster (pygame.sprite.Sprite):
@@ -52,7 +52,7 @@ class Monster (pygame.sprite.Sprite):
             self.kill()
             self.game.current_steel += self.steel_value
             self.is_dead = True
-            play_audio('death_1')
+            play_audio('death_1', self.game.sfx_assets)
             return
         
         if self.pathway is None:
@@ -60,7 +60,7 @@ class Monster (pygame.sprite.Sprite):
         if self.pathway_index == len(self.pathway) - 1:
             self.kill()
             self.game.current_steel -= self.base_hit_cost
-            play_audio('death_2')
+            play_audio('death_2', self.game.sfx_assets)
             return
         
         threshold = .1

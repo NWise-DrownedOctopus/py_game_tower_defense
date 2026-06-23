@@ -1,5 +1,5 @@
 import pygame
-from scripts.utils.utils import load_image
+from scripts.utils.assets import load_image
 from scripts.utils.ui_utils import build_context_panel
 
 class Tower (pygame.sprite.Sprite):

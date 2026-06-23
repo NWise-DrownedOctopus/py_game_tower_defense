@@ -1,7 +1,8 @@
 import pygame
 import time
 
-from scripts.utils.utils import play_audio, load_image, load_mask
+from scripts.utils.assets import load_image, load_mask
+from scripts.utils.audio import play_audio
 from scripts.projectile import Projectile
 
 class Gem (pygame.sprite.Sprite):
@@ -68,4 +69,4 @@ class Gem (pygame.sprite.Sprite):
     def fire(self, monster):
         projectile = Projectile(self.pos, monster, self.surf, self.damage, self.projectile_speed, self.game)
         self.projectiles.add(projectile)
-        play_audio('fire')
+        play_audio('fire', self.game.sfx_assets)

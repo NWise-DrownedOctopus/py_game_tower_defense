@@ -1,7 +1,7 @@
 import pygame
 import sys
 import json
-from scripts.utils.utils import draw_text
+from scripts.utils.ui_utils import draw_text
 from scripts import ui
 import main
 

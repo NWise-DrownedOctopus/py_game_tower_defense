@@ -30,4 +30,8 @@ def build_context_panel(mpos, width, height, label_text, display_width):
     break_bar.fill((0, 0, 0))
     s.blit(break_bar, (25, 40))  
     return s, context_pos
+
+def draw_text(surf, text, font, text_col, x, y):
+    img = font.render(text, True, text_col)
+    surf.blit(img, (x, y))
             
