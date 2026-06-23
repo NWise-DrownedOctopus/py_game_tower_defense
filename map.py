@@ -1,8 +1,8 @@
 import pygame
 import sys
 import json
-from scripts.utils import load_image, load_images, draw_text, load_save
-from scripts import level, ui
+from scripts.utils import draw_text
+from scripts import ui
 import main
 
 FPS = 60
