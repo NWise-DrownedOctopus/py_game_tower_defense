@@ -2,16 +2,20 @@ import pygame
 from scripts.utils.utils import load_image, play_audio
 from scripts.utils.ui_utils import build_context_panel
 
+BUTTON_HEIGHT = 80
+TARGET_FPS = 30
+FONT_PARENT = "fonts/Bandwidth8x8.ttf"
+
 
 class UI:
     def __init__(self, scene, display):
         self.scene = scene
         self.buttons = []
-        self.font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 50)        
-        self.sub_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 30)
-        self.wave_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 20)
-        self.context_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 10)
-        self.info_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 8)
+        self.font = pygame.font.Font(FONT_PARENT, 50)        
+        self.sub_font = pygame.font.Font(FONT_PARENT, 30)
+        self.wave_font = pygame.font.Font(FONT_PARENT, 20)
+        self.context_font = pygame.font.Font(FONT_PARENT, 10)
+        self.info_font = pygame.font.Font(FONT_PARENT, 8)
         self.font_color = (198, 172, 201)
         self.context_text_color = (220, 220, 220)        
         self.info_text_color = (247, 226, 107)
@@ -41,27 +45,20 @@ class UI:
         }
 
     def create_level_buttons(self, surf):
-        # This is for my pc
-        if surf.get_size()[0] == 2560 and surf.get_size()[1] == 1440:
-            pause_button = Button(self, 32, 32, (2250, 50), 'pause', self.assets["pause_button"])
-            start_button = Button(self, 32, 32, (2350, 50), 'play', self.assets["play_button"])
-            fast_forward_button = Button(self, 32, 32, (2450, 50), 'fast_forward',
-                                         self.assets["fast_forward_button"])
-            tower_button = Button(self, 128, 128, (2225, 500), 'tower_button', self.assets["tower_button"])
-            gem_button = Button(self, 128, 128, (2400, 500), 'gem_button', self.assets["gem_button"])
-        # This is for my laptop
-        if surf.get_size()[0] == 1440 and surf.get_size()[1] == 900:
-            pause_button = Button(self, 32, 32, (1150, 50), 'pause', self.assets["pause_button"])
-            start_button = Button(self, 32, 32, (1250, 50), 'play', self.assets["play_button"])
-            fast_forward_button = Button(self, 32, 32, (1350, 50), 'fast_forward',
-                                         self.assets["fast_forward_button"])
-        if surf.get_size()[0] == 1280 and surf.get_size()[1] == 720:
-            pause_button = Button(self, 32, 32, (1100, 20), 'pause', self.assets["pause_button"])
-            start_button = Button(self, 32, 32, (1165, 20), 'play', self.assets["play_button"])
-            fast_forward_button = Button(self, 32, 32, (1230, 20), 'fast_forward',
-                                         self.assets["fast_forward_button"])
-            tower_button = Button(self, 64, 64, (1100, 300), 'tower_button', self.assets["tower_button_small"])
-            gem_button = Button(self, 64, 64, (1200, 300), 'gem_button', self.assets["gem_button_small"])
+        surf_width = surf.get_size()[0]
+        
+        # Control buttons - top right area
+        pause_button = Button(self, 32, 32, (surf_width - 180, 20), 'pause', self.assets["pause_button"])
+        start_button = Button(self, 32, 32, (surf_width - 115, 20), 'play', self.assets["play_button"])
+        fast_forward_button = Button(self, 32, 32, (surf_width - 50, 20), 'fast_forward', self.assets["fast_forward_button"])
+
+        # Build buttons - middle right area
+        if surf_width >= 1440:
+            tower_button = Button(self, 128, 128, (surf_width - 335, 500), 'tower_button', self.assets["tower_button"])
+            gem_button = Button(self, 128, 128, (surf_width - 160, 500), 'gem_button', self.assets["gem_button"])
+        else:
+            tower_button = Button(self, 64, 64, (surf_width - 180, 300), 'tower_button', self.assets["tower_button_small"])
+            gem_button = Button(self, 64, 64, (surf_width - 80, 300), 'gem_button', self.assets["gem_button_small"])
 
     def check_click(self):
         if len(self.buttons) > 0:
@@ -74,21 +71,23 @@ class UI:
                 if button.rect.collidepoint(pygame.mouse.get_pos()):
                     play_audio('button')
                     return button.name
+            return False
 
     def create_wave_display(self, waves, monster_data):
         self.wave_data = waves
         self.monster_data = monster_data
         for count, wave in enumerate(waves):
             w_data = wave
-            wave_button = Button(self, 32, 80, (0, int(80 * count)), ('w', + count), self.assets['wave_button'], self.assets['wave_button_hover'], w_data)
+            wave_button = Button(self, 32, BUTTON_HEIGHT, (0, int(BUTTON_HEIGHT * count)), ('w', + count), self.assets['wave_button'], self.assets['wave_button_hover'], w_data)
 
     def draw_gem_stash(self, surf):
-        surf.blit(pygame.transform.scale(self.assets['gem_stash'], (165, 165)), (1100, 400))
+        stash_width = 165
+        surf.blit(pygame.transform.scale(self.assets['gem_stash'], (stash_width, stash_width)), (1100, 400))
 
+    # BUG: Wave display desyncs with actual wave spawns. Issue likely in main.py
     def update_wave_display(self, ff=False):
-        movement = 80 / 14 / 60
-        if ff:
-            movement = 80 / 14 / 30
+        speed_modifier = 1 if ff == False else 2
+        movement = (BUTTON_HEIGHT / 14 / TARGET_FPS) * speed_modifier
         for button in self.buttons:
             if button.name[0] == 'w':
                 button.pos = (button.pos[0], button.pos[1] - movement)
@@ -115,9 +114,7 @@ class Button:
                 wave_num = str(self.name[1] + 1)
                 wave_num = self.ui.wave_font.render(wave_num, True, self.ui.font_color)
                 wave_num_rect = wave_num.get_rect(center=(self.rect.width / 2, self.pos[1] + 70))
-                # draw_text(surf, wave_num, self.ui.wave_font, self.ui.font_color, self.rect.x + 10, self.rect.y - 70)
                 surf.blit(wave_num, wave_num_rect)
-
 
     def draw_button_hover(self, surf):
         if self.hover_img is not None:
@@ -166,3 +163,4 @@ class Button:
         else:
             if self.rect.collidepoint(pygame.mouse.get_pos()):
                 return True
+        return False
