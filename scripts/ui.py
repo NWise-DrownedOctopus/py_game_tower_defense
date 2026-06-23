@@ -11,13 +11,13 @@ class UI:
     def __init__(self, scene, display):
         self.scene = scene
         self.buttons = []
-        self.font = pygame.font.Font(FONT_PARENT, 50)        
+        self.font = pygame.font.Font(FONT_PARENT, 50)   
         self.sub_font = pygame.font.Font(FONT_PARENT, 30)
         self.wave_font = pygame.font.Font(FONT_PARENT, 20)
         self.context_font = pygame.font.Font(FONT_PARENT, 10)
         self.info_font = pygame.font.Font(FONT_PARENT, 8)
         self.font_color = (198, 172, 201)
-        self.context_text_color = (220, 220, 220)        
+        self.context_text_color = (220, 220, 220)
         self.info_text_color = (247, 226, 107)
         self.wave_data = None
         self.monster_data = None
