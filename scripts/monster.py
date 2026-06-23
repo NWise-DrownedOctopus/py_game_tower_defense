@@ -1,6 +1,6 @@
 import pygame
 from scripts.health_bar import HealthBar
-from scripts.utils import play_audio
+from scripts.utils.utils import play_audio
 
 
 class Monster (pygame.sprite.Sprite):

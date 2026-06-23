@@ -1,6 +1,6 @@
 import pygame
 from pygame.math import Vector2
-from scripts.utils import get_image, get_sheet_dim
+from scripts.utils.utils import get_image, get_sheet_dim
 
 PROJECTILE_IMG_SHEET = 'projectile_img_sheet'
 

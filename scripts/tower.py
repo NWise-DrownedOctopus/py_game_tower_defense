@@ -1,8 +1,6 @@
 import pygame
-from scripts.utils import load_image
-
-LINE_WIDTH = 5
-
+from scripts.utils.utils import load_image
+from scripts.utils.ui_utils import build_context_panel
 
 class Tower (pygame.sprite.Sprite):
 
@@ -80,25 +78,32 @@ class Tower (pygame.sprite.Sprite):
 
             surf.blit(s, context_pos)
         
-    def _draw_context_panel(self, s, width, height, lable_text):
-        l_bar = pygame.Surface((LINE_WIDTH, height))
-        l_bar.fill((0, 0, 0))
-        r_bar = pygame.Surface((LINE_WIDTH, height))
-        r_bar.fill((0, 0, 0))
-        top_bar = pygame.Surface((width, LINE_WIDTH))
-        top_bar.fill((0, 0, 0))
-        bot_bar = pygame.Surface((width, LINE_WIDTH))
-        bot_bar.fill((0, 0, 0))
-        s.set_alpha(200)  # alpha level
-        s.fill((20, 20, 20))
-        s.blit(l_bar, (0, 0))
-        s.blit(r_bar, ((width - LINE_WIDTH), 0))
-        s.blit(top_bar, (0, 0))
-        s.blit(bot_bar, (0, (height - LINE_WIDTH)))
-        lable_text_rect = lable_text.get_rect(center=(s.get_width() / 2, 20))
-        s.blit(lable_text, lable_text_rect)
-        
-        break_bar = pygame.Surface((170, 3))
-        break_bar.fill((0, 0, 0))
-        s.blit(break_bar, (25, 40))      
+    def draw_context(self, surf):
+        width = 225
+        mpos = pygame.mouse.get_pos()
+        display_width = self.game.display.get_width()
+
+        if not self.has_gem:
+            height = 100
+            label_text = self.game.game_ui.context_font.render('Tower', True, self.game.game_ui.context_text_color)
+            s, context_pos = build_context_panel(mpos, width, height, label_text, display_width)
+
+            info_text = self.game.game_ui.info_font.render('Insert a gem to activate', True, self.game.game_ui.info_text_color)
+            s.blit(info_text, info_text.get_rect(center=(width / 2, 65)))
+            surf.blit(s, context_pos)
+
+        else:
+            height = 150
+            label_text = self.game.game_ui.context_font.render('Grade 1 Gem', True, self.game.game_ui.context_text_color)
+            s, context_pos = build_context_panel(mpos, width, height, label_text, display_width)
+
+            for text, y in [
+                ('Damage: ' + str(self.gem.damage), 60),
+                ('Range: ' + str(self.gem.range / 10), 80),
+                ('Shots per second: ' + str(1 / self.gem.shot_delay), 100),
+                ('Hits: ' + str(self.gem.hit_count), 120)
+            ]:
+                rendered = self.game.game_ui.info_font.render(text, True, self.game.game_ui.info_text_color)
+                s.blit(rendered, rendered.get_rect(center=(width / 2, y)))
+            surf.blit(s, context_pos)   
             

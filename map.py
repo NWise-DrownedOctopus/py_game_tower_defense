@@ -1,7 +1,7 @@
 import pygame
 import sys
 import json
-from scripts.utils import draw_text
+from scripts.utils.utils import draw_text
 from scripts import ui
 import main
 
@@ -29,7 +29,7 @@ class Map:
         self.dt = 0
 
         self.selected_level = None
-        self.game_ui = ui.UI("ow_map")
+        self.game_ui = ui.UI("ow_map", self.display)
 
     def load(self, path):
         with open(path, 'r') as f:

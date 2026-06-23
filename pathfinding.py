@@ -4,9 +4,6 @@ from queue import PriorityQueue
 
 import pygame
 
-from scripts.utils import load_images
-from scripts.tilemap import Tilemap
-
 FPS = 60
 WIDTH = 1280
 ROWS = 22

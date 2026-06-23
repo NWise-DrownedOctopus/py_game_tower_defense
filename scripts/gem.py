@@ -1,7 +1,7 @@
 import pygame
 import time
 
-from scripts.utils import play_audio, load_image, load_mask
+from scripts.utils.utils import play_audio, load_image, load_mask
 from scripts.projectile import Projectile
 
 class Gem (pygame.sprite.Sprite):

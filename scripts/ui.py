@@ -1,20 +1,23 @@
 import pygame
-from scripts.utils import load_image, play_audio, draw_text
+from scripts.utils.utils import load_image, play_audio
+from scripts.utils.ui_utils import build_context_panel
 
 
 class UI:
-    def __init__(self, scene):
+    def __init__(self, scene, display):
         self.scene = scene
         self.buttons = []
-        self.font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 50)
-        self.font_color = (198, 172, 201)
+        self.font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 50)        
         self.sub_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 30)
         self.wave_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 20)
         self.context_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 10)
-        self.context_text_color = (220, 220, 220)
         self.info_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 8)
+        self.font_color = (198, 172, 201)
+        self.context_text_color = (220, 220, 220)        
         self.info_text_color = (247, 226, 107)
         self.wave_data = None
+        self.monster_data = None
+        self.display = display
 
         self.assets = {
             'l_side_bar': load_image("ui/UI_L_SideBar.png"),
@@ -72,13 +75,12 @@ class UI:
                     play_audio('button')
                     return button.name
 
-    def create_wave_display(self, waves):
+    def create_wave_display(self, waves, monster_data):
         self.wave_data = waves
-        count = 0
-        for wave in waves:
-            w_data = self.wave_data[count]
+        self.monster_data = monster_data
+        for count, wave in enumerate(waves):
+            w_data = wave
             wave_button = Button(self, 32, 80, (0, int(80 * count)), ('w', + count), self.assets['wave_button'], self.assets['wave_button_hover'], w_data)
-            count += 1
 
     def draw_gem_stash(self, surf):
         surf.blit(pygame.transform.scale(self.assets['gem_stash'], (165, 165)), (1100, 400))
@@ -124,84 +126,38 @@ class Button:
             self.draw_context(surf)
 
     def draw_context(self, surf):
-        if self.name:
-            if self.name[0] == 'w':
-                mpos = pygame.mouse.get_pos()
-                if mpos[1] < 230:
-                    s = pygame.Surface((350, 200))
-                    context_pos = (mpos[0] + 20, 20)
-                elif mpos[0] > 900:
-                    s = pygame.Surface((350, 200))
-                    context_pos = (mpos[0] - 320, mpos[1] - 200)
-                else:
-                    s = pygame.Surface((350, 200))
-                    context_pos = (mpos[0] + 20, mpos[1] - 200)
-                l_bar = pygame.Surface((5, 200))
-                l_bar.fill((0, 0, 0))
-                r_bar = pygame.Surface((5, 200))
-                r_bar.fill((0, 0, 0))
-                top_bar = pygame.Surface((350, 5))
-                top_bar.fill((0, 0, 0))
-                bot_bar = pygame.Surface((350, 5))
-                bot_bar.fill((0, 0, 0))
-                s.set_alpha(200)  # alpha level
-                s.fill((20, 20, 20))
-                s.blit(l_bar, (0, 0))
-                s.blit(r_bar, (345, 0))
-                s.blit(top_bar, (0, 0))
-                s.blit(bot_bar, (0, 195))
+        if self.name and self.name[0] == 'w':
+            mpos = pygame.mouse.get_pos()
+            width, height = 350, 200
+            wave_data = self.ui.wave_data[self.name[1]]
+            
+            label_text = self.ui.context_font.render(
+                'Wave ' + str(self.name[1] + 1) + ' of ' + str(len(self.ui.wave_data)), 
+                True, self.ui.context_text_color)
+            
+            s, context_pos = build_context_panel(mpos, width, height, label_text, self.ui.display.get_width())
 
-                wave_data = self.ui.wave_data[str(self.name[1] + 1)]
-                text = 'Wave ' + str(self.name[1] + 1) + ' of ' + str(len(self.ui.wave_data))
-                wavenum_text = self.ui.context_font.render(text, True, self.ui.context_text_color)
-                wavenum_text_rect = wavenum_text.get_rect(center=(s.get_width() / 2, 20))
-                s.blit(wavenum_text, wavenum_text_rect)
+            text = str(wave_data[0]) + ' ' + str(wave_data[1])
+            enemy_count_text = self.ui.context_font.render(text, True, self.ui.context_text_color)
+            s.blit(enemy_count_text, enemy_count_text.get_rect(center=(width / 2, 45)))
 
-                text = str(wave_data[0]) + ' ' + str(wave_data[1])
-                enemy_count_text = self.ui.context_font.render(text, True, self.ui.context_text_color)
-                enemy_count_text_rect = enemy_count_text.get_rect(center=(s.get_width() / 2, 45))
-                s.blit(enemy_count_text, enemy_count_text_rect)
+            text = 'Hitpoints: ' + str(wave_data[2])
+            hit_points_text = self.ui.context_font.render(text, True, self.ui.context_text_color)
+            s.blit(hit_points_text, hit_points_text.get_rect(center=(width / 2, 80)))
 
-                break_bar = pygame.Surface((250, 3))
-                break_bar.fill((0, 0, 0))
-                s.blit(break_bar, (50, 60))
+            monster_type = wave_data[1]
+            speed = self.ui.monster_data[monster_type]["move_speed"]
+            speed_text = self.ui.context_font.render('Speed: ' + str(speed), True, self.ui.context_text_color)
+            s.blit(speed_text, speed_text.get_rect(center=(width / 2, 105)))
 
-                text = 'Hitpoints: ' + str(wave_data[2])
-                hit_points_text = self.ui.context_font.render(text, True, self.ui.context_text_color)
-                hit_points_text_rect = hit_points_text.get_rect(center=(s.get_width() / 2, 80))
-                s.blit(hit_points_text, hit_points_text_rect)
+            steel = self.ui.monster_data[monster_type]["steel_value"]
+            steel_text = self.ui.context_font.render('Steel gain per kill: ' + str(steel), True, self.ui.context_text_color)
+            s.blit(steel_text, steel_text.get_rect(center=(width / 2, 130)))
 
-                if str(wave_data[1]) == "big":
-                    speed = .02
-                elif str(wave_data[1]) == "normal":
-                    speed = .05
-                elif str(wave_data[1]) == "fast":
-                    speed = .1
-                text = 'Speed: ' + str(speed)
-                speed_text = self.ui.context_font.render(text, True, self.ui.context_text_color)
-                speed_text_rect = speed_text.get_rect(center=(s.get_width() / 2, 105))
-                s.blit(speed_text, speed_text_rect)
+            info_text = self.ui.info_font.render('Click to start this and all waves above now', True, self.ui.info_text_color)
+            s.blit(info_text, info_text.get_rect(center=(width / 2, 175)))
 
-                if str(wave_data[1]) == "big":
-                    steel = 12
-                elif str(wave_data[1]) == "normal":
-                    steel = 8
-                elif str(wave_data[1]) == "fast":
-                    steel = 2
-                text = 'Steel gain per kill: ' + str(steel)
-                steel_text = self.ui.context_font.render(text, True, self.ui.context_text_color)
-                steel_text_rect = steel_text.get_rect(center=(s.get_width() / 2, 130))
-                s.blit(steel_text, steel_text_rect)
-
-                break_bar = pygame.Surface((250, 3))
-                break_bar.fill((0, 0, 0))
-                s.blit(break_bar, (50, 150))
-
-                info_text = self.ui.info_font.render('Click to start this and all waves above now', True, self.ui.info_text_color)
-                info_text_rect = info_text.get_rect(center=(s.get_width() / 2, 175))
-                s.blit(info_text, info_text_rect)
-
-                surf.blit(s, context_pos)
+            surf.blit(s, context_pos)
 
     def check_hover(self):
         if self.ui.scene == "ow_map":

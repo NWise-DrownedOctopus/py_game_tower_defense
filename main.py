@@ -4,7 +4,7 @@ import os
 import pygame
 
 from scripts import tower, gem, monster, ui, level
-from scripts.utils import load_image, load_images, draw_text, play_audio, load_save, save_game, load_monsters
+from scripts.utils.utils import load_image, load_images, draw_text, play_audio, load_save, save_game, load_monsters
 from scripts.tilemap import Tilemap
 from pathfinding import Pathfinding, make_grid, draw_pathfinding
 from pathfinding import algorithm as pf_algorithm
@@ -88,7 +88,7 @@ class Game:
             self.tile_size = 32
             self.tilemap = Tilemap(self,  self.tile_size)
             self.pathfinding = Pathfinding(self)
-            self.game_ui = ui.UI("game")
+            self.game_ui = ui.UI("game", self.display)
             self.pf_grid = make_grid(ROWS, WIDTH)
             self.pf_started = False
 
@@ -255,7 +255,7 @@ class Game:
             pf_algorithm(lambda: draw_pathfinding(self.display, self.pf_grid, ROWS, WIDTH),
                          self.pf_grid, self.pf_start, self.pf_end, self)
 
-            self.game_ui.create_wave_display(self.level.waves)
+            self.game_ui.create_wave_display(self.level.waves, self.monster_data)
 
             # Here we enter the game loop, it is called "every frame"
             while True:
