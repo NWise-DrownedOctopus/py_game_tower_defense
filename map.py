@@ -17,8 +17,7 @@ class Map:
         self.save_data = save_data
         self.map_ended = False
 
-        pygame.init()
-        pygame.display.set_caption("tower defense game")
+        pygame.display.set_caption("Errour: Canto")
 
         self.screen = pygame.display.set_mode(
             (1280, 720))
@@ -33,10 +32,8 @@ class Map:
         self.game_ui = ui.UI("ow_map")
 
     def load(self, path):
-        f = open(path, 'r')
-        map_data = json.load(f)
-        f.close()
-
+        with open(path, 'r') as f:
+            map_data = json.load(f)
         self.levels = map_data['levels']
 
     def run(self):
@@ -45,12 +42,11 @@ class Map:
 
         self.load('data/overworld_map.json')
 
-        if pygame.display.get_surface().get_width() == 1280 and pygame.display.get_surface().get_height() == 720:
-            l1_button = ui.Button(self.game_ui, 32, 32, (300, 100), 'l1', self.game_ui.assets["mars_hex_01"], self.game_ui.assets['mars_hex_select_01'])
-            if self.save_data['l1'] == 1:
-                l2_button = ui.Button(self.game_ui, 32, 32, (250, 200), 'l2', self.game_ui.assets["mars_hex_01"], self.game_ui.assets['mars_hex_select_01'])
-            if self.save_data['l2'] == 1:
-                l3_button = ui.Button(self.game_ui, 32, 32, (400, 150), 'l3', self.game_ui.assets["mars_hex_01"], self.game_ui.assets['mars_hex_select_01'])
+        l1_button = ui.Button(self.game_ui, 32, 32, (300, 100), 'l1', self.game_ui.assets["mars_hex_01"], self.game_ui.assets['mars_hex_select_01'])
+        if self.save_data['l1'] == 1:
+            l2_button = ui.Button(self.game_ui, 32, 32, (250, 200), 'l2', self.game_ui.assets["mars_hex_01"], self.game_ui.assets['mars_hex_select_01'])
+        if self.save_data['l2'] == 1:
+            l3_button = ui.Button(self.game_ui, 32, 32, (400, 150), 'l3', self.game_ui.assets["mars_hex_01"], self.game_ui.assets['mars_hex_select_01'])
 
         while True:
             if self.map_ended:
@@ -61,7 +57,7 @@ class Map:
             self.display.blit(pygame.transform.scale(self.game_ui.assets["planet_bg"], (self.display.get_size()[1], self.display.get_size()[1])), (150, 0))
 
             # here is where we manage the mouse position input
-            self.screen_mpos = pygame.mouse.get_pos()[0] / 2, pygame.mouse.get_pos()[1] / 2
+            self.screen_mpos = pygame.mouse.get_pos()[0] / self.render_scale, pygame.mouse.get_pos()[1] / self.render_scale
 
             # Here we display our UI
             for button in self.game_ui.buttons:
@@ -78,21 +74,16 @@ class Map:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         if self.game_ui.check_click() == 'l1':
-                            self.selected_level = '1'
-                            self.game = main.Game()
-                            self.game.current_level = self.levels[self.selected_level][0]
-                            self.game.run()
+                            self.selected_level = 1
                         elif self.game_ui.check_click() == 'l2':
-                            self.selected_level = '2'
-                            self.game = main.Game()
-                            self.game.current_level = self.levels[self.selected_level][0]
-                            self.game.run()
+                            self.selected_level = 2
                         elif self.game_ui.check_click() == 'l3':
-                            self.selected_level = '3'
+                            self.selected_level = 3
+                        if self.selected_level is not None:
                             self.game = main.Game()
-                            self.game.current_level = self.levels[self.selected_level][0]
+                            self.game.current_level = self.levels[self.selected_level - 1][0]
                             self.game.run()
-                        self.map_ended = True
+                            self.map_ended = True
 
             # Here we display our mouse
             self.display.blit(self.game_ui.assets['mouse_pointer'], self.screen_mpos)
@@ -106,4 +97,3 @@ class Map:
 
             pygame.display.update()
             self.dt = self.clock.tick(FPS) / 1000
-
