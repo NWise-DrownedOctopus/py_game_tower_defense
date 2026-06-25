@@ -1,12 +1,13 @@
-import pygame, sys, json
+import pygame
+import sys
+import json
 from scripts.utils.assets import load_image
 from scripts.utils.ui_utils import draw_text
-from scripts.utils.save import load_save
+from scripts.utils.save import load_save, create_save
+from pygame.locals import K_ESCAPE, MOUSEBUTTONDOWN
+from scripts import ui
 import map
 
-mainClock = pygame.time.Clock()
-from pygame.locals import *
-from scripts import ui
 pygame.init()
 pygame.mixer.init(44100, -16, 2, 2048)
 pygame.display.set_caption("game base")
@@ -38,7 +39,6 @@ def main_menu():
         new_game_button = ui.Button(menu_ui, 500, 110, (button_1_pos[0], button_1_pos[1]), 'new_game')
         continue_button = ui.Button(menu_ui, 500, 110, (button_2_pos[0], button_2_pos[1]), 'continue')
     # menu_ui.create_menu_buttons(screen)
-    clicking = False
     while True:
         bg = assets['background'].copy()
         screen.blit(pygame.transform.scale(bg, (1310, 720)), (-20, 0))
@@ -49,7 +49,6 @@ def main_menu():
             button.draw_button(screen)
 
         mx, my = pygame.mouse.get_pos()
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -59,33 +58,18 @@ def main_menu():
                     pygame.quit()
                     sys.exit()
             if event.type == MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    clicking = True
-                if menu_ui.check_click() == 'new_game':
+                clicked = menu_ui.check_click()                
+                if clicked == 'new_game':
                     create_save('data/save.json')
                     save_data = load_save('data/save.json')
                     map.Map(save_data).run()
                     break
-                if menu_ui.check_click() == 'continue':
+                elif clicked == 'continue':
                     save_data = load_save('data/save.json')
                     map.Map(save_data).run()
                     break
 
         pygame.display.update()
         clock.tick(60)
-
-
-def load(path):
-    f = open(path, 'r')
-    save_data = json.load(f)
-    f.close()
-    return save_data
-
-
-def create_save(path):
-    f = open(path, 'w')
-    json.dump({'l1': 0, 'l2': 0, 'l3': 0}, f)
-    f.close()
-
 
 main_menu()
