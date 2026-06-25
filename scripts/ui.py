@@ -53,12 +53,8 @@ class UI:
         fast_forward_button = Button(self, 32, 32, (surf_width - 50, 20), 'fast_forward', self.assets["fast_forward_button"])
 
         # Build buttons - middle right area
-        if surf_width >= 1440:
-            tower_button = Button(self, 128, 128, (surf_width - 335, 500), 'tower_button', self.assets["tower_button"])
-            gem_button = Button(self, 128, 128, (surf_width - 160, 500), 'gem_button', self.assets["gem_button"])
-        else:
-            tower_button = Button(self, 64, 64, (surf_width - 180, 300), 'tower_button', self.assets["tower_button_small"])
-            gem_button = Button(self, 64, 64, (surf_width - 80, 300), 'gem_button', self.assets["gem_button_small"])
+        tower_button = Button(self, 64, 64, (surf_width - 180, 300), 'tower_button', self.assets["tower_button_small"])
+        gem_button = Button(self, 64, 64, (surf_width - 80, 300), 'gem_button', self.assets["gem_button_small"])
 
     def check_click(self):
         if len(self.buttons) > 0:

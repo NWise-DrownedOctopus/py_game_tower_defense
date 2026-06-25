@@ -125,17 +125,13 @@ class Game:
             # Here we will initialize 16 x 9 ratios (My PC)
             if self.screen.get_size()[0] == 2560 and self.screen.get_size()[1] == 1440:
                 self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 16))
-                self.render_scale = 4.0
             # Here we will initialize 16 x 10 ratios (My Laptop)
             elif self.screen.get_size()[0] == 2880 and self.screen.get_size()[1] == 1800:
                 self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
-                self.render_scale = 3.0
             elif self.screen.get_size()[0] == 1440 and self.screen.get_size()[1] == 900:
                 self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 90))
-                self.render_scale = 2.0
             elif self.screen.get_size()[0] == 1280 and self.screen.get_size()[1] == 720:
                 self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 0))
-                self.render_scale = 2.0
             else:
                 self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
 
@@ -303,16 +299,7 @@ class Game:
                 # here is where we manage the mouse position input
                 self.screen_mpos = pygame.mouse.get_pos()
 
-                # This feels super hacky, and I think I should attempt to refactor this to be more elegant
-                # This is our solution for my laptop
                 self.tile_pos = self.mpos
-                if self.screen.get_size()[0] == 1440 and self.screen.get_size()[1] == 900:
-                    self.mpos = ((self.screen_mpos[0] / self.render_scale), (self.screen_mpos[1] / self.render_scale) - 45)
-                    self.tile_pos = (int(self.mpos[0] // self.tilemap.tile_size), int(self.mpos[1] // self.tilemap.tile_size))
-                # This is my solution for my pc
-                if self.screen.get_size()[0] == 2560 and self.screen.get_size()[1] == 1440:
-                    self.mpos = ((self.screen_mpos[0] / self.render_scale), (self.screen_mpos[1] / self.render_scale))
-                    self.tile_pos = (int(self.mpos[0] // self.tilemap.tile_size), int(self.mpos[1] // self.tilemap.tile_size))
                 # This is my solution that works on any monitor
                 if self.screen.get_size()[0] == 1280 and self.screen.get_size()[1] == 720:
                     self.mpos = ((self.screen_mpos[0] / self.render_scale), (self.screen_mpos[1] / self.render_scale))
@@ -452,7 +439,6 @@ class Game:
                     for button in self.game_ui.buttons:
                         button.draw_button()
 
-                    self.render_scale = 2.0
 
                 if self.screen.get_size()[0] == 2560 and self.screen.get_size()[1] == 1440:
                     self.screen.blit(pygame.transform.scale(self.display, (2560, 1440)), (0, 16))
@@ -469,7 +455,6 @@ class Game:
                     draw_text(self.screen, steel_text, self.text_font, (0, 0, 0), 2300, 200)
                     draw_text(self.screen, level_text, self.text_font, (0, 0, 0), 2300, 250)
                     draw_text(self.screen, wave_text, self.text_font, (0, 0, 0), 2300, 300)
-                    self.render_scale = 4.0
 
                 if self.screen.get_size()[0] == 1280 and self.screen.get_size()[1] == 720:
                     self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 8))
@@ -512,7 +497,6 @@ class Game:
                     draw_text(self.screen, wave_text, self.text_font, (0, 0, 0), 1100, 130)
                     draw_text(self.screen, tower_build_text, self.text_font, (0, 0, 0), 1100, 375)
                     draw_text(self.screen, gem_build_text, self.text_font, (0, 0, 0), 1195, 375)
-                    self.render_scale = 2.0
 
                 # Here we display our mouse
                 self.screen.blit(self.assets['mouse_pointer'], self.screen_mpos)
