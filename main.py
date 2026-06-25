@@ -17,6 +17,8 @@ FPS = 60
 WIDTH = 1280
 ROWS = 34
 BASE_AUDIO_PATH = r"audio/"
+TILES_WIDE = 34
+TILES_TALL = 22
 
 class Game:
         def __init__(self):
@@ -116,7 +118,7 @@ class Game:
             self.pf_start = None
             self.pf_end = None
             self.monster_spawn_pos = None
-            self.data_filepath = r"data"
+            self.data_filepath = "data"
             self.render_scale = 2.0
 
         def init_resolution(self):
@@ -137,10 +139,10 @@ class Game:
             else:
                 self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
 
-        def run_pathfinding(self):
+        def run_pathfinding(self, clicked):
             if self.level_ended:
                 return
-            if self.game_ui.check_click() == 'play':
+            if clicked == 'play':
                 if self.debug_mode:
                     self.pathfinding.update(True)
                 else:
@@ -162,12 +164,7 @@ class Game:
 
         def end_level(self):
             self.level_ended = True
-            if self.level.name == "Level 1":
-                save_game('data/save.json', 'l1', self.save_data)
-            elif self.level.name == "Level 2":
-                save_game('data/save.json', 'l2', self.save_data)
-            elif self.level.name == "Level 3":
-                save_game('data/save.json', 'l3', self.save_data)
+            save_game('data/save.json', self.level.name, self.save_data)
             ui.save_data = load_save('data/save.json')
             self.save_data = load_save('data/save.json')
             map.Map(self.save_data).run()
@@ -177,6 +174,22 @@ class Game:
                                         self.assets['monsters'][m_type], self.monster_data[m_type])
             self.monsters.add(monster_n)
             monster_n.find_path()
+            
+        def _clamp_tile_pos(self):
+            if self.tile_pos is None:
+                self.tile_pos = None
+                return
+            if self.tile_pos[0] <= 0:
+                self.tile_pos = None
+                return
+            if self.tile_pos[0] >= TILES_WIDE:
+                self.tile_pos = None
+                return
+            if self.tile_pos[1] <= -1:
+                self.tile_pos = None
+                return
+            if self.tile_pos[1] >= TILES_TALL:
+                self.tile_pos = None
 
         def build_display(self):
             self.current_build_img.set_alpha(100)
@@ -243,7 +256,7 @@ class Game:
             for s_tower in self.level.starting_towers:
                 tower_pos = s_tower
                 s_tower = tower.Tower(
-                    (tower_pos[0] * self.tilemap.tile_size * 2, tower_pos[1] * self.tilemap.tile_size * 2), (tower_pos[0], tower_pos[1]),  # This makes me hate dynamic typing hour long trying to fix this
+                    (tower_pos[0] * self.tilemap.tile_size * self.render_scale, tower_pos[1] * self.tilemap.tile_size * self.render_scale), (tower_pos[0], tower_pos[1]),  # This makes me hate dynamic typing hour long trying to fix this
                     self.display, self)
                 self.towers.add(s_tower)
                 for s_gem in self.level.starting_gems:
@@ -260,7 +273,7 @@ class Game:
 
             self.level.start_wave()
             self.fast_forward = False
-            self.current_wave = '1'
+            self.current_wave = 1
             self.pathfinding.update()
             spawn_pos = self.level.monster_spawn_pos
             base_pos = self.level.base_pos
@@ -307,20 +320,7 @@ class Game:
                     int(self.mpos[0] // self.tilemap.tile_size), int(self.mpos[1] // self.tilemap.tile_size))
 
                 # Here we are making sure our tile_position doesn't go out of bounds of the current game display area
-                while self.tile_pos is not None:
-                    if self.tile_pos[0] <= 0:
-                        self.tile_pos = None
-                        break
-                    if self.tile_pos[0] >= 34:
-                        self.tile_pos = None
-                        break
-                    if self.tile_pos[1] <= -1:
-                        self.tile_pos = None
-                        break
-                    if self.tile_pos[1] >= 22:
-                        self.tile_pos = None
-                        break
-                    break
+                self._clamp_tile_pos()
 
                 # Here is where we manage pathfinding
                 if self.debug_mode:
@@ -375,6 +375,7 @@ class Game:
                         continue
 
                     if event.type == pygame.MOUSEBUTTONDOWN:
+                        clicked = self.game_ui.check_click()
                         if event.button == 1:
                             self.clicking = True
                             if self.build_mode:
@@ -382,17 +383,17 @@ class Game:
                                     if self.tile_pos is not None:
                                         self.build()
                             else:
-                                if self.game_ui.check_click() == 'play':
-                                    self.run_pathfinding()
-                                if self.game_ui.check_click() == 'pause':
+                                if clicked == 'play':
+                                    self.run_pathfinding(clicked)
+                                if clicked == 'pause':
                                     self.paused = True
-                                if self.game_ui.check_click() == 'fast_forward':
+                                if clicked == 'fast_forward':
                                     self.fast_forward = not self.fast_forward
-                                if self.game_ui.check_click() == 'tower_button':
+                                if clicked == 'tower_button':
                                     self.current_build_img = self.assets['tower'].copy()
                                     self.current_build_type = 'tower'
                                     self.build_mode = not self.build_mode
-                                if self.game_ui.check_click() == 'gem_button':
+                                if clicked == 'gem_button':
                                     self.current_build_img = self.assets['gem'].copy()
                                     self.current_build_type = 'gem'
                                     self.build_mode = not self.build_mode
@@ -434,26 +435,19 @@ class Game:
                         if event.key == pygame.K_q:
                             self.fast_forward = not self.fast_forward
 
-                # Here we handle UI input
-                draw_text(self.display, "Pathfinding", self.text_font, (255, 255, 255), 10, 10)
-
                 # Here we start the loop by drawing the background of the scene first
                 if self.screen.get_size()[0] == 1440 and self.screen.get_size()[1] == 900:
                     self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 90))
                     # Left bar at this resolution should be at (0, 0) with the dim. (32 x 1440)
-                    # self.screen.blit(self.assets['l_side_bar'], (0, 0))
                     pygame.draw.rect(self.screen, (245, 190, 37), pygame.Rect(0, 0, 32, 1440))
                     # Right bar at this resolution should be at (1088, 0) with the dim. (128 x 1440)
                     pygame.draw.rect(self.screen, (245, 190, 37), pygame.Rect(1088, 0, 352, 1440))
-                    # self.screen.blit(self.assets['r_side_bar'], (1088, 0))
                     # Top bar at this resolution should be at (32, 0) with the dim. (1056 x 80)
                     pygame.draw.rect(self.screen, (200, 150, 10), pygame.Rect(32, 0, 1056, 90))
-                    # self.screen.blit(self.assets['top_bar'], (64, 0))
                     # Bottom bar at this resolution should be at (32, 810) with the dim. (1056 x 90)
                     # However our tile grid is slightly too tall because we have an extra half tile in height
                     # that adds an extra 16 pixels for us here
                     pygame.draw.rect(self.screen, (200, 150, 10), pygame.Rect(32, 794, 1056, 106))
-                    # self.screen.blit(self.assets['bottom_bar'], (64, 794))
 
                     for button in self.game_ui.buttons:
                         button.draw_button()
