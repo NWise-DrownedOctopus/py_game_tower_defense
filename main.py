@@ -122,18 +122,7 @@ class Game:
             self.render_scale = 2.0
 
         def init_resolution(self):
-            # Here we will initialize 16 x 9 ratios (My PC)
-            if self.screen.get_size()[0] == 2560 and self.screen.get_size()[1] == 1440:
-                self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 16))
-            # Here we will initialize 16 x 10 ratios (My Laptop)
-            elif self.screen.get_size()[0] == 2880 and self.screen.get_size()[1] == 1800:
-                self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
-            elif self.screen.get_size()[0] == 1440 and self.screen.get_size()[1] == 900:
-                self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 90))
-            elif self.screen.get_size()[0] == 1280 and self.screen.get_size()[1] == 720:
-                self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 0))
-            else:
-                self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
+            self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 0))
 
         def run_pathfinding(self, clicked):
             if self.level_ended:
@@ -173,7 +162,6 @@ class Game:
             
         def _clamp_tile_pos(self):
             if self.tile_pos is None:
-                self.tile_pos = None
                 return
             if self.tile_pos[0] <= 0:
                 self.tile_pos = None
@@ -421,40 +409,6 @@ class Game:
                             self.build_mode = False
                         if event.key == pygame.K_q:
                             self.fast_forward = not self.fast_forward
-
-                # Here we start the loop by drawing the background of the scene first
-                if self.screen.get_size()[0] == 1440 and self.screen.get_size()[1] == 900:
-                    self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 90))
-                    # Left bar at this resolution should be at (0, 0) with the dim. (32 x 1440)
-                    pygame.draw.rect(self.screen, (245, 190, 37), pygame.Rect(0, 0, 32, 1440))
-                    # Right bar at this resolution should be at (1088, 0) with the dim. (128 x 1440)
-                    pygame.draw.rect(self.screen, (245, 190, 37), pygame.Rect(1088, 0, 352, 1440))
-                    # Top bar at this resolution should be at (32, 0) with the dim. (1056 x 80)
-                    pygame.draw.rect(self.screen, (200, 150, 10), pygame.Rect(32, 0, 1056, 90))
-                    # Bottom bar at this resolution should be at (32, 810) with the dim. (1056 x 90)
-                    # However our tile grid is slightly too tall because we have an extra half tile in height
-                    # that adds an extra 16 pixels for us here
-                    pygame.draw.rect(self.screen, (200, 150, 10), pygame.Rect(32, 794, 1056, 106))
-
-                    for button in self.game_ui.buttons:
-                        button.draw_button()
-
-
-                if self.screen.get_size()[0] == 2560 and self.screen.get_size()[1] == 1440:
-                    self.screen.blit(pygame.transform.scale(self.display, (2560, 1440)), (0, 16))
-                    pygame.draw.rect(self.screen, (245, 190, 37), pygame.Rect(0, 0, 64, 1440))
-                    pygame.draw.rect(self.screen, (245, 190, 37), pygame.Rect(2176, 0, 384, 1440))
-                    pygame.draw.rect(self.screen, (200, 150, 10), pygame.Rect(64, 0, 2112, 16))
-                    pygame.draw.rect(self.screen, (200, 150, 10), pygame.Rect(64, 1424, 2112, 16))
-
-                    for button in self.game_ui.buttons:
-                        button.draw_button()
-                    steel_text = "Current Steel: " + str(self.current_steel)
-                    wave_text = "Current Wave: " + str(self.current_wave)
-                    level_text = str(self.current_level)
-                    draw_text(self.screen, steel_text, self.text_font, (0, 0, 0), 2300, 200)
-                    draw_text(self.screen, level_text, self.text_font, (0, 0, 0), 2300, 250)
-                    draw_text(self.screen, wave_text, self.text_font, (0, 0, 0), 2300, 300)
 
                 if self.screen.get_size()[0] == 1280 and self.screen.get_size()[1] == 720:
                     self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 8))
