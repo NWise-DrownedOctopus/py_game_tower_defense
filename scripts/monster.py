@@ -45,6 +45,7 @@ class Monster (pygame.sprite.Sprite):
         self.target_pos = (float(self.pathway[self.pathway_index][0]), float(self.pathway[self.pathway_index][1]))
 
     def update(self):
+        from scripts.utils.audio import sfx_assets
         if self.game.paused:
             return
 
@@ -52,7 +53,7 @@ class Monster (pygame.sprite.Sprite):
             self.kill()
             self.game.current_steel += self.steel_value
             self.is_dead = True
-            play_audio('death_1', self.game.sfx_assets)
+            play_audio('death_1')
             return
         
         if self.pathway is None:
@@ -60,7 +61,7 @@ class Monster (pygame.sprite.Sprite):
         if self.pathway_index == len(self.pathway) - 1:
             self.kill()
             self.game.current_steel -= self.base_hit_cost
-            play_audio('death_2', self.game.sfx_assets)
+            play_audio('death_2')
             return
         
         threshold = .1

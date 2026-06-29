@@ -1,6 +1,7 @@
 import pygame
 import sys
 import json
+import asyncio
 from scripts.utils.ui_utils import draw_text
 from scripts import ui
 
@@ -37,7 +38,9 @@ class OverworldMap:
             print(f"Permission denied when loading overworld map: {path}")
             self.levels = []
 
-    def run(self):
+    async def run(self):
+        from scripts.utils.audio import play_audio
+        play_audio('BGM_Menu', loop=True)
         pygame.mouse.set_visible(False)
         self.load('data/overworld_map.json')
 
@@ -85,3 +88,4 @@ class OverworldMap:
 
             pygame.display.update()
             self.dt = self.clock.tick(FPS) / 1000
+            await asyncio.sleep(0)

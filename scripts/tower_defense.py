@@ -2,6 +2,7 @@ import sys
 import os
 
 import pygame
+import asyncio
 
 from scripts import tower, gem, monster, ui, level
 from scripts.utils.audio import play_audio
@@ -56,17 +57,6 @@ class TowerDefense:
         self.sheet_assets = {
             'projectile_img_sheet': [pygame.image.load('art/round_bullets_small.png').convert_alpha(), 6, 8],
             'space_ground_tiles': [pygame.image.load('art/background_tiles.png').convert_alpha(), 32, 6, 12]
-        }
-        
-        self.sfx_assets = {
-            'fire': pygame.mixer.Sound(BASE_AUDIO_PATH + "laser_bolt.mp3"),
-            'build': pygame.mixer.Sound(BASE_AUDIO_PATH + "build_noise.mp3"),
-            'button': pygame.mixer.Sound(BASE_AUDIO_PATH + 'button_press.mp3'),
-            'death_1': pygame.mixer.Sound(BASE_AUDIO_PATH + 'death_noise_1.mp3'),
-            'death_2': pygame.mixer.Sound(BASE_AUDIO_PATH + 'death_noise_2.mp3'),
-            'BGM_Menu': BASE_AUDIO_PATH + 'BGM_Menu.wav',
-            'BGM_Game_1': BASE_AUDIO_PATH + 'BGM_Game_1.wav',
-            'BGM_Game_2': BASE_AUDIO_PATH + 'BGM_Game_2.wav'
         }
 
         self.text_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 10)
@@ -196,13 +186,14 @@ class TowerDefense:
                                 (self.tile_pos[0] * self.tilemap.tile_size * self.render_scale, self.tile_pos[1] * self.tilemap.tile_size * self.render_scale))
 
     def build(self):
+        from scripts.utils.audio import sfx_assets
         if self.current_build_type == 'tower' and self.current_steel >= self.tower_cost:
             tower_n = tower.Tower(
                 (self.tile_pos[0] * self.tilemap.tile_size * self.render_scale, self.tile_pos[1] * self.tilemap.tile_size * self.render_scale), self.tile_pos,
                 self.display, self)
             self.towers.add(tower_n)
             self.current_steel -= self.tower_cost
-            play_audio('build', self.sfx_assets)
+            play_audio('build')
         if self.current_build_type == 'gem' and self.current_steel >= self.gem_cost:
             for n_tower in self.towers:
                 if self.tile_pos == n_tower.tile_pos:
@@ -219,9 +210,10 @@ class TowerDefense:
         self.build_mode = False
             
     def _init_level(self):
-        # here we manage our BGM
-        play_audio('BGM_Game_1', self.sfx_assets, True)
-        play_audio('BGM_Game_2', self.sfx_assets, True)
+        # here we manage our BGM\
+        from scripts.utils.audio import sfx_assets
+        play_audio('BGM_Game_1', True)
+        play_audio('BGM_Game_2', True)
         
         self.game_ui.create_level_buttons(self.screen)
         self._init_resolution()
@@ -449,7 +441,7 @@ class TowerDefense:
             
         self.run_level()
 
-    def run(self):
+    async def run(self):
         self._init_level()
         while True:
             if self.level.waves_finished and len(self.monsters) == 0:
@@ -463,4 +455,5 @@ class TowerDefense:
 
             pygame.display.update()
             self.dt = self.clock.tick(FPS) / 1000             
+            await asyncio.sleep(0)
                 

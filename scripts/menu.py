@@ -1,5 +1,6 @@
 import pygame
 import sys
+import asyncio
 from scripts.utils.assets import load_image
 from scripts.utils.ui_utils import draw_text
 from scripts.utils.save import load_save, create_save
@@ -25,7 +26,9 @@ class MainMenu:
             'title_frame_2': load_image("ui/el_04_03.png"),
         }
             
-    def run(self):
+    async def run(self):
+        from scripts.utils.audio import play_audio
+        play_audio('BGM_Menu', loop=True)
         menu_ui = ui.UI("main_menu", self.screen)
         button_1_pos = [510, 450]
         button_2_pos = [510, 600]
@@ -60,3 +63,4 @@ class MainMenu:
 
             pygame.display.update()
             self.clock.tick(FPS)
+            await asyncio.sleep(0)

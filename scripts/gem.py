@@ -67,6 +67,7 @@ class Gem (pygame.sprite.Sprite):
                     self.targets.append(monster)
 
     def fire(self, monster):
+        from scripts.utils.audio import sfx_assets
         projectile = Projectile(self.pos, monster, self.surf, self.damage, self.projectile_speed, self.game)
         self.projectiles.add(projectile)
-        play_audio('fire', self.game.sfx_assets)
+        play_audio('fire')
