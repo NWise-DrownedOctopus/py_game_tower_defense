@@ -14,3 +14,10 @@ __pycache__/
 build/
 dist/
 .idea/
+
+data/save.json
+
+.DS_Store
+Thumbs.db
+
+.vscode/
