@@ -25,6 +25,7 @@ class Level:
             self.level_data = json.load(f)        
         
     def start(self):
+        self.unlocks = self.level_data.get('unlocks', [])
         self.name = self.level_data['name']
         self.waves = self.level_data['waves']
         self.starting_towers = self.level_data['starting_towers']

@@ -1,5 +1,9 @@
 {
     "name": "Level 1",
+    "unlocks": [
+        "level_02",
+        "level_03"
+    ],
     "waves": [
         [14, "normal", 10],
         [16, "fast", 5],

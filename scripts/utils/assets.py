@@ -1,4 +1,4 @@
-import pygame, os
+import pygame, os, json
 
 BASE_IMG_PATH = r"art/"
 
@@ -40,3 +40,17 @@ def get_sheet_dim(sheet, sheet_assets):
     max_frame_width = sheet_assets[sheet][1]
     max_frame_height = sheet_assets[sheet][2]
     return max_frame_width, max_frame_height
+
+def load_monsters(path):
+    try:
+        with open(path, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"Monster data file not found: {path}")
+        return None
+    except json.JSONDecodeError as e:
+        print(f"Monster data file is malformed: {e}")
+        return None
+    except PermissionError:
+        print(f"Permission denied when loading monster data: {path}")
+        return None

@@ -13,6 +13,7 @@ class App:
         self.clock = pygame.time.Clock()
         self.save_data = None
         self.current_level = None
+        self.current_level_key = None
 
     def run(self):
         scene = 'menu'

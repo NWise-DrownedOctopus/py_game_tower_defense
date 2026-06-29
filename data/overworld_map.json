@@ -1,16 +1,43 @@
 {
     "levels": [
-        [
-            "level_01.json",
-            "unlocked"
-        ],
-        [
-            "level_02.json",
-            "locked"
-        ],
-        [
-            "level_03.json",
-            "locked"
-        ]
+        {
+            "key": "level_01",
+            "file": "level_01.json",
+            "map_pos": [
+                300,
+                100
+            ],
+            "label": "Level 1",
+            "label_pos": [
+                560,
+                185
+            ]
+        },
+        {
+            "key": "level_02",
+            "file": "level_02.json",
+            "map_pos": [
+                250,
+                200
+            ],
+            "label": "Level 2",
+            "label_pos": [
+                460,
+                385
+            ]
+        },
+        {
+            "key": "level_03",
+            "file": "level_03.json",
+            "map_pos": [
+                400,
+                150
+            ],
+            "label": "Level 3",
+            "label_pos": [
+                765,
+                285
+            ]
+        }
     ]
 }

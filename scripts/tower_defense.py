@@ -5,12 +5,13 @@ import pygame
 
 from scripts import tower, gem, monster, ui, level
 from scripts.utils.audio import play_audio
-from scripts.utils.assets import load_image, load_images
+from scripts.utils.assets import load_image, load_images, load_monsters
 from scripts.utils.ui_utils import draw_text
-from scripts.utils.save import load_save, save_game, load_monsters
+from scripts.utils.save import load_save, save_game
 from scripts.tilemap import Tilemap
 from scripts.pathfinding import Pathfinding, make_grid, draw_pathfinding
 from scripts.pathfinding import algorithm as pf_algorithm
+from scripts.progression import complete_level
 
 FPS = 60
 WIDTH = 1280
@@ -147,8 +148,12 @@ class TowerDefense:
 
     def end_level(self):
         self.level_ended = True
-        save_game('data/save.json', self.level.name, self.save_data)
-        self.app.save_data = load_save('data/save.json')
+        self.app.save_data = complete_level(
+            self.app.save_data,
+            self.app.current_level_key,
+            self.level.unlocks
+        )
+        save_game('data/save.json', self.app.save_data)
         return 'map'
 
     def spawn_monsters(self, m_type):
