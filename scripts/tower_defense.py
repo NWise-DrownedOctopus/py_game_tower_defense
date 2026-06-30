@@ -4,6 +4,8 @@ import os
 import pygame
 
 from scripts import tower, gem, monster, ui, level
+from scripts.gem_bag import GemBag
+from scripts.gem_factory import GemFactory
 from scripts.utils.audio import play_audio
 from scripts.utils.assets import load_image, load_images, load_monsters
 from scripts.utils.ui_utils import draw_text
@@ -28,6 +30,10 @@ class TowerDefense:
         
         self.app = app
         self.screen = app.screen
+        
+        self.gem_factory = GemFactory(self)
+        self.gem_factory.load('data/gems.json')
+        self.gem_bag = GemBag(app.save_data["bags"])
 
         self.display = pygame.Surface((1280, 720))
         self.dt = 0
@@ -196,6 +202,7 @@ class TowerDefense:
                                 (self.tile_pos[0] * self.tilemap.tile_size * self.render_scale, self.tile_pos[1] * self.tilemap.tile_size * self.render_scale))
 
     def build(self):
+        """Creates instance of object for player"""
         if self.current_build_type == 'tower' and self.current_steel >= self.tower_cost:
             tower_n = tower.Tower(
                 (self.tile_pos[0] * self.tilemap.tile_size * self.render_scale, self.tile_pos[1] * self.tilemap.tile_size * self.render_scale), self.tile_pos,
@@ -206,10 +213,8 @@ class TowerDefense:
         if self.current_build_type == 'gem' and self.current_steel >= self.gem_cost:
             for n_tower in self.towers:
                 if self.tile_pos == n_tower.tile_pos:
-                    gem_n = gem.Gem(
-                        (self.tile_pos[0] * self.tilemap.tile_size * self.render_scale, self.tile_pos[1] * self.tilemap.tile_size * self.render_scale),
-                        n_tower,
-                        self.display, self)
+                    gem_type, tier, star = self.gem_bag.draw()
+                    gem_n = self.gem_factory.build_gem(gem_type, tier, star, n_tower, self.display)
                     self.gems.add(gem_n)
                     n_tower.has_gem = True
                     self.current_steel -= self.gem_cost
@@ -248,12 +253,13 @@ class TowerDefense:
             for s_gem in self.level.starting_gems:
                 gem_pos = s_gem
                 if gem_pos == tower_pos:
-                    s_gem = gem.Gem(
-                        (gem_pos[0] * self.tilemap.tile_size * self.render_scale, gem_pos[1] * self.tilemap.tile_size * self.render_scale),
-                        s_tower,
-                        self.display, self)
-                    s_tower.has_gem = True
-                    self.gems.add(s_gem)
+                    continue
+                    # s_gem = gem.Gem(
+                    #     (gem_pos[0] * self.tilemap.tile_size * self.render_scale, gem_pos[1] * self.tilemap.tile_size * self.render_scale),
+                    #     s_tower,
+                    #     self.display, self)
+                    # s_tower.has_gem = True
+                    # self.gems.add(s_gem)
                 else:
                     s_tower.has_gem = False
                     

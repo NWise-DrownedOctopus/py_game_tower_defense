@@ -1,0 +1,1026 @@
+{
+    "poison": {
+        "tier_1": {
+            "star_1": {
+                "stats": {
+                    "damage": 2,
+                    "range": 90,
+                    "shot_delay": 1.2,
+                    "projectile_speed": 3
+                },
+                "abilities": []
+            },
+            "star_2": {
+                "stats": {
+                    "damage": 3,
+                    "range": 95,
+                    "shot_delay": 1.1,
+                    "projectile_speed": 3
+                },
+                "abilities": [
+                    {
+                        "type": "damage_over_time",
+                        "dmg_per_tick": 1,
+                        "tick_rate": 0.5,
+                        "duration": 3
+                    }
+                ]
+            },
+            "star_3": {
+                "stats": {
+                    "damage": 4,
+                    "range": 100,
+                    "shot_delay": 1.0,
+                    "projectile_speed": 3
+                },
+                "abilities": [
+                    {
+                        "type": "damage_over_time",
+                        "dmg_per_tick": 2,
+                        "tick_rate": 0.5,
+                        "duration": 4
+                    },
+                    {
+                        "type": "bonus_vs_armored",
+                        "multiplier": 1.5
+                    }
+                ]
+            }
+        },
+        "tier_2": {
+            "star_1": {
+                "stats": {
+                    "damage": 4,
+                    "range": 100,
+                    "shot_delay": 1.1,
+                    "projectile_speed": 3
+                },
+                "abilities": []
+            },
+            "star_2": {
+                "stats": {
+                    "damage": 6,
+                    "range": 105,
+                    "shot_delay": 1.0,
+                    "projectile_speed": 3
+                },
+                "abilities": [
+                    {
+                        "type": "damage_over_time",
+                        "dmg_per_tick": 2,
+                        "tick_rate": 0.5,
+                        "duration": 4
+                    },
+                    {
+                        "type": "bonus_vs_armored",
+                        "multiplier": 1.5
+                    }
+                ]
+            },
+            "star_3": {
+                "stats": {
+                    "damage": 8,
+                    "range": 110,
+                    "shot_delay": 0.9,
+                    "projectile_speed": 3
+                },
+                "abilities": [
+                    {
+                        "type": "damage_over_time",
+                        "dmg_per_tick": 3,
+                        "tick_rate": 0.5,
+                        "duration": 5
+                    },
+                    {
+                        "type": "bonus_vs_armored",
+                        "multiplier": 2.0
+                    },
+                    {
+                        "type": "poison_cloud",
+                        "radius": 40,
+                        "dmg_per_tick": 1,
+                        "duration": 3
+                    }
+                ]
+            }
+        },
+        "tier_3": {
+            "star_1": {
+                "stats": {
+                    "damage": 8,
+                    "range": 110,
+                    "shot_delay": 1.0,
+                    "projectile_speed": 4
+                },
+                "abilities": []
+            },
+            "star_2": {
+                "stats": {
+                    "damage": 12,
+                    "range": 115,
+                    "shot_delay": 0.95,
+                    "projectile_speed": 4
+                },
+                "abilities": [
+                    {
+                        "type": "damage_over_time",
+                        "dmg_per_tick": 4,
+                        "tick_rate": 0.5,
+                        "duration": 5
+                    },
+                    {
+                        "type": "bonus_vs_armored",
+                        "multiplier": 2.0
+                    },
+                    {
+                        "type": "poison_cloud",
+                        "radius": 40,
+                        "dmg_per_tick": 1,
+                        "duration": 3
+                    }
+                ]
+            },
+            "star_3": {
+                "stats": {
+                    "damage": 16,
+                    "range": 120,
+                    "shot_delay": 0.9,
+                    "projectile_speed": 4
+                },
+                "abilities": [
+                    {
+                        "type": "damage_over_time",
+                        "dmg_per_tick": 6,
+                        "tick_rate": 0.4,
+                        "duration": 6
+                    },
+                    {
+                        "type": "bonus_vs_armored",
+                        "multiplier": 2.5
+                    },
+                    {
+                        "type": "poison_cloud",
+                        "radius": 60,
+                        "dmg_per_tick": 2,
+                        "duration": 4
+                    }
+                ]
+            }
+        }
+    },
+   "grey": {
+        "tier_1": {
+            "star_1": {
+                "stats": {
+                    "damage": 1,
+                    "range": 60,
+                    "shot_delay": 2.5,
+                    "projectile_speed": 2
+                },
+                "abilities": []
+            },
+            "star_2": {
+                "stats": {
+                    "damage": 1,
+                    "range": 60,
+                    "shot_delay": 2.5,
+                    "projectile_speed": 2
+                },
+                "abilities": []
+            },
+            "star_3": {
+                "stats": {
+                    "damage": 1,
+                    "range": 60,
+                    "shot_delay": 2.5,
+                    "projectile_speed": 2
+                },
+                "abilities": []
+            }
+        }
+    },
+    "frost": {
+        "tier_1": {
+            "star_1": {
+                "stats": {
+                    "damage": 2,
+                    "range": 85,
+                    "shot_delay": 1.2,
+                    "projectile_speed": 3
+                },
+                "abilities": []
+            },
+            "star_2": {
+                "stats": {
+                    "damage": 3,
+                    "range": 90,
+                    "shot_delay": 1.1,
+                    "projectile_speed": 3
+                },
+                "abilities": [
+                    {
+                        "type": "slow",
+                        "percent": 0.25,
+                        "duration": 2.0
+                    }
+                ]
+            },
+            "star_3": {
+                "stats": {
+                    "damage": 4,
+                    "range": 95,
+                    "shot_delay": 1.0,
+                    "projectile_speed": 3
+                },
+                "abilities": [
+                    {
+                        "type": "slow",
+                        "percent": 0.4,
+                        "duration": 2.5
+                    },
+                    {
+                        "type": "amplify_damage",
+                        "multiplier": 1.25,
+                        "duration": 3.0
+                    }
+                ]
+            }
+        },
+        "tier_2": {
+            "star_1": {
+                "stats": {
+                    "damage": 3,
+                    "range": 95,
+                    "shot_delay": 1.1,
+                    "projectile_speed": 3
+                },
+                "abilities": []
+            },
+            "star_2": {
+                "stats": {
+                    "damage": 5,
+                    "range": 100,
+                    "shot_delay": 1.0,
+                    "projectile_speed": 3
+                },
+                "abilities": [
+                    {
+                        "type": "slow",
+                        "percent": 0.4,
+                        "duration": 2.5
+                    },
+                    {
+                        "type": "amplify_damage",
+                        "multiplier": 1.25,
+                        "duration": 3.0
+                    }
+                ]
+            },
+            "star_3": {
+                "stats": {
+                    "damage": 7,
+                    "range": 105,
+                    "shot_delay": 0.9,
+                    "projectile_speed": 3
+                },
+                "abilities": [
+                    {
+                        "type": "slow",
+                        "percent": 0.55,
+                        "duration": 3.0
+                    },
+                    {
+                        "type": "amplify_damage",
+                        "multiplier": 1.5,
+                        "duration": 4.0
+                    },
+                    {
+                        "type": "freeze",
+                        "duration": 1.0,
+                        "chance": 0.15
+                    }
+                ]
+            }
+        },
+        "tier_3": {
+            "star_1": {
+                "stats": {
+                    "damage": 5,
+                    "range": 100,
+                    "shot_delay": 1.0,
+                    "projectile_speed": 4
+                },
+                "abilities": []
+            },
+            "star_2": {
+                "stats": {
+                    "damage": 8,
+                    "range": 110,
+                    "shot_delay": 0.95,
+                    "projectile_speed": 4
+                },
+                "abilities": [
+                    {
+                        "type": "slow",
+                        "percent": 0.55,
+                        "duration": 3.0
+                    },
+                    {
+                        "type": "amplify_damage",
+                        "multiplier": 1.5,
+                        "duration": 4.0
+                    },
+                    {
+                        "type": "freeze",
+                        "duration": 1.0,
+                        "chance": 0.15
+                    }
+                ]
+            },
+            "star_3": {
+                "stats": {
+                    "damage": 10,
+                    "range": 115,
+                    "shot_delay": 0.9,
+                    "projectile_speed": 4
+                },
+                "abilities": [
+                    {
+                        "type": "slow",
+                        "percent": 0.7,
+                        "duration": 4.0
+                    },
+                    {
+                        "type": "amplify_damage",
+                        "multiplier": 2.0,
+                        "duration": 5.0
+                    },
+                    {
+                        "type": "freeze",
+                        "duration": 2.0,
+                        "chance": 0.25
+                    }
+                ]
+            }
+        }
+    },
+    "fire": {
+        "tier_1": {
+            "star_1": {
+                "stats": {
+                    "damage": 3,
+                    "range": 90,
+                    "shot_delay": 0.9,
+                    "projectile_speed": 4
+                },
+                "abilities": []
+            },
+            "star_2": {
+                "stats": {
+                    "damage": 4,
+                    "range": 95,
+                    "shot_delay": 0.85,
+                    "projectile_speed": 4
+                },
+                "abilities": [
+                    {
+                        "type": "damage_over_time",
+                        "dmg_per_tick": 1,
+                        "tick_rate": 0.5,
+                        "duration": 3
+                    }
+                ]
+            },
+            "star_3": {
+                "stats": {
+                    "damage": 6,
+                    "range": 100,
+                    "shot_delay": 0.8,
+                    "projectile_speed": 5
+                },
+                "abilities": [
+                    {
+                        "type": "damage_over_time",
+                        "dmg_per_tick": 2,
+                        "tick_rate": 0.5,
+                        "duration": 4
+                    },
+                    {
+                        "type": "bonus_vs_biological",
+                        "multiplier": 1.5
+                    }
+                ]
+            }
+        },
+        "tier_2": {
+            "star_1": {
+                "stats": {
+                    "damage": 6,
+                    "range": 100,
+                    "shot_delay": 0.85,
+                    "projectile_speed": 5
+                },
+                "abilities": []
+            },
+            "star_2": {
+                "stats": {
+                    "damage": 9,
+                    "range": 105,
+                    "shot_delay": 0.8,
+                    "projectile_speed": 5
+                },
+                "abilities": [
+                    {
+                        "type": "damage_over_time",
+                        "dmg_per_tick": 2,
+                        "tick_rate": 0.5,
+                        "duration": 4
+                    },
+                    {
+                        "type": "bonus_vs_biological",
+                        "multiplier": 1.5
+                    }
+                ]
+            },
+            "star_3": {
+                "stats": {
+                    "damage": 12,
+                    "range": 110,
+                    "shot_delay": 0.75,
+                    "projectile_speed": 6
+                },
+                "abilities": [
+                    {
+                        "type": "damage_over_time",
+                        "dmg_per_tick": 3,
+                        "tick_rate": 0.5,
+                        "duration": 5
+                    },
+                    {
+                        "type": "bonus_vs_biological",
+                        "multiplier": 2.0
+                    },
+                    {
+                        "type": "fire_explosion",
+                        "radius": 50,
+                        "damage": 6
+                    }
+                ]
+            }
+        },
+        "tier_3": {
+            "star_1": {
+                "stats": {
+                    "damage": 10,
+                    "range": 110,
+                    "shot_delay": 0.8,
+                    "projectile_speed": 6
+                },
+                "abilities": []
+            },
+            "star_2": {
+                "stats": {
+                    "damage": 15,
+                    "range": 115,
+                    "shot_delay": 0.75,
+                    "projectile_speed": 6
+                },
+                "abilities": [
+                    {
+                        "type": "damage_over_time",
+                        "dmg_per_tick": 3,
+                        "tick_rate": 0.5,
+                        "duration": 5
+                    },
+                    {
+                        "type": "bonus_vs_biological",
+                        "multiplier": 2.0
+                    },
+                    {
+                        "type": "fire_explosion",
+                        "radius": 50,
+                        "damage": 6
+                    }
+                ]
+            },
+            "star_3": {
+                "stats": {
+                    "damage": 20,
+                    "range": 120,
+                    "shot_delay": 0.7,
+                    "projectile_speed": 7
+                },
+                "abilities": [
+                    {
+                        "type": "damage_over_time",
+                        "dmg_per_tick": 5,
+                        "tick_rate": 0.4,
+                        "duration": 6
+                    },
+                    {
+                        "type": "bonus_vs_biological",
+                        "multiplier": 2.5
+                    },
+                    {
+                        "type": "fire_explosion",
+                        "radius": 70,
+                        "damage": 12
+                    }
+                ]
+            }
+        }
+    },
+    "lightning": {
+        "tier_1": {
+            "star_1": {
+                "stats": {
+                    "damage": 4,
+                    "range": 100,
+                    "shot_delay": 0.8,
+                    "projectile_speed": 6
+                },
+                "abilities": []
+            },
+            "star_2": {
+                "stats": {
+                    "damage": 5,
+                    "range": 105,
+                    "shot_delay": 0.75,
+                    "projectile_speed": 6
+                },
+                "abilities": [
+                    {
+                        "type": "chain_attack",
+                        "max_targets": 2,
+                        "falloff": 0.5,
+                        "chain_range": 60
+                    }
+                ]
+            },
+            "star_3": {
+                "stats": {
+                    "damage": 7,
+                    "range": 110,
+                    "shot_delay": 0.7,
+                    "projectile_speed": 7
+                },
+                "abilities": [
+                    {
+                        "type": "chain_attack",
+                        "max_targets": 3,
+                        "falloff": 0.6,
+                        "chain_range": 70
+                    },
+                    {
+                        "type": "stun",
+                        "duration": 0.4,
+                        "chance": 0.15
+                    }
+                ]
+            }
+        },
+        "tier_2": {
+            "star_1": {
+                "stats": {
+                    "damage": 7,
+                    "range": 110,
+                    "shot_delay": 0.75,
+                    "projectile_speed": 7
+                },
+                "abilities": []
+            },
+            "star_2": {
+                "stats": {
+                    "damage": 10,
+                    "range": 115,
+                    "shot_delay": 0.7,
+                    "projectile_speed": 7
+                },
+                "abilities": [
+                    {
+                        "type": "chain_attack",
+                        "max_targets": 3,
+                        "falloff": 0.6,
+                        "chain_range": 70
+                    },
+                    {
+                        "type": "stun",
+                        "duration": 0.4,
+                        "chance": 0.15
+                    }
+                ]
+            },
+            "star_3": {
+                "stats": {
+                    "damage": 13,
+                    "range": 120,
+                    "shot_delay": 0.65,
+                    "projectile_speed": 8
+                },
+                "abilities": [
+                    {
+                        "type": "chain_attack",
+                        "max_targets": 4,
+                        "falloff": 0.65,
+                        "chain_range": 80
+                    },
+                    {
+                        "type": "stun",
+                        "duration": 0.6,
+                        "chance": 0.25
+                    },
+                    {
+                        "type": "rapid_strike",
+                        "extra_hits": 1,
+                        "delay_between": 0.15
+                    }
+                ]
+            }
+        },
+        "tier_3": {
+            "star_1": {
+                "stats": {
+                    "damage": 12,
+                    "range": 120,
+                    "shot_delay": 0.7,
+                    "projectile_speed": 8
+                },
+                "abilities": []
+            },
+            "star_2": {
+                "stats": {
+                    "damage": 18,
+                    "range": 125,
+                    "shot_delay": 0.65,
+                    "projectile_speed": 8
+                },
+                "abilities": [
+                    {
+                        "type": "chain_attack",
+                        "max_targets": 4,
+                        "falloff": 0.65,
+                        "chain_range": 80
+                    },
+                    {
+                        "type": "stun",
+                        "duration": 0.6,
+                        "chance": 0.25
+                    },
+                    {
+                        "type": "rapid_strike",
+                        "extra_hits": 1,
+                        "delay_between": 0.15
+                    }
+                ]
+            },
+            "star_3": {
+                "stats": {
+                    "damage": 24,
+                    "range": 130,
+                    "shot_delay": 0.6,
+                    "projectile_speed": 9
+                },
+                "abilities": [
+                    {
+                        "type": "chain_attack",
+                        "max_targets": 6,
+                        "falloff": 0.75,
+                        "chain_range": 90
+                    },
+                    {
+                        "type": "stun",
+                        "duration": 0.8,
+                        "chance": 0.35
+                    },
+                    {
+                        "type": "rapid_strike",
+                        "extra_hits": 2,
+                        "delay_between": 0.1
+                    }
+                ]
+            }
+        }
+    },
+    "crit": {
+        "tier_1": {
+            "star_1": {
+                "stats": {
+                    "damage": 5,
+                    "range": 110,
+                    "shot_delay": 2.0,
+                    "projectile_speed": 5
+                },
+                "abilities": []
+            },
+            "star_2": {
+                "stats": {
+                    "damage": 7,
+                    "range": 115,
+                    "shot_delay": 1.9,
+                    "projectile_speed": 5
+                },
+                "abilities": [
+                    {
+                        "type": "critical_hit",
+                        "multiplier": 2.5,
+                        "chance": 0.2
+                    }
+                ]
+            },
+            "star_3": {
+                "stats": {
+                    "damage": 10,
+                    "range": 120,
+                    "shot_delay": 1.8,
+                    "projectile_speed": 5
+                },
+                "abilities": [
+                    {
+                        "type": "critical_hit",
+                        "multiplier": 3.0,
+                        "chance": 0.25
+                    },
+                    {
+                        "type": "armor_pierce",
+                        "percent": 0.4
+                    }
+                ]
+            }
+        },
+        "tier_2": {
+            "star_1": {
+                "stats": {
+                    "damage": 10,
+                    "range": 115,
+                    "shot_delay": 1.9,
+                    "projectile_speed": 5
+                },
+                "abilities": []
+            },
+            "star_2": {
+                "stats": {
+                    "damage": 14,
+                    "range": 120,
+                    "shot_delay": 1.8,
+                    "projectile_speed": 5
+                },
+                "abilities": [
+                    {
+                        "type": "critical_hit",
+                        "multiplier": 3.0,
+                        "chance": 0.25
+                    },
+                    {
+                        "type": "armor_pierce",
+                        "percent": 0.4
+                    }
+                ]
+            },
+            "star_3": {
+                "stats": {
+                    "damage": 20,
+                    "range": 125,
+                    "shot_delay": 1.7,
+                    "projectile_speed": 6
+                },
+                "abilities": [
+                    {
+                        "type": "critical_hit",
+                        "multiplier": 3.5,
+                        "chance": 0.3
+                    },
+                    {
+                        "type": "armor_pierce",
+                        "percent": 0.6
+                    },
+                    {
+                        "type": "execute",
+                        "threshold": 0.15
+                    }
+                ]
+            }
+        },
+        "tier_3": {
+            "star_1": {
+                "stats": {
+                    "damage": 18,
+                    "range": 120,
+                    "shot_delay": 1.8,
+                    "projectile_speed": 6
+                },
+                "abilities": []
+            },
+            "star_2": {
+                "stats": {
+                    "damage": 26,
+                    "range": 125,
+                    "shot_delay": 1.7,
+                    "projectile_speed": 6
+                },
+                "abilities": [
+                    {
+                        "type": "critical_hit",
+                        "multiplier": 3.5,
+                        "chance": 0.3
+                    },
+                    {
+                        "type": "armor_pierce",
+                        "percent": 0.6
+                    },
+                    {
+                        "type": "execute",
+                        "threshold": 0.15
+                    }
+                ]
+            },
+            "star_3": {
+                "stats": {
+                    "damage": 35,
+                    "range": 130,
+                    "shot_delay": 1.6,
+                    "projectile_speed": 7
+                },
+                "abilities": [
+                    {
+                        "type": "critical_hit",
+                        "multiplier": 4.5,
+                        "chance": 0.35
+                    },
+                    {
+                        "type": "armor_pierce",
+                        "percent": 0.8
+                    },
+                    {
+                        "type": "execute",
+                        "threshold": 0.2
+                    }
+                ]
+            }
+        }
+    },
+    "splash": {
+        "tier_1": {
+            "star_1": {
+                "stats": {
+                    "damage": 3,
+                    "range": 95,
+                    "shot_delay": 1.3,
+                    "projectile_speed": 3
+                },
+                "abilities": []
+            },
+            "star_2": {
+                "stats": {
+                    "damage": 4,
+                    "range": 100,
+                    "shot_delay": 1.2,
+                    "projectile_speed": 3
+                },
+                "abilities": [
+                    {
+                        "type": "area_damage",
+                        "radius": 45,
+                        "falloff": 0.5
+                    }
+                ]
+            },
+            "star_3": {
+                "stats": {
+                    "damage": 6,
+                    "range": 105,
+                    "shot_delay": 1.1,
+                    "projectile_speed": 3
+                },
+                "abilities": [
+                    {
+                        "type": "area_damage",
+                        "radius": 55,
+                        "falloff": 0.6
+                    },
+                    {
+                        "type": "knockback",
+                        "force": 0.3,
+                        "duration": 0.5
+                    }
+                ]
+            }
+        },
+        "tier_2": {
+            "star_1": {
+                "stats": {
+                    "damage": 6,
+                    "range": 100,
+                    "shot_delay": 1.2,
+                    "projectile_speed": 3
+                },
+                "abilities": []
+            },
+            "star_2": {
+                "stats": {
+                    "damage": 9,
+                    "range": 105,
+                    "shot_delay": 1.1,
+                    "projectile_speed": 3
+                },
+                "abilities": [
+                    {
+                        "type": "area_damage",
+                        "radius": 55,
+                        "falloff": 0.6
+                    },
+                    {
+                        "type": "knockback",
+                        "force": 0.3,
+                        "duration": 0.5
+                    }
+                ]
+            },
+            "star_3": {
+                "stats": {
+                    "damage": 12,
+                    "range": 110,
+                    "shot_delay": 1.0,
+                    "projectile_speed": 4
+                },
+                "abilities": [
+                    {
+                        "type": "area_damage",
+                        "radius": 65,
+                        "falloff": 0.65
+                    },
+                    {
+                        "type": "knockback",
+                        "force": 0.5,
+                        "duration": 0.75
+                    },
+                    {
+                        "type": "disorient",
+                        "duration": 1.0,
+                        "chance": 0.3
+                    }
+                ]
+            }
+        },
+        "tier_3": {
+            "star_1": {
+                "stats": {
+                    "damage": 10,
+                    "range": 105,
+                    "shot_delay": 1.1,
+                    "projectile_speed": 4
+                },
+                "abilities": []
+            },
+            "star_2": {
+                "stats": {
+                    "damage": 15,
+                    "range": 110,
+                    "shot_delay": 1.0,
+                    "projectile_speed": 4
+                },
+                "abilities": [
+                    {
+                        "type": "area_damage",
+                        "radius": 65,
+                        "falloff": 0.65
+                    },
+                    {
+                        "type": "knockback",
+                        "force": 0.5,
+                        "duration": 0.75
+                    },
+                    {
+                        "type": "disorient",
+                        "duration": 1.0,
+                        "chance": 0.3
+                    }
+                ]
+            },
+            "star_3": {
+                "stats": {
+                    "damage": 20,
+                    "range": 115,
+                    "shot_delay": 0.9,
+                    "projectile_speed": 5
+                },
+                "abilities": [
+                    {
+                        "type": "area_damage",
+                        "radius": 80,
+                        "falloff": 0.75
+                    },
+                    {
+                        "type": "knockback",
+                        "force": 0.7,
+                        "duration": 1.0
+                    },
+                    {
+                        "type": "disorient",
+                        "duration": 1.5,
+                        "chance": 0.45
+                    }
+                ]
+            }
+        }
+    }
+}

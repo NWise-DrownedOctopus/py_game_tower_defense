@@ -10,7 +10,14 @@ DEFAULT_SAVE = {
     "persistent_resources": {
         "crystals": 0
     },
-    "upgrade_tree": {}
+    "upgrade_tree": {},
+    "bags": {
+        "tier_1": {
+            "fire": 2,
+            "frost": 2,
+            "poison": 1
+        }
+    }
 }
 
 def create_save(path):

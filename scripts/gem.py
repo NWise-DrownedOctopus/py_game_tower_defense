@@ -7,25 +7,28 @@ from scripts.projectile import Projectile
 
 class Gem (pygame.sprite.Sprite):
 
-    def __init__(self, pos, tower, surf, game):
+    def __init__(self, gem_type, stats, abilities, tower, surf, game):
         super().__init__()
-        self.pos = pos
+        self.gem_type = gem_type
+        self.stats = stats
+        self.abilities = abilities
+        self.pos = tower.pos
         self.surf = surf
         self.tower = tower
         self.tower.gem = self
         self.projectiles = pygame.sprite.Group()
         self.last_shot = time.time()
-        self.shot_delay = 1
-        self.range = 100
-        self.damage = 4
-        self.projectile_speed = 4
+        self.shot_delay = stats["shot_delay"]
+        self.range = stats["range"] # Was 100
+        self.damage = stats["damage"]
+        self.projectile_speed = stats["projectile_speed"]
         self.hit_count = 0
         self.game = game
         self.valid_target_gizmo = load_image('valid_target_gizmo.png')
         self.target_mask_gizmo = load_mask('target_mask_gizmo.png')
         self.valid_target_gizmo = pygame.transform.scale(self.valid_target_gizmo, (self.range * 2, self.range * 2))
         self.target_mask_gizmo = pygame.transform.scale(self.target_mask_gizmo, (self.range * 2, self.range * 2))
-        self.gem_img = load_image('gem.png')
+        self.gem_img = load_image(gem_type + '_gem.png')
         self.range_mask = pygame.mask.from_surface(self.target_mask_gizmo)
         self.tile_size = self.game.tile_size
         self.targets = []
@@ -70,3 +73,4 @@ class Gem (pygame.sprite.Sprite):
         projectile = Projectile(self.pos, monster, self.surf, self.damage, self.projectile_speed, self.game)
         self.projectiles.add(projectile)
         play_audio('fire', self.game.sfx_assets)
+        
