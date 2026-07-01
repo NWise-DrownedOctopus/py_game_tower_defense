@@ -5,7 +5,10 @@ import pygame
 
 from scripts import tower, gem, monster, ui, level
 from scripts.gem_bag import GemBag
+from scripts.gem_token import GemToken
 from scripts.gem_factory import GemFactory
+from scripts.gem_stash import GemStash
+from scripts.ui import Button
 from scripts.utils.audio import play_audio
 from scripts.utils.assets import load_image, load_images, load_monsters
 from scripts.utils.ui_utils import draw_text
@@ -34,6 +37,7 @@ class TowerDefense:
         self.gem_factory = GemFactory(self)
         self.gem_factory.load('data/gems.json')
         self.gem_bag = GemBag(app.save_data["bags"])
+        self.gem_stash = GemStash(origin_x=1100, origin_y=400)
 
         self.display = pygame.Surface((1280, 720))
         self.dt = 0
@@ -57,6 +61,27 @@ class TowerDefense:
                 m_type: load_image('monsters/' + data['image'])
                 for m_type, data in self.monster_data.items()
             }
+        }
+        
+        self.ui_assets = {
+            'l_side_bar': load_image("ui/UI_L_SideBar.png"),
+            'r_side_bar': load_image("ui/UI_R_SideBar.png"),
+            'top_bar': load_image("ui/UI_TopBar.png"),
+            'bottom_bar': load_image("ui/UI_BottomBar.png"),
+            'play_button': load_image("ui/play_button.png"),
+            'pause_button': load_image("ui/pause_button.png"),
+            'fast_forward_button': load_image("ui/fast_forward_button.png"),
+            'tower_button': load_image("ui/tower_button.png"),
+            'gem_button': load_image("ui/gem_button.png"),
+            'tower_button_small': load_image("ui/tower_button_small.png"),
+            'gem_button_small': load_image("ui/gem_button_small.png"),
+            'mars_hex_01': load_image("ui/mars_hex_01.png"),
+            'mars_hex_select_01': load_image("ui/mars_hex_select_01.png"),
+            'planet_bg': load_image("ui/planet_bg.png"),
+            'mouse_pointer': load_image("mouse_pointer.png"),
+            'wave_button_hover': load_image("ui/wave_button_hover.png"),
+            'wave_button': load_image("ui/wave_button.png"),
+            'gem_stash': load_image("ui/gem_stash.png")
         }
         
         self.sheet_assets = {
@@ -98,7 +123,6 @@ class TowerDefense:
         self.current_build_img = None
         self.current_build_type = None
         self.hoverables = []
-        self.gem_stash = []
 
         # Here is where we can initialize resources
         self.current_steel = 300
@@ -211,24 +235,40 @@ class TowerDefense:
             self.current_steel -= self.tower_cost
             play_audio('build', self.sfx_assets)
         if self.current_build_type == 'gem' and self.current_steel >= self.gem_cost:
-            for n_tower in self.towers:
-                if self.tile_pos == n_tower.tile_pos:
-                    gem_type, tier, star = self.gem_bag.draw()
-                    gem_n = self.gem_factory.build_gem(gem_type, tier, star, n_tower, self.display)
-                    self.gems.add(gem_n)
-                    n_tower.has_gem = True
-                    self.current_steel -= self.gem_cost
+            gem_type, tier, star = self.gem_bag.draw()
+            gem_token = GemToken(gem_type, tier, star, self)
+            self.gem_stash.add(gem_token)
+            self.current_steel -= self.gem_cost
+            # for n_tower in self.towers:
+            #     if self.tile_pos == n_tower.tile_pos:
+            #         gem_type, tier, star = self.gem_bag.draw()
+            #         gem_n = self.gem_factory.build_gem(gem_type, tier, star, n_tower, self.display)
+            #         self.gems.add(gem_n)
+            #         n_tower.has_gem = True
+            #         self.current_steel -= self.gem_cost
 
         self.current_build_img = None
         self.current_build_type = None
         self.build_mode = False
+        
+    def _enter_tower_build_mode(self):
+        self.current_build_img = self.assets['tower'].copy()
+        self.current_build_type = 'tower'
+        self.build_mode = True
+
+    def _draw_gem(self):
+        if not self.gem_stash.is_full() and self.current_steel >= self.gem_cost:
+            gem_type, tier, star = self.gem_bag.draw()
+            gem_token = GemToken(gem_type, tier, star, self)
+            self.gem_stash.add(gem_token)
+            self.current_steel -= self.gem_cost
             
     def _init_level(self):
         # here we manage our BGM
         play_audio('BGM_Game_1', self.sfx_assets, True)
         play_audio('BGM_Game_2', self.sfx_assets, True)
         
-        self.game_ui.create_level_buttons(self.screen)
+        self.create_level_buttons()
         self._init_resolution()
         
         # Here is where we load all our data that is stored in files
@@ -294,27 +334,12 @@ class TowerDefense:
                 continue
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                clicked = self.game_ui.check_click()
                 if event.button == 1:
-                    self.clicking = True
                     if self.build_mode:
                         if self.tile_pos is not None:
                             self.build()
                     else:
-                        if clicked == 'play':
-                            self.run_pathfinding(clicked)
-                        if clicked == 'pause':
-                            self.paused = True
-                        if clicked == 'fast_forward':
-                            self.fast_forward = not self.fast_forward
-                        if clicked == 'tower_button':
-                            self.current_build_img = self.assets['tower'].copy()
-                            self.current_build_type = 'tower'
-                            self.build_mode = not self.build_mode
-                        if clicked == 'gem_button':
-                            self.current_build_img = self.assets['gem'].copy()
-                            self.current_build_type = 'gem'
-                            self.build_mode = not self.build_mode
+                        self.game_ui.check_click()
 
                     if self.debug_mode:
                         row = self.tile_pos[0]
@@ -366,6 +391,7 @@ class TowerDefense:
 
         # draw gem_stash
         self.game_ui.draw_gem_stash(self.screen)
+        self.gem_stash.draw(self.screen)
 
         for button in self.game_ui.buttons:
             button.draw_button(self.screen)
@@ -397,6 +423,28 @@ class TowerDefense:
                 self.game_ui.update_wave_display(True)
             else:
                 self.game_ui.update_wave_display() 
+                
+    def create_level_buttons(self):
+        surf_width = self.screen.get_size()[0]
+        Button(self.game_ui, 32, 32, (surf_width - 180, 20), 'pause',
+           self.ui_assets["pause_button"],
+           on_click=lambda: setattr(self, 'paused', True))
+    
+        Button(self.game_ui, 32, 32, (surf_width - 115, 20), 'play',
+            self.ui_assets["play_button"],
+            on_click=lambda: self.run_pathfinding())
+        
+        Button(self.game_ui, 32, 32, (surf_width - 50, 20), 'fast_forward',
+            self.ui_assets["fast_forward_button"],
+            on_click=lambda: setattr(self, 'fast_forward', not self.fast_forward))
+        
+        Button(self.game_ui, 64, 64, (surf_width - 180, 300), 'tower_button',
+            self.ui_assets["tower_button_small"],
+            on_click=lambda: self._enter_tower_build_mode())
+        
+        Button(self.game_ui, 64, 64, (surf_width - 80, 300), 'gem_button',
+            self.ui_assets["gem_button_small"],
+            on_click=lambda: self._draw_gem())
                 
     def _update(self):
         # Here is where we can draw our background

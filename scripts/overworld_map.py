@@ -14,12 +14,11 @@ class OverworldMap:
         self.bg_color = (25, 25, 25)
         self.clock = app.clock
         self.render_scale = 2.0
-        self.save_data = app.save_data
         self.screen_mpos = None
         self.text_font = pygame.font.Font("fonts/Bandwidth8x8.ttf", 20)
         self.display = pygame.Surface((640, 360))
         self.dt = 0
-        self.selected_level = None
+        self.next_scene = None
         self.game_ui = ui.UI("ow_map", self.display)
 
     def load(self, path):
@@ -37,24 +36,34 @@ class OverworldMap:
             print(f"Permission denied when loading overworld map: {path}")
             self.levels = []
 
+    def _on_level_select(self, level):
+        self.app.current_level = level['file']
+        self.app.current_level_key = level['key']
+        self.next_scene = 'tower_defense'
+
     def run(self):
+        self.next_scene = None
         pygame.mouse.set_visible(False)
         self.load('data/overworld_map.json')
 
         for level in self.levels:
             if self.app.save_data['levels'][level['key']]['unlocked']:
                 ui.Button(self.game_ui, 32, 32, level['map_pos'], level['key'],
-                        self.game_ui.assets["mars_hex_01"], 
-                        self.game_ui.assets['mars_hex_select_01'])
+                          self.game_ui.assets["mars_hex_01"],
+                          self.game_ui.assets['mars_hex_select_01'],
+                          on_click=lambda l=level: self._on_level_select(l))
 
         while True:
+            if self.next_scene:
+                return self.next_scene
+
             self.screen.fill(self.bg_color)
             self.display.fill(self.bg_color)
             self.display.blit(pygame.transform.scale(
-                self.game_ui.assets["planet_bg"], 
+                self.game_ui.assets["planet_bg"],
                 (self.display.get_size()[1], self.display.get_size()[1])), (150, 0))
 
-            self.screen_mpos = (pygame.mouse.get_pos()[0] / self.render_scale, 
+            self.screen_mpos = (pygame.mouse.get_pos()[0] / self.render_scale,
                                 pygame.mouse.get_pos()[1] / self.render_scale)
 
             for button in self.game_ui.buttons:
@@ -67,21 +76,16 @@ class OverworldMap:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    clicked = self.game_ui.check_click()
-                    if event.button == 1 and clicked:
-                        for level in self.levels:
-                            if clicked == level['key']:
-                                self.app.current_level = level['file']
-                                self.app.current_level_key = level['key']
-                                return 'tower_defense'
+                    if event.button == 1:
+                        self.game_ui.check_click()
 
             self.display.blit(self.game_ui.assets['mouse_pointer'], self.screen_mpos)
 
             self.screen.blit(pygame.transform.scale(self.display, (1280, 720)), (0, 8))
             for level in self.levels:
                 if self.app.save_data['levels'][level['key']]['unlocked']:
-                    draw_text(self.screen, level['label'], self.text_font, 
-                            (255, 255, 255), level['label_pos'][0], level['label_pos'][1])
+                    draw_text(self.screen, level['label'], self.text_font,
+                              (255, 255, 255), level['label_pos'][0], level['label_pos'][1])
 
             pygame.display.update()
             self.dt = self.clock.tick(FPS) / 1000

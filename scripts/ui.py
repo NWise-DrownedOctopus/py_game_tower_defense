@@ -57,17 +57,17 @@ class UI:
         gem_button = Button(self, 64, 64, (surf_width - 80, 300), 'gem_button', self.assets["gem_button_small"])
 
     def check_click(self):
-        if len(self.buttons) > 0:
-            for button in self.buttons:
-                # Check if we have a collision with the mpos point
-                if self.scene == "ow_map":
-                    if button.rect.collidepoint(pygame.mouse.get_pos()[0] / 2, pygame.mouse.get_pos()[1] / 2):
-                        # play_audio('button')
-                        return button.name
-                if button.rect.collidepoint(pygame.mouse.get_pos()):
+        for button in self.buttons:
+            if self.scene == "ow_map":
+                if button.rect.collidepoint(pygame.mouse.get_pos()[0] / 2, pygame.mouse.get_pos()[1] / 2):
                     # play_audio('button')
+                    button.handle_click()
                     return button.name
-            return False
+            if button.rect.collidepoint(pygame.mouse.get_pos()):
+                # play_audio('button')
+                button.handle_click()
+                return button.name
+        return None
 
     def create_wave_display(self, waves, monster_data):
         self.wave_data = waves
@@ -92,7 +92,7 @@ class UI:
                     
 
 class Button:
-    def __init__(self, ui, width, height, pos, name, img=None, hover_img=None, context=None):
+    def __init__(self, ui, width, height, pos, name, img=None, hover_img=None, context=None, on_click=None):
         self.ui = ui
         self.width, self.height = width, height
         self.pos = pos
@@ -101,7 +101,12 @@ class Button:
         self.hover_img = hover_img
         self.name = name
         self.context = context
+        self.on_click = on_click
         ui.buttons.append(self)
+        
+    def handle_click(self):
+        if self.on_click:
+            self.on_click()
 
     def draw_button(self, surf):
         if self.img is not None:
